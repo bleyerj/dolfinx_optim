@@ -363,7 +363,6 @@ class MosekProblem:
             print(type(var), vec)
             if conv_fun.objective is not None:
                 if isinstance(var, fem.Constant):
-                    print("ndim", np.ndim(var.value))
                     if np.ndim(var.value) == 0:
                         var.value = 1.0
                         c = fem.assemble_scalar(
@@ -377,7 +376,6 @@ class MosekProblem:
                             c[i] = fem.assemble_scalar(
                                 fem.form(conv_fun.scale_factor * conv_fun.objective)
                             )
-                    print("Constant of size", c)
                 else:
                     var_ = ufl.TestFunction(var.function_space)
                     dobj = ufl.derivative(
@@ -397,31 +395,66 @@ class MosekProblem:
         for cons in conv_fun.linear_constraints:
             expr = cons["expr"]
             expr_list = []
+            curr_expr_list = []
             lamb_ = ufl.TestFunction(cons["V"])
             for var, vec in zip(self.variables, self.vectors):
-                if isinstance(var, fem.Function):
-                    dvar = ufl.TrialFunction(var.function_space)
-                    curr_expr = apply_derivatives(ufl.derivative(expr, var, dvar))
-                    A_petsc = fem.petsc.assemble_matrix(
-                        fem.form(ufl.inner(lamb_, curr_expr) * conv_fun.dx)
-                    )
-                    A_petsc.assemble()
-                    A_coo = petsc_matrix_to_scipy(A_petsc)
-                    A_mosek = scipy_matrix_to_mosek(A_coo)
-                    expr_list.append(mf.Expr.mul(A_mosek, vec))
+                if not isinstance(var, fem.Constant):
+                    curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
+                    if len(curr_expr.ufl_operands) > 0:  # if derivative is zero ignore
+                        curr_expr_list.append(curr_expr)
+                        A_op = create_interpolation_matrix(
+                            curr_expr, var, cons["V"], conv_fun.dx
+                        )
+                        expr_list.append(mf.Expr.mul(A_op, vec))
 
-            if hasattr(cons, "bu") and hasattr(cons, "bl"):
-                bu = fem.assemble_vector(
-                    fem.form(ufl.inner(lamb_, cons["bu"]) * conv_fun.dx)
-                )
-                bl = fem.assemble_vector(
-                    fem.form(ufl.inner(lamb_, cons["bl"]) * conv_fun.dx)
-                )
-                xbu = bu.array
-                xbl = bl.array
-                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.inRange(xbl, xbu))
+                    # dvar = ufl.TrialFunction(var.function_space)
+                    # curr_expr = apply_derivatives(ufl.derivative(expr, var, dvar))
+                    # A_petsc = fem.petsc.assemble_matrix(
+                    #     fem.form(ufl.inner(lamb_, curr_expr) * conv_fun.dx)
+                    # )
+                    # A_petsc.assemble()
+                    # A_coo = petsc_matrix_to_scipy(A_petsc)
+                    # A_mosek = scipy_matrix_to_mosek(A_coo)
+                    # expr_list.append(mf.Expr.mul(A_mosek, vec))
+
+                else:
+                    raise NotImplementedError
+
+            if cons["bu"] is not None:
+                if isinstance(cons["bu"], float):
+                    bu = fem.Function(cons["V"])
+                    xbu = bu.vector.array
+                    xbu[:] = cons["bu"]
+                else:
+                    bu = fem.assemble_vector(
+                        fem.form(ufl.inner(lamb_, cons["bu"]) * conv_fun.dx)
+                    )
+                    xbu = bu.array
             else:
-                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.equalsTo(0.0))
+                xbl = None
+            if cons["bl"] is not None:
+                if isinstance(cons["bl"], float):
+                    bl = fem.Function(cons["V"])
+                    xbl = bl.vector.array
+                    xbl[:] = cons["bl"]
+                else:
+                    bl = fem.assemble_vector(
+                        fem.form(ufl.inner(lamb_, cons["bl"]) * conv_fun.dx)
+                    )
+                    xbl = bl.array
+            else:
+                xbl = None
+
+            if (xbu is not None) and (xbl is not None):
+                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.inRange(xbl, xbu))
+            elif xbu is not None:
+                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.lessThan(xbu))
+            elif xbl is not None:
+                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.greaterThan(xbl))
+            else:
+                raise NotImplementedError(
+                    "Linear inequality constraint must have bounds"
+                )
 
     def _apply_conic_constraints(self, conv_fun):
         for cons in conv_fun.conic_constraints:
@@ -441,6 +474,8 @@ class MosekProblem:
                             curr_expr, var, V, conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
+                else:
+                    raise NotImplementedError
 
             b = expr - sum(curr_expr_list)
             b_vec = mf.Expr.constTerm(

@@ -13,7 +13,7 @@ from dolfinx import fem, mesh, io
 import ufl
 from ufl import dot, grad
 from dolfinx_optim.mosek_io import MosekProblem
-from dolfinx_optim.convex_function import L2Norm
+from dolfinx_optim.convex_function import L2Norm, L1Norm, LinfNorm
 
 
 N = 50
@@ -48,6 +48,7 @@ Pext = dot(f, u) * dx
 prob.add_eq_constraint(A=Pext, b=1.0)
 
 pi = L2Norm(grad(u), deg_quad)
+
 prob.add_convex_term(pi)
 
 prob.optimize()

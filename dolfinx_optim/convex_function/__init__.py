@@ -7,5 +7,5 @@
 @Time    :   17/11/2023
 """
 from .convex_term import ConvexTerm
-from .norms import L2Norm, L2Ball
+from .norms import L2Norm, L2Ball, L1Norm, LinfNorm
 from .simple_terms import QuadraticTerm

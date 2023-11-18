@@ -81,7 +81,6 @@ class ConvexTerm:
         self._linear_objective = []
 
         self.conic_repr(self.operand)
-        print(self.variable_names)
 
     def add_var(self, dim=0, cone=None, ux=None, lx=None, name=None):
         """
@@ -127,14 +126,14 @@ class ConvexTerm:
         if cone is not None:
             for v, c in zip(new_var, cone):
                 self.add_conic_constraint(v, c)
-        try:
+        if isinstance(new_var, list):
             self.variables += new_var
             return tuple(new_var)
-        except NotImplementedError:
+        else:
             self.variables.append(new_var)
             return new_var
 
-    def add_eq_constraint(self, Az, b=0, name=None):
+    def add_eq_constraint(self, Az, b=0.0, name=None):
         """
         Add an equality constraint :math:`Az=b`.
 
@@ -152,21 +151,18 @@ class ConvexTerm:
         name : str, optional
             Lagrange-multiplier name for later retrieval.
         """
+        if isinstance(b, int):
+            b = float(b)
         self.add_ineq_constraint(Az, b, b, name)
 
-    def add_ineq_constraint(self, Az, bu=None, bl=None, name=None):
+    def add_ineq_constraint(self, expr, bu=None, bl=None, name=None):
         """
-        Add an inequality constraint :math:`b_l \\leq Az \\leq b_u`.
-
-        `z` can contain a linear combination of X and local variables.
+        Add an inequality constraint :math:`b_l \\leq expr \\leq b_u`.
 
         Parameters
         ----------
-        Az : UFL expression
-            a UFL linear combination of X and local variables defining the
-            linear constraint. We still support expressing Az as a list of
-            linear expressions of X and local variable blocks. Use 0 or None for
-            an empty block.
+        expr : UFL expression
+            a UFL affine combination of variables
         b_l : float, expression
             corresponding lower bound. Ignored if None.
         b_u : float, expression
@@ -174,14 +170,14 @@ class ConvexTerm:
         name : str, optional
             Lagrange-multiplier name for later retrieval.
         """
-        A_shape = ufl.shape(Az)
-        if len(A_shape) == 0:  # scalar constraint
-            dim = 0
-        else:
-            dim = A_shape[0]
+        if isinstance(bu, int):
+            bu = float(bu)
+        if isinstance(bl, int):
+            bl = float(bl)
+        dim = get_shape(expr)
         self.linear_constraints.append(
             {
-                "A": Az,
+                "expr": expr,
                 "bu": bu,
                 "bl": bl,
                 "dim": dim,
