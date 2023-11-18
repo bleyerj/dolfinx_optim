@@ -483,12 +483,14 @@ class MosekProblem:
             )
             expr_list.append(b_vec)
             z_in_cone = mf.Expr.add(expr_list)
-            if len(conv_fun.shape) > 0:
-                z_shape = get_shape(expr)
+            z_shape = get_shape(expr)
+            if z_shape > 0:
                 assert (
                     z_in_cone.getSize() == conv_fun.ndof * z_shape
                 ), "Wrong shape in conic constraint"
                 z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, z_shape)
+            else:
+                z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, 1)
 
             self.M.constraint(z_in_cone, MOSEK_CONE_TYPES[cone.type])
 

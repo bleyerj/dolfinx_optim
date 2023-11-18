@@ -14,10 +14,22 @@ import numpy as np
 import ufl
 
 
+class AbsValue(ConvexTerm):
+    """Define the absolute value function :math:`|x|`."""
+
+    def conic_repr(self, expr):
+        assert get_shape(expr) == 0, "Absolute value applies only to scalar function"
+        t = self.add_var()
+        self.add_ineq_constraint(expr - t, bu=0.0)
+        self.add_ineq_constraint(-expr - t, bu=0.0)
+        self.add_linear_term(t)
+
+
 class L2Norm(ConvexTerm):
     def conic_repr(self, expr):
         t = self.add_var()
         stack = concatenate([t, expr])
+        print(stack)
         dim = get_shape(stack)
         print("Dim", dim)
         self.add_conic_constraint(stack, Quad(dim))

@@ -60,13 +60,13 @@ class ConvexTerm:
             metadata={"quadrature_degree": deg_quad, "quadrature_scheme": "default"},
         )
         self.operand = operand
-        self.shape = ufl.shape(self.operand)
-        if len(self.shape) == 2:
+        self.operand_shape = ufl.shape(self.operand)
+        if len(self.operand_shape) == 2:
             self.operand = to_vect(operand)
-            self.shape = (len(self.operand),)
-        assert self.shape == () or len(self.shape) == 1
+            self.operand_shape = (len(self.operand),)
+        assert self.operand_shape == () or len(self.operand_shape) == 1
         self.W_exp = generate_quadrature_functionspace(
-            self.domain, deg_quad, self.shape
+            self.domain, deg_quad, self.operand_shape
         )
         self.ndof = self.W.dofmap.index_map.size_global * self.W.dofmap.index_map_bs
         self.scale_factor = 1.0
