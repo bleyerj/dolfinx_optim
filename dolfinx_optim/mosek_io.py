@@ -10,15 +10,15 @@ are supported.
 Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
 @email: jeremy.bleyer@enpc.fr
 """
-import scipy.sparse as sp
 import numpy as np
 import sys
 import mosek
 import mosek.fusion as mf
 import ufl
-from itertools import compress
+from ufl.algorithms.apply_derivatives import apply_derivatives
+import scipy.sparse
 from dolfinx import fem
-from .convex_function import scipy_matrix_to_mosek, petsc_matrix_to_scipy
+from .utils import get_shape
 
 
 def to_list(a, n=1):
@@ -29,20 +29,45 @@ def to_list(a, n=1):
         return a
 
 
-# unimportant value to denote infinite bounds
-inf = 1e30
+MOSEK_CONE_TYPES = {"quad": mf.Domain.inQCone(), "rquad": mf.Domain.inRotatedQCone()}
 
-MOSEK_CONE_TYPES = {"quad": mosek.conetype.quad, "rquad": mosek.conetype.rquad}
-version = mosek.Env().getversion()
-if version >= (9, 0, 0):
-    MOSEK_CONE_TYPES.update(
-        {
-            "ppow": mosek.conetype.ppow,
-            "dpow": mosek.conetype.dpow,
-            "pexp": mosek.conetype.pexp,
-            "dexp": mosek.conetype.dexp,
-        }
-    )
+
+def petsc_matrix_to_scipy(A_petsc, M_array=None):
+    """
+    Utility function to converts a PETSc matrix to a scipy sparse coo matrix
+
+    if M_array is not None, computes diag(M_array)^{-1})*A_petsc
+    """
+    row, col, data = A_petsc.getValuesCSR()
+    A_csr = scipy.sparse.csr_matrix((data, col, row), shape=A_petsc.size)
+    if M_array is not None:
+        A_csr = scipy.sparse.diags(1.0 / M_array) @ A_csr
+    return A_csr.tocoo()
+
+
+def scipy_matrix_to_mosek(A_coo):
+    nrow, ncol = A_coo.shape
+    return mf.Matrix.sparse(nrow, ncol, A_coo.row, A_coo.col, A_coo.data)
+
+
+def create_interpolation_matrix(operator, u, V2, dx):
+    V1 = u.function_space
+    v_ = ufl.TrialFunction(V1)
+    v = ufl.TestFunction(V2)
+    new_op = ufl.replace(operator, {u: v_})
+    a_ufl = ufl.inner(new_op, v) * dx
+
+    A_petsc = fem.petsc.assemble_matrix(fem.form(a_ufl))
+    A_petsc.assemble()
+
+    # mass matrix on V2
+    one = fem.Function(V2)
+    one.vector.set(1.0)
+    m_ufl = ufl.inner(one, v) * dx
+    M_array = fem.assemble_vector(fem.form(m_ufl)).array
+
+    A_coo = petsc_matrix_to_scipy(A_petsc, M_array=M_array)
+    return scipy_matrix_to_mosek(A_coo)
 
 
 class MosekProblem:
@@ -67,7 +92,7 @@ class MosekProblem:
         self.c = []
         self.parameters = self._default_parameters()
         self.M = mf.Model(name)
-        self.vectors_dict = {}
+        # self.vectors_dict = {}
         self.vectors = []
         self.objectives = []
         self.constraints = {}
@@ -85,16 +110,21 @@ class MosekProblem:
         }
 
     def _create_variable_vector(self, var, name):
-        if name is None:
-            name = ""
         if isinstance(var, fem.Function):
-            return self.M.variable(name, len(var.vector.array))
+            if name is None:
+                return self.M.variable(len(var.vector.array))
+            else:
+                return self.M.variable(name, len(var.vector.array))
         else:
             value = var.value
             if len(value.shape) == 0:
-                return self.M.variable(name, 1)
+                size = 1
             else:
-                return self.M.variable(name, len(value))
+                size = len(value)
+            if name is None:
+                return self.M.variable(size)
+            else:
+                return self.M.variable(name, size)
 
     def _add_boundary_conditions(self, variable, vector, bcs):
         V = variable.function_space
@@ -173,7 +203,7 @@ class MosekProblem:
             print(name, vector, vector.getSize())
             if bc is not None:
                 self._add_boundary_conditions(var, vector, bc)
-            self.vectors_dict.update({name: vector})
+            # self.vectors_dict.update({name: vector})
             self.vectors.append(vector)
         self.variables += new_var
         self.Vx += V_list
@@ -259,6 +289,7 @@ class MosekProblem:
                     dvar = ufl.TrialFunction(var.function_space)
                     curr_form = ufl.derivative(A, var, dvar)
                     try:
+                        # FIXME: need to apply bcs
                         A_petsc = fem.petsc.assemble_matrix(fem.form(curr_form))
                         A_petsc.assemble()
                         A_coo = petsc_matrix_to_scipy(A_petsc)
@@ -300,9 +331,10 @@ class MosekProblem:
         for var, vec in zip(self.variables, self.vectors):
             if isinstance(var, fem.Function):
                 var_ = ufl.TestFunction(var.function_space)
-                curr_form = ufl.derivative(obj, var, var_)
-                c = fem.assemble_vector(fem.form(curr_form)).array
-                self.objectives.append(mf.Expr.dot(c, vec))
+                curr_form = apply_derivatives(ufl.derivative(obj, var, var_))
+                if len(curr_form.arguments()) > 0:
+                    c = fem.assemble_vector(fem.form(curr_form)).array
+                    self.objectives.append(mf.Expr.dot(c, vec))
             else:
                 n = vec.getSize()
                 c0 = fem.assemble_scalar(fem.form(obj))
@@ -310,31 +342,127 @@ class MosekProblem:
                 for val in np.eye(n):
                     var.value = val
                     c.append(fem.assemble_scalar(fem.form(obj)) - c0)
-                c = np.array([1.0])
                 self.objectives.append(mf.Expr.dot(np.array(c), vec))
 
     def add_convex_term(self, conv_fun):
         """Add the convex term `conv_fun` to the problem."""
-        for var in conv_fun.variables:
-            vector = self._create_variable_vector(var, var.name)
+        for var, name in zip(conv_fun.variables, conv_fun.variable_names):
+            vector = self._create_variable_vector(var, name)
             self.variables.append(var)
-            print("Add var", var.name)
-            self.vectors_dict.update({var.name: vector})
+            # self.vectors_dict.update({var.name: vector})
             self.vectors.append(vector)
-        print("Variables", [v.name for v in self.variables])
-        print("Vectors", [v for v in self.vectors])
-        objective = conv_fun._apply_objective(self)
-        conv_fun._apply_linear_constraints(self)
-        print("Applying conic constraints")
-        conv_fun._apply_conic_constraints(self)
-        # print(objective)
-        # conv_fun._apply_on_problem(self)
-        self.objectives.append(objective)
+        objective = self._apply_objective(conv_fun)
+        self._apply_linear_constraints(conv_fun)
+        self._apply_conic_constraints(conv_fun)
+        if objective is not None:
+            self.objectives.append(objective)
+
+    def _apply_objective(self, conv_fun):
+        obj = []
+        for var, vec in zip(self.variables, self.vectors):
+            print(type(var), vec)
+            if conv_fun.objective is not None:
+                if isinstance(var, fem.Constant):
+                    print("ndim", np.ndim(var.value))
+                    if np.ndim(var.value) == 0:
+                        var.value = 1.0
+                        c = fem.assemble_scalar(
+                            fem.form(conv_fun.scale_factor * conv_fun.objective)
+                        )
+                    else:
+                        c = np.zeros_like(var.value)
+                        for i in range(len(c)):
+                            var.value *= 0.0
+                            var.value[i] = 1.0
+                            c[i] = fem.assemble_scalar(
+                                fem.form(conv_fun.scale_factor * conv_fun.objective)
+                            )
+                    print("Constant of size", c)
+                else:
+                    var_ = ufl.TestFunction(var.function_space)
+                    dobj = ufl.derivative(
+                        conv_fun.scale_factor * conv_fun.objective, var, var_
+                    )
+                    c = fem.assemble_vector(fem.form(dobj)).array
+                try:
+                    obj.append(mf.Expr.dot(c, vec))
+                except AttributeError:
+                    obj.append(mf.Expr.constTerm(0.0))
+        if len(obj) > 0:
+            return mf.Expr.add(obj)
+        else:
+            return None
+
+    def _apply_linear_constraints(self, conv_fun):
+        for cons in conv_fun.linear_constraints:
+            expr = cons["expr"]
+            expr_list = []
+            lamb_ = ufl.TestFunction(cons["V"])
+            for var, vec in zip(self.variables, self.vectors):
+                if isinstance(var, fem.Function):
+                    dvar = ufl.TrialFunction(var.function_space)
+                    curr_expr = apply_derivatives(ufl.derivative(expr, var, dvar))
+                    A_petsc = fem.petsc.assemble_matrix(
+                        fem.form(ufl.inner(lamb_, curr_expr) * conv_fun.dx)
+                    )
+                    A_petsc.assemble()
+                    A_coo = petsc_matrix_to_scipy(A_petsc)
+                    A_mosek = scipy_matrix_to_mosek(A_coo)
+                    expr_list.append(mf.Expr.mul(A_mosek, vec))
+
+            if hasattr(cons, "bu") and hasattr(cons, "bl"):
+                bu = fem.assemble_vector(
+                    fem.form(ufl.inner(lamb_, cons["bu"]) * conv_fun.dx)
+                )
+                bl = fem.assemble_vector(
+                    fem.form(ufl.inner(lamb_, cons["bl"]) * conv_fun.dx)
+                )
+                xbu = bu.array
+                xbl = bl.array
+                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.inRange(xbl, xbu))
+            else:
+                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.equalsTo(0.0))
+
+    def _apply_conic_constraints(self, conv_fun):
+        for cons in conv_fun.conic_constraints:
+            expr = cons["expr"]
+            cone = cons["cone"]
+            V = cons["V"]
+
+            v = ufl.TestFunction(V)
+            expr_list = []
+            curr_expr_list = []
+            for var, vec in zip(self.variables, self.vectors):
+                if not isinstance(var, fem.Constant):
+                    curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
+                    if len(curr_expr.ufl_operands) > 0:  # if derivative is zero ignore
+                        curr_expr_list.append(curr_expr)
+                        A_op = create_interpolation_matrix(
+                            curr_expr, var, V, conv_fun.dx
+                        )
+                        expr_list.append(mf.Expr.mul(A_op, vec))
+
+            b = expr - sum(curr_expr_list)
+            b_vec = mf.Expr.constTerm(
+                fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array
+            )
+            expr_list.append(b_vec)
+            z_in_cone = mf.Expr.add(expr_list)
+            if len(conv_fun.shape) > 0:
+                z_shape = get_shape(expr)
+                assert (
+                    z_in_cone.getSize() == conv_fun.ndof * z_shape
+                ), "Wrong shape in conic constraint"
+                z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, z_shape)
+
+            self.M.constraint(z_in_cone, MOSEK_CONE_TYPES[cone.type])
 
     def _set_task_parameters(self):
         assert all(
             [p in self._default_parameters().keys() for p in self.parameters.keys()]
         ), "Available parameters are:\n{}".format(self._default_parameters())
+
+        self.M.setSolverParam("autoUpdateSolInfo", "on")
 
         # Set log level (integer parameter)
         self.M.setSolverParam("log", self.parameters["log_level"])
@@ -358,28 +486,34 @@ class MosekProblem:
 
         If output=True, it gets printed out.
         """
-        int_info = ["intpnt_iter", "opt_numcon", "opt_numvar", "ana_pro_num_var"]
+        int_info = [
+            "intpntIter",
+            "optNumcon",
+            "optNumvar",
+            "anaProNumVar",
+        ]
         double_info = [
-            "optimizer_time",
-            "presolve_eli_time",
-            "presolve_lindep_time",
-            "presolve_time",
-            "intpnt_time",
-            "intpnt_order_time",
-            "sol_itr_primal_obj",
-            "sol_itr_dual_obj",
+            "optimizerTime",
+            "presolveEliTime",
+            "presolveLindepTime",
+            "presolveTime",
+            "intpntTime",
+            "intpntOrderTime",
+            "solItrPrimalObj",
+            "solItrDualObj",
         ]
-        int_value = [self.task.getintinf(getattr(mosek.iinfitem, k)) for k in int_info]
-        double_value = [
-            self.task.getdouinf(getattr(mosek.dinfitem, k)) for k in double_info
-        ]
-        info = dict(zip(int_info + double_info, int_value + double_value))
+        Lint_info = ["numAffConicCon"]
+        Lint_value = [self.M.getSolverLIntInfo("rdNumacc")]
+        int_value = [self.M.getSolverIntInfo(k) for k in int_info] + Lint_value
+        double_value = [self.M.getSolverDoubleInfo(k) for k in double_info]
+        info = dict(
+            zip(
+                int_info + Lint_info + double_info,
+                int_value + Lint_value + double_value,
+            )
+        )
         info.update(
-            {
-                "solution_status": str(self.task.getsolsta(mosek.soltype.itr)).split(
-                    "."
-                )[1]
-            }
+            {"solution_status": str(self.M.getAcceptedSolutionStatus()).split(".")[1]}
         )
         if output:
             print("Solver information:\n{}".format(info))

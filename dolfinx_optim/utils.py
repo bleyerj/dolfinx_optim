@@ -11,6 +11,15 @@ import numpy as np
 from ufl import shape, as_matrix, as_vector, outer, cross, sqrt, dot, inner, avg
 
 
+def get_shape(expr):
+    expr_shape = shape(expr)
+    if len(expr_shape) == 0:  # scalar constraint
+        dim = 0
+    else:
+        dim = expr_shape[0]
+    return dim
+
+
 def to_list(a, n=1):
     """Transform `a` to list of length `n`."""
     if type(a) not in [list, tuple]:

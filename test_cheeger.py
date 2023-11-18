@@ -52,6 +52,8 @@ prob.add_convex_term(pi)
 
 prob.optimize()
 
+prob.get_solution_info()
+
 with io.XDMFFile(MPI.COMM_WORLD, "limit_analysis/u.xdmf", "w") as file:
     file.write_mesh(u.function_space.mesh)
     file.write_function(u)
