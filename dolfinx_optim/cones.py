@@ -94,7 +94,7 @@ class Pow(Cone):
     def __init__(self, dim: int, alpha: float):
         self.dim = dim
         assert 0 < float(alpha) < 1, "Exponent alpha must be between 0 and 1."
-        self.alp = alpha
+        self.alpha = alpha
         self.type = "ppow"
 
 

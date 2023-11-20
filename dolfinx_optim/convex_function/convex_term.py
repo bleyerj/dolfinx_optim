@@ -50,7 +50,7 @@ def _get_mesh_from_expr(expr):
 
 
 class ConvexTerm:
-    def __init__(self, operand, deg_quad):
+    def __init__(self, operand, deg_quad, parameters=None):
         self.domain = _get_mesh_from_expr(operand)
         self.deg_quad = deg_quad
         self.W = generate_scalar_quadrature_functionspace(self.domain, self.deg_quad)
@@ -70,6 +70,7 @@ class ConvexTerm:
         )
         self.ndof = self.W.dofmap.index_map.size_global * self.W.dofmap.index_map_bs
         self.scale_factor = 1.0
+        self.parameters = parameters
 
         self.variables = []
         self.variable_names = []
@@ -79,8 +80,10 @@ class ConvexTerm:
         self.ux = []
         self.lx = []
         self._linear_objective = []
-
-        self.conic_repr(self.operand)
+        if self.parameters is None:
+            self.conic_repr(self.operand)
+        else:
+            self.conic_repr(self.operand, *self.parameters)
 
     def add_var(self, dim=0, cone=None, ux=None, lx=None, name=None):
         """

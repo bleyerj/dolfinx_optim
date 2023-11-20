@@ -13,7 +13,7 @@ from dolfinx import fem, mesh, io
 import ufl
 from ufl import dot, grad
 from dolfinx_optim.mosek_io import MosekProblem
-from dolfinx_optim.convex_function import L2Norm, L1Norm, LinfNorm, AbsValue
+from dolfinx_optim.convex_function import L2Norm, L1Norm, LinfNorm, AbsValue, LpNorm
 
 
 N = 50
@@ -32,8 +32,8 @@ def border(x):  # noqa
 
 f = fem.Constant(domain, 1.0)
 
-deg_u = 1
-deg_quad = 1
+deg_u = 2
+deg_quad = 2
 V = fem.FunctionSpace(domain, ("CG", deg_u))
 dofs = fem.locate_dofs_geometrical(V, border)
 bc = fem.dirichletbc(0.0, dofs, V)
@@ -47,7 +47,7 @@ Pext = dot(f, u) * dx
 
 prob.add_eq_constraint(A=Pext, b=1.0)
 
-pi = L2Norm(grad(u), deg_quad)
+pi = LpNorm(grad(u), deg_quad, 1.2)
 
 prob.add_convex_term(pi)
 

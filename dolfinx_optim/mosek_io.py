@@ -29,7 +29,13 @@ def to_list(a, n=1):
         return a
 
 
-MOSEK_CONE_TYPES = {"quad": mf.Domain.inQCone(), "rquad": mf.Domain.inRotatedQCone()}
+def mosek_cone_domain(K):
+    if K.type == "quad":
+        return mf.Domain.inQCone()
+    elif K.type == "rquad":
+        return mf.Domain.inRotatedQCone()
+    elif K.type == "ppow":
+        return mf.Domain.inPPowerCone(K.alpha)
 
 
 def petsc_matrix_to_scipy(A_petsc, M_array=None):
@@ -492,7 +498,7 @@ class MosekProblem:
             else:
                 z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, 1)
 
-            self.M.constraint(z_in_cone, MOSEK_CONE_TYPES[cone.type])
+            self.M.constraint(z_in_cone, mosek_cone_domain(cone))
 
     def _set_task_parameters(self):
         assert all(
