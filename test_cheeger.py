@@ -16,16 +16,19 @@ from dolfinx_optim.mosek_io import MosekProblem
 from dolfinx_optim.convex_function import (
     L2Norm,
     L1Norm,
+    L1Ball,
+    L2Ball,
     LinfNorm,
     AbsValue,
     LpNorm,
     Epigraph,
     Perspective,
     InfConvolution,
+    Conjugate,
 )
 
 
-N = 50
+N = 1
 domain = mesh.create_unit_square(
     MPI.COMM_WORLD,
     N,
@@ -41,8 +44,8 @@ def border(x):  # noqa
 
 f = fem.Constant(domain, 1.0)
 
-deg_u = 2
-deg_quad = 2
+deg_u = 1
+deg_quad = 1
 V = fem.FunctionSpace(domain, ("CG", deg_u))
 dofs = fem.locate_dofs_geometrical(V, border)
 bc = fem.dirichletbc(0.0, dofs, V)
@@ -59,18 +62,27 @@ Pext = dot(f, u) * dx
 
 prob.add_eq_constraint(A=Pext, b=1.0)
 
-pi = L1Norm(grad(u), deg_quad)
 
-d = ufl.as_vector([u.dx(0), u.dx(1), 0])
-pi2 = L2Norm(d, deg_quad)
+pi = L2Norm(grad(u), deg_quad)
+
+# crit = L1Ball(grad(u), deg_quad)
+# pi = Conjugate(grad(u), crit)
+# prob.add_convex_term(pi)
+
+# d = ufl.as_vector([u.dx(0), u.dx(1), 0])
+# pi2 = L2Norm(d, deg_quad)
 # prob.add_convex_term(pi)
 
 # epi = Epigraph(t, pi)
 # prob.add_convex_term(epi)
 # prob.add_obj_func(t * dx)
 
-infc = InfConvolution(pi2, pi, indices=(0, 1))
-prob.add_convex_term(infc)
+persp = Perspective(t, pi)
+prob.add_convex_term(persp)
+prob.add_obj_func(t * dx)
+
+# infc = InfConvolution(pi2, 0.5*pi, indices=(0, 1))
+# prob.add_convex_term(infc)
 
 prob.optimize()
 

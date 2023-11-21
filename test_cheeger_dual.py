@@ -13,7 +13,7 @@ from dolfinx import fem, mesh, io
 import ufl
 from ufl import dot, grad
 from dolfinx_optim.mosek_io import MosekProblem
-from dolfinx_optim.convex_function import L2Norm, L2Ball, L1Ball
+from dolfinx_optim.convex_function import L2Norm, L2Ball, L1Ball, Epigraph
 
 
 N = 10
@@ -72,10 +72,10 @@ equilibrium = (lamb * f - ufl.div(sig)) * u_ * dx
 prob.add_eq_constraint(A=equilibrium, name="u")
 
 
-crit = L1Ball(sig, deg_quad)
+# crit = L1Ball(sig, deg_quad)
 
-# norm = L2Norm(sig, deg_quad)
-# crit = Epigraph(t, norm)
+norm = L2Norm(sig, deg_quad)
+crit = Epigraph(t, norm)
 
 prob.add_convex_term(crit)
 

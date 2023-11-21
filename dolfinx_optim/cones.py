@@ -30,6 +30,10 @@ class Quad(Cone):
         self.dim = dim
         self.type = "quad"
 
+    @property
+    def dual(self):
+        return self
+
 
 class RQuad(Cone):
     """
@@ -47,6 +51,10 @@ class RQuad(Cone):
     def __init__(self, dim: int = 1):
         self.dim = dim
         self.type = "rquad"
+
+    @property
+    def dual(self):
+        return self
 
 
 class Product(Cone):
@@ -76,6 +84,10 @@ class SDP(Cone):
         self.dim = dim
         self.type = "sdp"
 
+    @property
+    def dual(self):
+        return self
+
 
 class Pow(Cone):
     """The primal power cone.
@@ -97,6 +109,12 @@ class Pow(Cone):
         self.alpha = alpha
         self.type = "ppow"
 
+    @property
+    def dual(self):
+        p = Pow(self.dim, self.alpha)
+        p.type = "dpow"
+        return p
+
 
 class Exp(Cone):
     """The primal exponential cone."""
@@ -104,3 +122,9 @@ class Exp(Cone):
     def __init__(self, dim: int):
         self.dim = dim
         self.type = "pexp"
+
+    @property
+    def dual(self):
+        p = Exp(self.dim)
+        p.type = "dexp"
+        return p

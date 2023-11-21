@@ -38,6 +38,10 @@ def mosek_cone_domain(K):
         return mf.Domain.inPPowerCone(K.alpha)
     elif K.type == "pexp":
         return mf.Domain.inPExpCone()
+    elif K.type == "dpow":
+        return mf.Domain.inDPowerCone(K.alpha)
+    elif K.type == "dexp":
+        return mf.Domain.inDExpCone()
     else:
         raise NotImplementedError(f'Cone type "{K.type}" is not available.')
 
@@ -119,12 +123,20 @@ class MosekProblem:
             "dump_file": None,
         }
 
-    def _create_variable_vector(self, var, name):
+    def _create_variable_vector(self, var, name, ux, lx):
+        if ux is None and lx is None:
+            domain = mf.Domain.unbounded()
+        elif ux is None:
+            domain = mf.Domain.greaterThan(lx)
+        elif lx is None:
+            domain = mf.Domain.greaterThan(ux)
+        else:
+            domain = mf.Domain.inRange(lx, ux)
         if isinstance(var, fem.Function):
             if name is None:
-                return self.M.variable(len(var.vector.array))
+                return self.M.variable(len(var.vector.array), domain)
             else:
-                return self.M.variable(name, len(var.vector.array))
+                return self.M.variable(name, len(var.vector.array), domain)
         else:
             value = var.value
             if len(value.shape) == 0:
@@ -132,9 +144,9 @@ class MosekProblem:
             else:
                 size = len(value)
             if name is None:
-                return self.M.variable(size)
+                return self.M.variable(size, domain)
             else:
-                return self.M.variable(name, size)
+                return self.M.variable(name, size, domain)
 
     def _add_boundary_conditions(self, variable, vector, bcs):
         V = variable.function_space
@@ -206,14 +218,14 @@ class MosekProblem:
                     value = np.zeros((V,))
                 new_var.append(fem.Constant(self.domain, value))
 
-        for var, bc, name in zip(new_var, bc_list, self.variable_names):
+        for var, bc, name, ux, lx in zip(
+            new_var, bc_list, self.variable_names, self.ux, self.lx
+        ):
             vector = self._create_variable_vector(
-                var, name
+                var, name, ux, lx
             )  # FIXME: better handle bcs ?
-            print(name, vector, vector.getSize())
             if bc is not None:
                 self._add_boundary_conditions(var, vector, bc)
-            # self.vectors_dict.update({name: vector})
             self.vectors.append(vector)
         self.variables += new_var
         self.Vx += V_list
@@ -359,12 +371,12 @@ class MosekProblem:
         conv_fun._problem_variables = self.variables
         conv_fun._apply_conic_representation()
 
-        for var, name in zip(conv_fun.variables, conv_fun.variable_names):
-            vector = self._create_variable_vector(var, name)
+        for var, name, ux, lx in zip(
+            conv_fun.variables, conv_fun.variable_names, conv_fun.ux, conv_fun.lx
+        ):
+            vector = self._create_variable_vector(var, name, ux, lx)
             self.variables.append(var)
             self.vectors.append(vector)
-        for v in self.variables:
-            print("var", v)
         objective = self._apply_objective(conv_fun)
         self._apply_linear_constraints(conv_fun)
         self._apply_conic_constraints(conv_fun)
@@ -374,7 +386,6 @@ class MosekProblem:
     def _apply_objective(self, conv_fun):
         obj = []
         for var, vec in zip(self.variables, self.vectors):
-            print(type(var), vec)
             if conv_fun.objective is not None:
                 if isinstance(var, fem.Constant):
                     if np.ndim(var.value) == 0:
@@ -391,6 +402,7 @@ class MosekProblem:
                                 fem.form(conv_fun.scale_factor * conv_fun.objective)
                             )
                 else:
+                    print("Objective", conv_fun.objective)
                     var_ = ufl.TestFunction(var.function_space)
                     dobj = ufl.derivative(
                         conv_fun.scale_factor * conv_fun.objective, var, var_
@@ -450,18 +462,24 @@ class MosekProblem:
                     bu = fem.Function(cons["V"])
                     xbu = bu.vector.array
                     xbu[:] = cons["bu"]
+                elif cons["bu"] == 0:
+                    bu = fem.Function(cons["V"])
+                    xbu = bu.vector.array
                 else:
                     bu = fem.assemble_vector(
                         fem.form(ufl.inner(lamb_, cons["bu"]) * conv_fun.dx)
                     )
                     xbu = bu.array
             else:
-                xbl = None
+                xbu = None
             if cons["bl"] is not None:
                 if isinstance(cons["bl"], float):
                     bl = fem.Function(cons["V"])
                     xbl = bl.vector.array
                     xbl[:] = cons["bl"]
+                elif cons["bl"] == 0:
+                    bl = fem.Function(cons["V"])
+                    xbl = bl.vector.array
                 else:
                     bl = fem.assemble_vector(
                         fem.form(ufl.inner(lamb_, cons["bl"]) * conv_fun.dx)
@@ -492,6 +510,7 @@ class MosekProblem:
             curr_expr_list = []
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
+                    print("var conic", var)
                     curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)

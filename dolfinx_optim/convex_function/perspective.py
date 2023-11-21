@@ -6,7 +6,12 @@
 @Contact :   jeremy.bleyer@enpc.fr
 @Time    :   20/11/2023
 """
-from dolfinx_optim.utils import concatenate, get_shape, tail, split_affine_expression
+from dolfinx_optim.utils import (
+    concatenate,
+    get_shape,
+    split_affine_expression,
+    reshape,
+)
 from dolfinx_optim.convex_function import ConvexTerm
 import ufl
 
@@ -21,33 +26,30 @@ class Perspective(ConvexTerm):
     def conic_repr(self, expr):
         self.fun._apply_conic_representation()
         self.copy(self.fun)
-        variables = self.variables + self._problem_variables
 
         t = expr[0]
+        _, _, t0 = split_affine_expression(
+            t,
+            self.operand,
+            self.variables,
+        )
 
         self.linear_constraints = []
         for cons in self.fun.linear_constraints:
             d = get_shape(cons["expr"])
             if cons["bu"] is not None:
-                if get_shape(cons["bu"]) != d:
-                    buv = ufl.as_vector([1] * d) * cons["bu"]
-                else:
-                    buv = cons["bu"]
-                self.add_ineq_constraint(cons["expr"] - buv * t, bu=0)
+                buv = reshape(cons["bu"], d)
+                self.add_ineq_constraint(cons["expr"] - buv * t, bu=buv * t0)
             if cons["bl"] is not None:
-                if get_shape(cons["bl"]) != d:
-                    blv = ufl.as_vector([1] * d) * cons["bl"]
-                else:
-                    blv = cons["bl"]
-                self.add_ineq_constraint(cons["expr"] - blv * t, bl=0)
+                blv = reshape(cons["bl"], d)
+                self.add_ineq_constraint(cons["expr"] - blv * t, bl=blv * t0)
 
         for cons in self.conic_constraints:
-            linear, constant = split_affine_expression(
+            linear_op, linear_var, constant = split_affine_expression(
                 cons["expr"],
-                variables,
+                self.fun.operand,
+                self.variables,
             )
-            cons["expr"] = sum(linear) + t * constant
-
-        self.add_ineq_constraint(
-            sum(self.fun._linear_objective) - t, bu=0.0, name="epigraph-constraint"
-        )
+            print("\n\n t0", constant)
+            cons["expr"] = cons["expr"] - constant + (t + t0) * constant
+        self.add_ineq_constraint(t + t0, bl=0)

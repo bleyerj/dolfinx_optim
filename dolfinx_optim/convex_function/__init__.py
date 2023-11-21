@@ -12,3 +12,5 @@ from .simple_terms import QuadraticTerm, AbsValue
 from .epigraph import Epigraph
 from .perspective import Perspective
 from .infconvolution import InfConvolution
+from .conjugate import Conjugate
+from .partial_minimization import PartialMinimization

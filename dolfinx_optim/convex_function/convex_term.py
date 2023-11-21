@@ -11,7 +11,13 @@ from abc import ABC, abstractmethod
 from dolfinx import fem
 import ufl
 import mosek.fusion as mf
-from dolfinx_optim.utils import to_vect, to_list, get_shape
+from dolfinx_optim.utils import (
+    to_vect,
+    to_list,
+    get_shape,
+    split_affine_expression,
+    reshape,
+)
 
 MOSEK_CONES = {"quad": mf.Domain.inQCone(), "rquad": mf.Domain.inRotatedQCone()}
 
@@ -60,12 +66,16 @@ class ConvexTerm(ABC):
             domain=self.domain,
             metadata={"quadrature_degree": deg_quad, "quadrature_scheme": "default"},
         )
-        self.operand = operand
-        self.operand_shape = ufl.shape(self.operand)
+
+        self.operand_shape = ufl.shape(operand)
         if len(self.operand_shape) == 2:
-            self.operand = to_vect(operand)
-            self.operand_shape = (len(self.operand),)
+            operand = to_vect(operand)
+            self.operand_shape = (len(operand),)
         assert self.operand_shape == () or len(self.operand_shape) == 1
+        self.operand = ufl.variable(
+            operand
+        )  # use variable to differentiate expressions
+
         self.W_exp = generate_quadrature_functionspace(
             self.domain, deg_quad, self.operand_shape
         )
@@ -180,6 +190,22 @@ class ConvexTerm(ABC):
         if isinstance(bl, int):
             bl = float(bl)
         dim = get_shape(expr)
+        # _, _, constant = split_affine_expression(expr, self.operand, self.variables)
+        # print(get_shape(constant), constant)
+        # if bu is not None:
+        #     d1 = get_shape(bu)
+        #     d2 = get_shape(constant)
+        #     if d1 != d2:
+        #         assert d1 == 0, "Rhs should be a constant, shape mismatch!"
+        #         bu = reshape(bu, d2)
+        #     bu -= constant
+        # if bl is not None:
+        #     d1 = get_shape(bl)
+        #     d2 = get_shape(constant)
+        #     if d1 != d2:
+        #         assert d1 == 0, "Rhs should be a constant, shape mismatch!"
+        #         bl = reshape(bl, d2)
+        #     bl -= constant
         self.linear_constraints.append(
             {
                 "expr": expr,

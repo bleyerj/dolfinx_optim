@@ -11,33 +11,61 @@ from dolfinx_optim.utils import concatenate, get_shape
 from dolfinx_optim.cones import Quad, RQuad, Pow
 from dolfinx_optim.convex_function import ConvexTerm
 from dolfinx_optim.convex_function.epigraph import Epigraph
+from dolfinx_optim.convex_function.partial_minimization import PartialMinimization
 import numpy as np
 import ufl
 
 
+def to_ball(norm, k, *args):
+    return PartialMinimization(Epigraph(k, norm(*args)), [0])
+    # return Epigraph(k, norm(*args))
+
+
 def L2Ball(*args, k=1.0):
-    return Epigraph(k, L2Norm(*args))
+    return to_ball(L2Norm, k, *args)
 
 
 def L1Ball(*args, k=1.0):
-    return Epigraph(k, L1Norm(*args))
+    return to_ball(L1Norm, k, *args)
 
 
 def LinfBall(*args, k=1.0):
-    return Epigraph(k, LinfNorm(*args))
+    return to_ball(LinfNorm, k, *args)
 
 
 def LpBall(*args, k=1.0):
-    return Epigraph(k, LpNorm(*args))
+    return to_ball(LpNorm, k, *args)
+
+
+# class L2Ball(ConvexTerm):
+#     def conic_repr(self, expr):
+#         stack = concatenate([1.0, expr])
+#         dim = get_shape(stack)
+#         self.add_conic_constraint(stack, Quad(dim))
 
 
 class L2Norm(ConvexTerm):
     def conic_repr(self, expr):
-        t = self.add_var(name="L2Norm_t")
+        t = self.add_var()
         stack = concatenate([t, expr])
         dim = get_shape(stack)
         self.add_conic_constraint(stack, Quad(dim))
         self.add_linear_term(t)
+
+
+# class L1Ball(ConvexTerm):
+#     """Define the L1-norm function :math:`||x||_1`."""
+
+#     def conic_repr(self, expr):
+#         d = get_shape(expr)
+#         z = self.add_var(d)
+#         self.add_ineq_constraint(expr - z, bu=0.0)
+#         self.add_ineq_constraint(-expr - z, bu=0.0)
+#         if d == 0:
+#             obj = z
+#         else:
+#             obj = sum(z)
+#         self.add_ineq_constraint(obj, bu=1.0)
 
 
 class L1Norm(ConvexTerm):

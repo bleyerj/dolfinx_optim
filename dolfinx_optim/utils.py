@@ -17,8 +17,10 @@ def get_shape(expr):
     expr_shape = shape(expr)
     if len(expr_shape) == 0:  # scalar constraint
         dim = 0
-    else:
+    elif len(expr_shape) == 1:
         dim = expr_shape[0]
+    else:
+        dim = expr_shape
     return dim
 
 
@@ -143,6 +145,9 @@ def concatenate(vectors):
 
 def vstack(arrays):
     """Vertical stack of vectors/matrix."""
+    if all([len(a.ufl_shape) <= 1 for a in arrays]):
+        return concatenate(arrays)
+
     shapes = [shape(a)[0] if len(shape(a)) == 1 else shape(a)[1] for a in arrays]
     assert len(set(shapes)) == 1, "Arrays must have matching dimensions."
     final_array = []
@@ -158,6 +163,9 @@ def vstack(arrays):
 
 def hstack(arrays):
     """Vertical stack of vectors/matrix."""
+    if all([len(a.ufl_shape) <= 1 for a in arrays]):
+        return concatenate(arrays)
+
     shapes = [shape(a)[0] for a in arrays]
     assert len(set(shapes)) == 1, "Arrays must have matching dimensions."
     final_array = []
@@ -242,11 +250,36 @@ def local_frame(n):
         return outer(e1, n) + outer(e2, t1) + outer(e3, t2)
 
 
-def split_affine_expression(expr, variables):
-    linear = [
-        ufl.algorithms.apply_derivatives.apply_derivatives(ufl.derivative(expr, v, v))
-        for v in variables
-        if not isinstance(v, fem.Constant)
-    ]
-    constant = ufl.replace(expr, {v: 0 * v for v in variables})
-    return linear, constant
+def split_affine_expression(expr, operand, variables):
+    if expr == 0:
+        return 0, 0, 0
+    else:
+        e = ufl.variable(operand)
+        new_expr = ufl.replace(expr, {operand: e})
+        linear_op = ufl.algorithms.apply_derivatives.apply_derivatives(
+            ufl.diff(new_expr, e)
+        )
+        linear_var = [
+            ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
+                ufl.algorithms.apply_derivatives.apply_derivatives(ufl.diff(expr, v))
+            )
+            for v in variables
+            if not isinstance(v, fem.Constant)
+        ]
+        z = ufl.as_vector([0] * len(operand))
+        constant = ufl.replace(
+            ufl.replace(expr, {operand: z}), {v: 0 * v for v in variables}
+        )
+
+        return (
+            ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(linear_op),
+            linear_var,
+            ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(constant),
+        )
+
+
+def reshape(x, d):
+    if get_shape(x) != d:
+        return ufl.as_vector([1] * d) * x
+    else:
+        return x
