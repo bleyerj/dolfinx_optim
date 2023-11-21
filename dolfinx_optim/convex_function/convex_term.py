@@ -7,6 +7,7 @@ Base class for convex functions and mesh/facet children.
 Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
 @email: jeremy.bleyer@enpc.fr
 """
+from abc import ABC, abstractmethod
 from dolfinx import fem
 import ufl
 import mosek.fusion as mf
@@ -49,7 +50,7 @@ def _get_mesh_from_expr(expr):
     raise ValueError("Unable to extract mesh from UFL expression")
 
 
-class ConvexTerm:
+class ConvexTerm(ABC):
     def __init__(self, operand, deg_quad, parameters=None):
         self.domain = _get_mesh_from_expr(operand)
         self.deg_quad = deg_quad
@@ -76,10 +77,11 @@ class ConvexTerm:
         self.variable_names = []
         self.linear_constraints = []
         self.conic_constraints = []
-        self.cones = []
         self.ux = []
         self.lx = []
         self._linear_objective = []
+
+    def _apply_conic_representation(self):
         if self.parameters is None:
             self.conic_repr(self.operand)
         else:
@@ -214,14 +216,14 @@ class ConvexTerm:
             a UFL linear combination of X and local variables defining the
             linear objective.
         """
-        self._linear_objective.append(expr * self.dx)
+        self._linear_objective.append(expr)
 
     @property
     def objective(self):
         if len(self._linear_objective) == 0:
             return None
         else:
-            return sum(self._linear_objective)
+            return sum(self._linear_objective) * self.dx
 
     def __rmul__(self, alpha):
         """Allow multiplication by a scalar."""
@@ -230,3 +232,18 @@ class ConvexTerm:
         ):
             self.scale_factor = alpha
         return self
+
+    def copy(self, fun):
+        self.linear_constraints = fun.linear_constraints
+        self.conic_constraints = fun.conic_constraints
+        self.variables = fun.variables
+        self.variable_names = fun.variable_names
+        self.scale_factor = fun.scale_factor
+        self.ux = fun.ux
+        self.lx = fun.lx
+        self.parameters = fun.parameters
+        self._linear_objective = fun._linear_objective
+
+    @abstractmethod
+    def conic_repr(self):
+        pass

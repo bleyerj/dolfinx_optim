@@ -27,7 +27,7 @@ class AbsValue(ConvexTerm):
 
 class L2Norm(ConvexTerm):
     def conic_repr(self, expr):
-        t = self.add_var()
+        t = self.add_var(name="L2Norm_t")
         stack = concatenate([t, expr])
         dim = get_shape(stack)
         self.add_conic_constraint(stack, Quad(dim))
@@ -73,11 +73,15 @@ class LpNorm(ConvexTerm):
     def conic_repr(self, expr, p):
         t = self.add_var()
         d = get_shape(expr)
-        r = self.add_var(d)
-        self.add_eq_constraint(sum(r) - t)
-        for i in range(d):
-            stack = concatenate([r[i], t, expr[i]])
+        if d == 0:
+            stack = concatenate([t, t, expr])
             self.add_conic_constraint(stack, Pow(3, 1 / p))
+        else:
+            r = self.add_var(d)
+            self.add_eq_constraint(sum(r) - t)
+            for i in range(d):
+                stack = concatenate([r[i], t, expr[i]])
+                self.add_conic_constraint(stack, Pow(3, 1 / p))
         self.add_linear_term(t)
 
 
@@ -86,3 +90,13 @@ class L2Ball(ConvexTerm):
         stack = concatenate([1, expr])
         dim = get_shape(stack)
         self.add_conic_constraint(stack, Quad(dim))
+
+
+class L1Ball(ConvexTerm):
+    """Define the L1-ball constraint :math:`||x||_1 \leq 1`."""
+
+    def conic_repr(self, expr):
+        d = get_shape(expr)
+        z = self.add_var(d, ux=1.0)
+        self.add_ineq_constraint(expr - z, bu=0.0)
+        self.add_ineq_constraint(-expr - z, bu=0.0)

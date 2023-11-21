@@ -13,7 +13,15 @@ from dolfinx import fem, mesh, io
 import ufl
 from ufl import dot, grad
 from dolfinx_optim.mosek_io import MosekProblem
-from dolfinx_optim.convex_function import L2Norm, L1Norm, LinfNorm, AbsValue, LpNorm
+from dolfinx_optim.convex_function import (
+    L2Norm,
+    L1Norm,
+    LinfNorm,
+    AbsValue,
+    LpNorm,
+    Epigraph,
+    Perspective,
+)
 
 
 N = 50
@@ -39,7 +47,10 @@ dofs = fem.locate_dofs_geometrical(V, border)
 bc = fem.dirichletbc(0.0, dofs, V)
 
 prob = MosekProblem(domain, "Test")
-u = prob.add_var(V, bc=bc)
+# u = prob.add_var(V, bc=bc)
+
+V0 = fem.FunctionSpace(domain, ("DG", 0))
+u, t = prob.add_var([V, V0], bc=[bc, None], name=["u", "t"])
 
 dx = ufl.Measure("dx", domain=domain)
 
@@ -47,9 +58,13 @@ Pext = dot(f, u) * dx
 
 prob.add_eq_constraint(A=Pext, b=1.0)
 
-pi = LpNorm(grad(u), deg_quad, 1.2)
+pi = L1Norm(grad(u), deg_quad)
 
-prob.add_convex_term(pi)
+# prob.add_convex_term(pi)
+
+epi = Epigraph(t, pi)
+prob.add_convex_term(epi)
+prob.add_obj_func(t * dx)
 
 prob.optimize()
 

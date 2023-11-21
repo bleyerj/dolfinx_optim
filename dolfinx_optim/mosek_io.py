@@ -36,6 +36,10 @@ def mosek_cone_domain(K):
         return mf.Domain.inRotatedQCone()
     elif K.type == "ppow":
         return mf.Domain.inPPowerCone(K.alpha)
+    elif K.type == "pexp":
+        return mf.Domain.inPExpCone()
+    else:
+        raise NotImplementedError(f'Cone type "{K.type}" is not available.')
 
 
 def petsc_matrix_to_scipy(A_petsc, M_array=None):
@@ -352,11 +356,15 @@ class MosekProblem:
 
     def add_convex_term(self, conv_fun):
         """Add the convex term `conv_fun` to the problem."""
+        conv_fun._problem_variables = self.variables
+        conv_fun._apply_conic_representation()
+
         for var, name in zip(conv_fun.variables, conv_fun.variable_names):
             vector = self._create_variable_vector(var, name)
             self.variables.append(var)
-            # self.vectors_dict.update({var.name: vector})
             self.vectors.append(vector)
+        for v in self.variables:
+            print("var", v)
         objective = self._apply_objective(conv_fun)
         self._apply_linear_constraints(conv_fun)
         self._apply_conic_constraints(conv_fun)
@@ -403,10 +411,20 @@ class MosekProblem:
             expr_list = []
             curr_expr_list = []
             lamb_ = ufl.TestFunction(cons["V"])
+            print(cons["name"], expr)
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
                     curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
-                    if len(curr_expr.ufl_operands) > 0:  # if derivative is zero ignore
+                    print(dir(curr_expr))
+                    print(
+                        var.name,
+                        curr_expr,
+                        curr_expr.ufl_operands,
+                        curr_expr.ufl_shape,
+                        curr_expr.ufl_free_indices,
+                    )
+                    if not curr_expr == 0:  # if derivative is zero ignore
+                        print("Pass")
                         curr_expr_list.append(curr_expr)
                         A_op = create_interpolation_matrix(
                             curr_expr, var, cons["V"], conv_fun.dx
@@ -424,7 +442,8 @@ class MosekProblem:
                     # expr_list.append(mf.Expr.mul(A_mosek, vec))
 
                 else:
-                    raise NotImplementedError
+                    pass  # FIXME: handle constant terms
+                    # raise NotImplementedError
 
             if cons["bu"] is not None:
                 if isinstance(cons["bu"], float):
@@ -474,14 +493,15 @@ class MosekProblem:
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
                     curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
-                    if len(curr_expr.ufl_operands) > 0:  # if derivative is zero ignore
+                    if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
                         A_op = create_interpolation_matrix(
                             curr_expr, var, V, conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
                 else:
-                    raise NotImplementedError
+                    pass  # FIXME: handle constant terms
+                    # raise NotImplementedError
 
             b = expr - sum(curr_expr_list)
             b_vec = mf.Expr.constTerm(
@@ -584,6 +604,7 @@ class MosekProblem:
         elif sense in ["maximize", "max"]:
             self.sense = mf.ObjectiveSense.Maximize
 
+        print("Objectives", self.objectives)
         self.M.objective(self.sense, mf.Expr.add(self.objectives))
         self.M.writeTask("dump.ptf")
         self.M.setLogHandler(sys.stdout)

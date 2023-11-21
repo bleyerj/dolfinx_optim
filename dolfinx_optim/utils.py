@@ -9,6 +9,7 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
 """
 import numpy as np
 from ufl import shape, as_matrix, as_vector, outer, cross, sqrt, dot, inner, avg
+import ufl
 
 
 def get_shape(expr):
@@ -238,3 +239,12 @@ def local_frame(n):
         e2 = as_vector([0.0, 1.0, 0.0])
         e3 = as_vector([0.0, 0.0, 1.0])
         return outer(e1, n) + outer(e2, t1) + outer(e3, t2)
+
+
+def split_affine_expression(expr, variables):
+    linear = [
+        ufl.algorithms.apply_derivatives.apply_derivatives(ufl.derivative(expr, v, v))
+        for v in variables
+    ]
+    constant = ufl.replace(expr, {v: 0 * v for v in variables})
+    return linear, constant

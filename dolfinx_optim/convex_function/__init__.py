@@ -7,5 +7,7 @@
 @Time    :   17/11/2023
 """
 from .convex_term import ConvexTerm
-from .norms import L2Norm, L2Ball, L1Norm, LinfNorm, LpNorm, AbsValue
+from .norms import L2Norm, L2Ball, L1Norm, L1Ball, LinfNorm, LpNorm, AbsValue
 from .simple_terms import QuadraticTerm
+from .epigraph import Epigraph
+from .perspective import Perspective
