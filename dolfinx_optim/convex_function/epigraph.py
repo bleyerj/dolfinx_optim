@@ -6,7 +6,7 @@
 @Contact :   jeremy.bleyer@enpc.fr
 @Time    :   20/11/2023
 """
-from dolfinx_optim.utils import concatenate, get_shape, tail, split_affine_expression
+from dolfinx_optim.utils import concatenate, split_affine_expression
 from dolfinx_optim.convex_function import ConvexTerm
 
 

@@ -11,13 +11,7 @@ from abc import ABC, abstractmethod
 from dolfinx import fem
 import ufl
 import mosek.fusion as mf
-from dolfinx_optim.utils import (
-    to_vect,
-    to_list,
-    get_shape,
-    split_affine_expression,
-    reshape,
-)
+from dolfinx_optim.utils import to_vect, to_list, get_shape
 
 MOSEK_CONES = {"quad": mf.Domain.inQCone(), "rquad": mf.Domain.inRotatedQCone()}
 
@@ -271,5 +265,5 @@ class ConvexTerm(ABC):
         self._linear_objective = fun._linear_objective
 
     @abstractmethod
-    def conic_repr(self):
+    def conic_repr(self, expr):
         pass

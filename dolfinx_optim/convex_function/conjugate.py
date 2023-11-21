@@ -9,11 +9,9 @@
 from dolfinx_optim.utils import (
     concatenate,
     get_shape,
-    tail,
     split_affine_expression,
     reshape,
     hstack,
-    vstack,
 )
 from dolfinx_optim.convex_function import ConvexTerm
 import ufl
@@ -35,7 +33,7 @@ class Conjugate(ConvexTerm):
         self.fun._apply_conic_representation()
         c = sum(self.fun._linear_objective)
         print("Num var", len(self.fun.variables), get_shape(expr))
-        constraint = -concatenate([expr] + [0 * v for v in self.fun.variables])
+        constraint = concatenate([-expr] + [0 * v for v in self.fun.variables])
         if c != 0:
             c_op, c_var, _ = split_affine_expression(
                 c, self.fun.operand, self.fun.variables
@@ -79,10 +77,10 @@ class Conjugate(ConvexTerm):
                 if cons["bl"] is not None:
                     bl = reshape(cons["bl"], d)
                     sl = self.add_var(d, lx=0)
-                    self.add_linear_term(ufl.dot(-sl, bl))
-                    constraint += (
+                    self.add_linear_term(-ufl.dot(sl, bl))
+                    constraint -= (
                         ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
-                            -transpose(A) * sl
+                            transpose(A) * sl
                         )
                     )
 

@@ -6,9 +6,9 @@
 @Contact :   jeremy.bleyer@enpc.fr
 @Time    :   20/11/2023
 """
+import ufl
 from dolfinx_optim.utils import get_shape
 from dolfinx_optim.convex_function import ConvexTerm
-import ufl
 
 
 class InfConvolution(ConvexTerm):
