@@ -23,6 +23,7 @@ class Epigraph(ConvexTerm):
         self._linear_objective = []
 
         t = expr[0]
+        _, t0 = split_affine_expression(t, self.variables + self._problem_variables)
         self.add_ineq_constraint(
-            sum(self.fun._linear_objective) - t, bu=0.0, name="epigraph-constraint"
+            sum(self.fun._linear_objective) - t, bu=t0, name="epigraph-constraint"
         )

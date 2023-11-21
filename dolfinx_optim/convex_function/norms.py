@@ -10,19 +10,25 @@ Definition of various norms and balls.
 from dolfinx_optim.utils import concatenate, get_shape
 from dolfinx_optim.cones import Quad, RQuad, Pow
 from dolfinx_optim.convex_function import ConvexTerm
+from dolfinx_optim.convex_function.epigraph import Epigraph
 import numpy as np
 import ufl
 
 
-class AbsValue(ConvexTerm):
-    """Define the absolute value function :math:`|x|`."""
+def L2Ball(*args, k=1.0):
+    return Epigraph(k, L2Norm(*args))
 
-    def conic_repr(self, expr):
-        assert get_shape(expr) == 0, "Absolute value applies only to scalar function"
-        t = self.add_var()
-        self.add_ineq_constraint(expr - t, bu=0.0)
-        self.add_ineq_constraint(-expr - t, bu=0.0)
-        self.add_linear_term(t)
+
+def L1Ball(*args, k=1.0):
+    return Epigraph(k, L1Norm(*args))
+
+
+def LinfBall(*args, k=1.0):
+    return Epigraph(k, LinfNorm(*args))
+
+
+def LpBall(*args, k=1.0):
+    return Epigraph(k, LpNorm(*args))
 
 
 class L2Norm(ConvexTerm):
@@ -83,20 +89,3 @@ class LpNorm(ConvexTerm):
                 stack = concatenate([r[i], t, expr[i]])
                 self.add_conic_constraint(stack, Pow(3, 1 / p))
         self.add_linear_term(t)
-
-
-class L2Ball(ConvexTerm):
-    def conic_repr(self, expr):
-        stack = concatenate([1, expr])
-        dim = get_shape(stack)
-        self.add_conic_constraint(stack, Quad(dim))
-
-
-class L1Ball(ConvexTerm):
-    """Define the L1-ball constraint :math:`||x||_1 \leq 1`."""
-
-    def conic_repr(self, expr):
-        d = get_shape(expr)
-        z = self.add_var(d, ux=1.0)
-        self.add_ineq_constraint(expr - z, bu=0.0)
-        self.add_ineq_constraint(-expr - z, bu=0.0)

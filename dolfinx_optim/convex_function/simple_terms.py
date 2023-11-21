@@ -12,6 +12,17 @@ from dolfinx_optim.cones import Quad, RQuad
 from dolfinx_optim.convex_function import ConvexTerm
 
 
+class AbsValue(ConvexTerm):
+    """Define the absolute value function :math:`|x|`."""
+
+    def conic_repr(self, expr):
+        assert get_shape(expr) == 0, "Absolute value applies only to scalar function"
+        t = self.add_var()
+        self.add_ineq_constraint(expr - t, bu=0.0)
+        self.add_ineq_constraint(-expr - t, bu=0.0)
+        self.add_linear_term(t)
+
+
 class QuadraticTerm(ConvexTerm):
     """Define the quadratic function :math:`\\frac{1}{2}x^T x`.
 
