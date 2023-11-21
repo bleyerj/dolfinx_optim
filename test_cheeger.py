@@ -21,6 +21,7 @@ from dolfinx_optim.convex_function import (
     LpNorm,
     Epigraph,
     Perspective,
+    InfConvolution,
 )
 
 
@@ -60,11 +61,16 @@ prob.add_eq_constraint(A=Pext, b=1.0)
 
 pi = L1Norm(grad(u), deg_quad)
 
+d = ufl.as_vector([u.dx(0), u.dx(1), 0])
+pi2 = L2Norm(d, deg_quad)
 # prob.add_convex_term(pi)
 
-epi = Epigraph(t, pi)
-prob.add_convex_term(epi)
-prob.add_obj_func(t * dx)
+# epi = Epigraph(t, pi)
+# prob.add_convex_term(epi)
+# prob.add_obj_func(t * dx)
+
+infc = InfConvolution(pi2, pi, indices=(0, 1))
+prob.add_convex_term(infc)
 
 prob.optimize()
 
