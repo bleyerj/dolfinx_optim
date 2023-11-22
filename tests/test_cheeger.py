@@ -20,7 +20,8 @@ from dolfinx_optim.convex_function import (
     L1Ball,
     L2Ball,
     LinfNorm,
-    AbsValue,
+    LinfBall,
+    LpBall,
     LpNorm,
     Epigraph,
     Perspective,
@@ -64,7 +65,12 @@ def L4Norm(*args):
     return LpNorm(*args, 4.0)
 
 
+def L4_3Ball(*args):
+    return LpBall(*args, 4.0 / 3.0)
+
+
 norms = [L2Norm, LinfNorm, L1Norm, L4Norm]
+balls = [L2Ball, L1Ball, LinfBall, L4Norm]
 
 x0 = np.full(2, 2.0)
 fun_eval = [
@@ -122,11 +128,11 @@ def test_infconvolution(norm, value):
     assert np.isclose(dobj, value)
 
 
-@pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
-def test_conjugate(norm, value):
+@pytest.mark.parametrize("ball, value", zip(balls, fun_eval))
+def test_conjugate(ball, value):
     prob, u, t, dx = generate_Cheeger_problem()
-    pi = norm(grad(u), 1)
-    c = Conjugate(grad(u), pi)
+
+    c = ball(grad(u), 1)
     pi2 = Conjugate(grad(u), c)
     prob.add_convex_term(pi2)
     pobj, dobj = prob.optimize()

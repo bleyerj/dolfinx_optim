@@ -31,6 +31,8 @@ class Conjugate(ConvexTerm):
 
     def conic_repr(self, expr):
         self.fun._apply_conic_representation()
+        self.fun.change_operand(self.operand)
+
         c = sum(self.fun._linear_objective)
         print("Num var", len(self.fun.variables), get_shape(expr))
         constraint = concatenate([-expr] + [0 * v for v in self.fun.variables])

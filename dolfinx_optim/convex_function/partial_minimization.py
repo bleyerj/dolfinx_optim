@@ -21,14 +21,20 @@ class PartialMinimization(ConvexTerm):
         super().__init__(new_op, fun.deg_quad)
 
     def conic_repr(self, expr):
-        self.fun._apply_conic_representation()
-        self.copy(self.fun)
-
+        d = get_shape(self.fun.operand)
         x_free = ufl.as_vector([self.fun.operand[i] for i in self.indices])
         y = self.add_var(len(self.indices))
-        old_obj = sum(self.fun._linear_objective)
-        if old_obj != 0:
-            obj = ufl.replace(old_obj, {x_free: y})
-            self.add_linear_term(obj)
+        mapping = {i: k for k, i in enumerate(self.indices)}
+        new_op = ufl.as_vector(
+            [
+                self.fun.operand[i] if i not in self.indices else y[mapping[i]]
+                for i in range(d)
+            ]
+        )
+
+        self.fun._apply_conic_representation()
+        self.fun.change_operand(new_op)
+
+        self.copy(self.fun)
 
         self.add_eq_constraint(x_free - y)

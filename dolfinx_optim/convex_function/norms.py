@@ -21,27 +21,27 @@ def to_ball(norm, k, *args):
     # return Epigraph(k, norm(*args))
 
 
-def L2Ball(*args, k=1.0):
-    return to_ball(L2Norm, k, *args)
+# def L2Ball(*args, k=1.0):
+#     return to_ball(L2Norm, k, *args)
 
 
-def L1Ball(*args, k=1.0):
-    return to_ball(L1Norm, k, *args)
+# def L1Ball(*args, k=1.0):
+#     return to_ball(L1Norm, k, *args)
 
 
-def LinfBall(*args, k=1.0):
-    return to_ball(LinfNorm, k, *args)
+# def LinfBall(*args, k=1.0):
+#     return to_ball(LinfNorm, k, *args)
 
 
 def LpBall(*args, k=1.0):
     return to_ball(LpNorm, k, *args)
 
 
-# class L2Ball(ConvexTerm):
-#     def conic_repr(self, expr):
-#         stack = concatenate([1.0, expr])
-#         dim = get_shape(stack)
-#         self.add_conic_constraint(stack, Quad(dim))
+class L2Ball(ConvexTerm):
+    def conic_repr(self, expr):
+        stack = concatenate([1.0, expr])
+        dim = get_shape(stack)
+        self.add_conic_constraint(stack, Quad(dim))
 
 
 class L2Norm(ConvexTerm):
@@ -53,19 +53,27 @@ class L2Norm(ConvexTerm):
         self.add_linear_term(t)
 
 
-# class L1Ball(ConvexTerm):
-#     """Define the L1-norm function :math:`||x||_1`."""
+class L1Ball(ConvexTerm):
+    """Define the L1-norm ball :math:`||x||_1 \leq 1`."""
 
-#     def conic_repr(self, expr):
-#         d = get_shape(expr)
-#         z = self.add_var(d)
-#         self.add_ineq_constraint(expr - z, bu=0.0)
-#         self.add_ineq_constraint(-expr - z, bu=0.0)
-#         if d == 0:
-#             obj = z
-#         else:
-#             obj = sum(z)
-#         self.add_ineq_constraint(obj, bu=1.0)
+    def conic_repr(self, expr):
+        d = get_shape(expr)
+        z = self.add_var(d)
+        self.add_ineq_constraint(expr - z, bu=0.0)
+        self.add_ineq_constraint(-expr - z, bu=0.0)
+        if d == 0:
+            obj = z
+        else:
+            obj = sum(z)
+        self.add_ineq_constraint(obj, bu=1.0)
+
+
+class LinfBall(ConvexTerm):
+    """Define the Linf-norm ball :math:`||x||_\infty \leq 1`."""
+
+    def conic_repr(self, expr):
+        self.add_ineq_constraint(expr, bu=1.0)
+        self.add_ineq_constraint(-expr, bu=1.0)
 
 
 class L1Norm(ConvexTerm):
