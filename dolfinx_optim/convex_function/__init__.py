@@ -14,3 +14,4 @@ from .perspective import Perspective
 from .infconvolution import InfConvolution
 from .conjugate import Conjugate
 from .partial_minimization import PartialMinimization
+from .eigenvalues import LambdaMax, SpectralNorm

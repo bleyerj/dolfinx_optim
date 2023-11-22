@@ -55,81 +55,104 @@ def half_vect2subl(index_list, d):
 
 
 def to_vect(X, symmetric=True):
-    """
-    Transform a tensor into vector by spanning diagonals.
-
-    Parameters
-    ----------
-    symmetric: bool
-        indicates if the tensor X must be considered as symmetric or not
-
-    Returns
-    -------
-    UFL vector expression
-        a d*(d+1)/2 vector if the d x d tensor is symmetric, a d**2 vector otherwise
-    """
-    s = shape(X)
-    if len(s) == 2 and s[0] == s[1]:
-        d = s[0]
-        if symmetric:
-            return as_vector([X[i - k, i] for k in range(d) for i in range(k, d)])
-        else:
-            components = [X[i, i] for i in range(d)]
-            lower_diags = [X[i, i - k] for k in range(1, d) for i in range(k, d)]
-            upper_diags = [X[i - k, i] for k in range(1, d) for i in range(k, d)]
-            diags = (upper_diags, lower_diags)
-            components += [diag[i] for i in range(len(upper_diags)) for diag in diags]
-            return as_vector(components)
+    if symmetric:
+        raise NotImplementedError
     else:
-        raise ValueError("Variable must be a square tensor")
+        d1, d2 = get_shape(X)
+        return as_vector([X[i, j] for i in range(d1) for j in range(d2)])
 
 
-def to_mat(X, symmetric=True):
-    """Transform vector of components (diagonal spanning) into tensor.
-
-    Parameters
-    ----------
-    X : UFL vector expression
-        a d*(d+1)/2 vector if the d x d tensor is symmetric, a d**2 vector otherwise
-    symmetric: bool
-        indicates if the returned tensor is symmetric or not
-
-    Returns
-    -------
-    UFL tensor expression
-        a d x d tensor
-    """
-    s = shape(X)
-    buff = 0
-    if len(s) == 1:
-        if symmetric:
-            d = int(-1 + (1 + 8 * s[0]) ** 0.5) // 2
+def to_mat(X, symmetric=True, shape=None):
+    if symmetric:
+        raise NotImplementedError
+    else:
+        if shape is None:  # assumes a square matrix
+            d1 = int(np.sqrt(len(X)))
+            d2 = d1
+        else:
+            d1, d2 = shape
             assert (
-                s[0] == d * (d + 1) // 2
-            ), "Vector shape does not correspond to a lower triangular part"
+                len(X) == d1 * d2
+            ), f"Vector of size {len(X)} cannot be written as {d1}x{d2}."
+        return as_matrix([[X[i + d1 * j] for j in range(d2)] for i in range(d1)])
 
-            a = np.zeros((d, d), dtype="int")
-            for k in range(d):
-                for i in range(k, d):
-                    a[i, i - k] = buff
-                    a[i - k, i] = buff
-                    buff += 1
-        else:
-            d = int(sqrt(s[0]))
-            assert s[0] == d**2, "Vector shape must be d**2 for dimension d."
-            a = np.zeros((d, d), dtype="int")
-            for i in range(d):
-                a[i, i] = i
-            buff = d
-            for k in range(1, d):
-                for i in range(k, d):
-                    a[i - k, i] = buff
-                    a[i, i - k] = buff + 1
-                    buff += 2
-        mat = [[X[int(a[i, j])] for j in range(d)] for i in range(d)]
-        return as_matrix(mat)
-    else:
-        raise ValueError("Variable must be a vector")
+
+# def to_vect(X, symmetric=True):
+#     """
+#     Transform a tensor into vector by spanning diagonals.
+
+#     Parameters
+#     ----------
+#     symmetric: bool
+#         indicates if the tensor X must be considered as symmetric or not
+
+#     Returns
+#     -------
+#     UFL vector expression
+#         a d*(d+1)/2 vector if the d x d tensor is symmetric, a d**2 vector otherwise
+#     """
+#     s = shape(X)
+#     if len(s) == 2 and s[0] == s[1]:
+#         d = s[0]
+#         if symmetric:
+#             return as_vector([X[i - k, i] for k in range(d) for i in range(k, d)])
+#         else:
+#             components = [X[i, i] for i in range(d)]
+#             lower_diags = [X[i, i - k] for k in range(1, d) for i in range(k, d)]
+#             upper_diags = [X[i - k, i] for k in range(1, d) for i in range(k, d)]
+#             diags = (upper_diags, lower_diags)
+#             components += [diag[i] for i in range(len(upper_diags)) for diag in diags]
+#             return as_vector(components)
+#     else:
+#         raise ValueError("Variable must be a square tensor")
+
+
+# def to_mat(X, symmetric=True):
+#     """Transform vector of components (diagonal spanning) into tensor.
+
+#     Parameters
+#     ----------
+#     X : UFL vector expression
+#         a d*(d+1)/2 vector if the d x d tensor is symmetric, a d**2 vector otherwise
+#     symmetric: bool
+#         indicates if the returned tensor is symmetric or not
+
+#     Returns
+#     -------
+#     UFL tensor expression
+#         a d x d tensor
+#     """
+#     s = shape(X)
+#     buff = 0
+#     if len(s) == 1:
+#         if symmetric:
+#             d = int(-1 + (1 + 8 * s[0]) ** 0.5) // 2
+#             assert (
+#                 s[0] == d * (d + 1) // 2
+#             ), "Vector shape does not correspond to a lower triangular part"
+
+#             a = np.zeros((d, d), dtype="int")
+#             for k in range(d):
+#                 for i in range(k, d):
+#                     a[i, i - k] = buff
+#                     a[i - k, i] = buff
+#                     buff += 1
+#         else:
+#             d = int(sqrt(s[0]))
+#             assert s[0] == d**2, "Vector shape must be d**2 for dimension d."
+#             a = np.zeros((d, d), dtype="int")
+#             for i in range(d):
+#                 a[i, i] = i
+#             buff = d
+#             for k in range(1, d):
+#                 for i in range(k, d):
+#                     a[i - k, i] = buff
+#                     a[i, i - k] = buff + 1
+#                     buff += 2
+#         mat = [[X[int(a[i, j])] for j in range(d)] for i in range(d)]
+#         return as_matrix(mat)
+#     else:
+#         raise ValueError("Variable must be a vector")
 
 
 def concatenate(vectors):

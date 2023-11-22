@@ -10,8 +10,9 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
 from abc import ABC, abstractmethod
 from dolfinx import fem
 import ufl
+from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 import mosek.fusion as mf
-from dolfinx_optim.utils import to_vect, to_list, get_shape
+from dolfinx_optim.utils import to_vect, to_mat, to_list, get_shape
 
 MOSEK_CONES = {"quad": mf.Domain.inQCone(), "rquad": mf.Domain.inRotatedQCone()}
 
@@ -63,7 +64,8 @@ class ConvexTerm(ABC):
 
         self.operand_shape = ufl.shape(operand)
         if len(self.operand_shape) == 2:
-            operand = to_vect(operand)
+            self.is_operand_matrix = True
+            operand = to_vect(operand, False)
             self.operand_shape = (len(operand),)
         assert self.operand_shape == () or len(self.operand_shape) == 1
         self.operand = ufl.variable(
@@ -86,6 +88,10 @@ class ConvexTerm(ABC):
         self._linear_objective = []
 
     def _apply_conic_representation(self):
+        # if self.is_operand_matrix:
+        #     op = to_mat(self.operand, False)
+        # else:
+        #     op = self.operand
         if self.parameters is None:
             self.conic_repr(self.operand)
         else:
@@ -213,9 +219,15 @@ class ConvexTerm(ABC):
 
     def add_conic_constraint(self, expr, cone, name=""):
         dim = get_shape(expr)
+        if isinstance(dim, tuple):
+            expr = apply_algebra_lowering(to_vect(expr, False))
+            cdim = dim[0]
+            dim = get_shape(expr)
+        else:
+            cdim = dim
         assert (
-            cone.dim == dim
-        ), f"Expression and cone dimensions do not match: {dim} vs. {cone.dim}."
+            cone.dim == cdim
+        ), f"Expression and cone dimensions do not match: {cdim} vs. {cone.dim}."
         self.conic_constraints.append(
             {
                 "expr": expr,

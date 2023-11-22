@@ -42,6 +42,8 @@ def mosek_cone_domain(K):
         return mf.Domain.inDPowerCone(K.alpha)
     elif K.type == "dexp":
         return mf.Domain.inDExpCone()
+    elif K.type == "sdp":
+        return mf.Domain.inPSDCone()
     else:
         raise NotImplementedError(f'Cone type "{K.type}" is not available.')
 
@@ -514,7 +516,12 @@ class MosekProblem:
             expr_list.append(b_vec)
             z_in_cone = mf.Expr.add(expr_list)
             z_shape = get_shape(expr)
-            if z_shape > 0:
+            if cone.type == "sdp":
+                d = cone.dim
+                print(z_in_cone.getSize(), conv_fun.ndof, d)
+                assert z_in_cone.getSize() == conv_fun.ndof * d * d
+                z_in_cone = mf.Expr.reshape(z_in_cone, [conv_fun.ndof, d, d])
+            elif z_shape > 0:
                 assert (
                     z_in_cone.getSize() == conv_fun.ndof * z_shape
                 ), "Wrong shape in conic constraint"
