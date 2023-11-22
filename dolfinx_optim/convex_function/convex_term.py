@@ -267,3 +267,14 @@ class ConvexTerm(ABC):
     @abstractmethod
     def conic_repr(self, expr):
         pass
+
+    def change_operand(self, new_op):
+        new_op = ufl.variable(new_op)
+        for cons in self.linear_constraints:
+            cons["expr"] = ufl.replace(cons["expr"], {self.operand: new_op})
+        for cons in self.conic_constraints:
+            cons["expr"] = ufl.replace(cons["expr"], {self.operand: new_op})
+        self._linear_objective = [
+            ufl.replace(obj, {self.operand: new_op}) for obj in self._linear_objective
+        ]
+        self.operand = new_op

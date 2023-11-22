@@ -368,7 +368,6 @@ class MosekProblem:
 
     def add_convex_term(self, conv_fun):
         """Add the convex term `conv_fun` to the problem."""
-        conv_fun._problem_variables = self.variables
         conv_fun._apply_conic_representation()
 
         for var, name, ux, lx in zip(
@@ -377,6 +376,7 @@ class MosekProblem:
             vector = self._create_variable_vector(var, name, ux, lx)
             self.variables.append(var)
             self.vectors.append(vector)
+
         objective = self._apply_objective(conv_fun)
         self._apply_linear_constraints(conv_fun)
         self._apply_conic_constraints(conv_fun)
@@ -423,35 +423,17 @@ class MosekProblem:
             expr_list = []
             curr_expr_list = []
             lamb_ = ufl.TestFunction(cons["V"])
-            print(cons["name"], expr)
+
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
                     curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
-                    print(dir(curr_expr))
-                    print(
-                        var.name,
-                        curr_expr,
-                        curr_expr.ufl_operands,
-                        curr_expr.ufl_shape,
-                        curr_expr.ufl_free_indices,
-                    )
+
                     if not curr_expr == 0:  # if derivative is zero ignore
-                        print("Pass")
                         curr_expr_list.append(curr_expr)
                         A_op = create_interpolation_matrix(
                             curr_expr, var, cons["V"], conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
-
-                    # dvar = ufl.TrialFunction(var.function_space)
-                    # curr_expr = apply_derivatives(ufl.derivative(expr, var, dvar))
-                    # A_petsc = fem.petsc.assemble_matrix(
-                    #     fem.form(ufl.inner(lamb_, curr_expr) * conv_fun.dx)
-                    # )
-                    # A_petsc.assemble()
-                    # A_coo = petsc_matrix_to_scipy(A_petsc)
-                    # A_mosek = scipy_matrix_to_mosek(A_coo)
-                    # expr_list.append(mf.Expr.mul(A_mosek, vec))
 
                 else:
                     pass  # FIXME: handle constant terms
@@ -522,7 +504,10 @@ class MosekProblem:
                     pass  # FIXME: handle constant terms
                     # raise NotImplementedError
 
-            b = expr - sum(curr_expr_list)
+            if len(curr_expr_list) > 0:
+                b = expr - sum(curr_expr_list)
+            else:
+                b = expr
             b_vec = mf.Expr.constTerm(
                 fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array
             )
@@ -623,7 +608,8 @@ class MosekProblem:
         elif sense in ["maximize", "max"]:
             self.sense = mf.ObjectiveSense.Maximize
 
-        print("Objectives", self.objectives)
+        if len(self.objectives) == 0:
+            raise ValueError("No objective function has been defined.")
         self.M.objective(self.sense, mf.Expr.add(self.objectives))
         self.M.writeTask("dump.ptf")
         self.M.setLogHandler(sys.stdout)
