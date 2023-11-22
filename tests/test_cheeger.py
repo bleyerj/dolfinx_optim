@@ -48,7 +48,6 @@ def generate_Cheeger_problem():
     bc = fem.dirichletbc(0.0, dofs, V)
 
     prob = MosekProblem(domain, "Test")
-    # u = prob.add_var(V, bc=bc)
 
     V0 = fem.FunctionSpace(domain, ("DG", 0))
     u, t = prob.add_var([V, V0], bc=[bc, None], name=["u", "t"], lx=[None, 0])
@@ -118,6 +117,18 @@ def test_infconvolution(norm, value):
     pi2 = 10 * norm(grad(u), 1)
     infc = InfConvolution(pi, pi2)
     prob.add_convex_term(infc)
+    pobj, dobj = prob.optimize()
+    assert np.isclose(pobj, value)
+    assert np.isclose(dobj, value)
+
+
+@pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
+def test_conjugate(norm, value):
+    prob, u, t, dx = generate_Cheeger_problem()
+    pi = norm(grad(u), 1)
+    c = Conjugate(grad(u), pi)
+    pi2 = Conjugate(grad(u), c)
+    prob.add_convex_term(pi2)
     pobj, dobj = prob.optimize()
     assert np.isclose(pobj, value)
     assert np.isclose(dobj, value)
