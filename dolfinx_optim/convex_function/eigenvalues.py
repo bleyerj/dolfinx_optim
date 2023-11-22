@@ -8,8 +8,8 @@
 """
 import ufl
 from dolfinx_optim.convex_function import ConvexTerm
-from dolfinx_optim.utils import to_mat, get_shape, block_matrix, to_vect
-from dolfinx_optim.cones import SDP
+from dolfinx_optim.utils import to_mat, get_shape, block_matrix, to_vect, concatenate
+from dolfinx_optim.cones import SDP, Quad
 
 
 class LambdaMax(ConvexTerm):
@@ -34,4 +34,26 @@ class SpectralNorm(ConvexTerm):
         Id2 = ufl.Identity(d1)
         Z = block_matrix([[t * Id1, Expr], [Expr.T, t * Id2]])
         self.add_conic_constraint(Z, SDP(d1 + d2))
+        self.add_linear_term(t)
+
+
+class NuclearNorm(ConvexTerm):
+    def conic_repr(self, expr):
+        Expr = to_mat(expr, False)
+        d1, d2 = get_shape(Expr)
+        U = to_mat(self.add_var(d1**2), False)
+        V = to_mat(self.add_var(d2**2), False)
+
+        Z = block_matrix([[U, Expr], [Expr.T, V]])
+        self.add_conic_constraint(Z, SDP(d1 + d2))
+        self.add_linear_term(ufl.tr(U + V) / 2)
+
+
+class FrobeniusNorm(ConvexTerm):
+    def conic_repr(self, expr):
+        t = self.add_var()
+        d = get_shape(expr)
+        stack = concatenate([t, expr])
+
+        self.add_conic_constraint(stack, Quad(d + 1))
         self.add_linear_term(t)

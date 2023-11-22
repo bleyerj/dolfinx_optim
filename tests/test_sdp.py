@@ -28,7 +28,9 @@ from dolfinx_optim.convex_function import (
     InfConvolution,
     Conjugate,
     SpectralNorm,
+    NuclearNorm,
     LambdaMax,
+    FrobeniusNorm,
 )
 
 
@@ -58,8 +60,13 @@ def generate_3D_Cheeger_problem():
     return prob, g, X
 
 
-norms = [LambdaMax, SpectralNorm]
-fun_eval = [lambda X: max(np.linalg.eig(X)[0]), lambda X: np.linalg.norm(X, ord=2)]
+norms = [LambdaMax, SpectralNorm, NuclearNorm, FrobeniusNorm]
+fun_eval = [
+    lambda X: max(np.linalg.eig(X)[0]),
+    lambda X: np.linalg.norm(X, ord=2),
+    lambda X: np.linalg.norm(X, ord="nuc"),
+    lambda X: np.linalg.norm(X, ord="fro"),
+]
 
 
 @pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
