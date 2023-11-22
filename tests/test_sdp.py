@@ -11,22 +11,8 @@ import pytest
 import numpy as np
 from mpi4py import MPI
 from dolfinx import fem, mesh
-import ufl
-from ufl import dot, grad
 from dolfinx_optim.mosek_io import MosekProblem
 from dolfinx_optim.convex_function import (
-    L2Norm,
-    L1Norm,
-    L1Ball,
-    L2Ball,
-    LinfNorm,
-    LinfBall,
-    LpBall,
-    LpNorm,
-    Epigraph,
-    Perspective,
-    InfConvolution,
-    Conjugate,
     SpectralNorm,
     NuclearNorm,
     LambdaMax,

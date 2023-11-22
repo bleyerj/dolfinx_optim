@@ -12,9 +12,7 @@ from dolfinx import fem
 import ufl
 from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 import mosek.fusion as mf
-from dolfinx_optim.utils import to_vect, to_mat, to_list, get_shape
-
-MOSEK_CONES = {"quad": mf.Domain.inQCone(), "rquad": mf.Domain.inRotatedQCone()}
+from dolfinx_optim.utils import to_vect, to_list, get_shape
 
 
 def generate_scalar_quadrature_functionspace(domain, deg_quad):
