@@ -26,7 +26,7 @@ def get_shape(expr):
 
 def to_list(a, n=1):
     """Transform `a` to list of length `n`."""
-    if type(a) not in [list, tuple]:
+    if not isinstance(a, list):
         return [a] * n
     else:
         return a
