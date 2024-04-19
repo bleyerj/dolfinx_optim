@@ -30,8 +30,7 @@ from dolfinx_optim.convex_function import (
 )
 
 
-def generate_Cheeger_problem():
-    N = 1
+def generate_Cheeger_problem(N=1):
     domain = mesh.create_unit_square(
         MPI.COMM_WORLD,
         N,
@@ -40,17 +39,22 @@ def generate_Cheeger_problem():
     )
 
     def border(x):
-        return np.logical_or(np.isclose(x[1], 0), np.isclose(x[0], 0))
+        return (
+            np.isclose(x[1], 0)
+            | np.isclose(x[0], 0)
+            | np.isclose(x[0], 1)
+            | np.isclose(x[1], 1)
+        )
 
     f = fem.Constant(domain, 1.0)
 
-    V = fem.FunctionSpace(domain, ("CG", 1))
+    V = fem.functionspace(domain, ("CG", 2))
     dofs = fem.locate_dofs_geometrical(V, border)
     bc = fem.dirichletbc(0.0, dofs, V)
 
     prob = MosekProblem(domain, "Test")
 
-    V0 = fem.FunctionSpace(domain, ("DG", 0))
+    V0 = fem.functionspace(domain, ("DG", 0))
     u, t = prob.add_var([V, V0], bc=[bc, None], name=["u", "t"], lx=[None, 0])
 
     dx = ufl.Measure("dx", domain=domain)
@@ -80,11 +84,13 @@ fun_eval = [
     np.linalg.norm(x0, 4.0),
 ]
 
+deg_quad = 1
+
 
 @pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
 def test_norms(norm, value):
     prob, u, t, dx = generate_Cheeger_problem()
-    pi = norm(grad(u), 1)
+    pi = norm(grad(u), deg_quad)
     prob.add_convex_term(pi)
     pobj, dobj = prob.optimize()
     assert np.isclose(pobj, value)
@@ -94,7 +100,7 @@ def test_norms(norm, value):
 @pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
 def test_epigraphs(norm, value):
     prob, u, t, dx = generate_Cheeger_problem()
-    pi = norm(grad(u), 1)
+    pi = norm(grad(u), deg_quad)
     epi = Epigraph(t, pi)
     prob.add_convex_term(epi)
     with pytest.raises(ValueError):
@@ -108,7 +114,7 @@ def test_epigraphs(norm, value):
 @pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
 def test_perspectives(norm, value):
     prob, u, t, dx = generate_Cheeger_problem()
-    pi = norm(grad(u), 1)
+    pi = norm(grad(u), deg_quad)
     persp = Perspective(t, pi)
     prob.add_convex_term(persp)
     pobj, dobj = prob.optimize()
@@ -119,8 +125,8 @@ def test_perspectives(norm, value):
 @pytest.mark.parametrize("norm, value", zip(norms, fun_eval))
 def test_infconvolution(norm, value):
     prob, u, t, dx = generate_Cheeger_problem()
-    pi = norm(grad(u), 1)
-    pi2 = 10 * norm(grad(u), 1)
+    pi = norm(grad(u), deg_quad)
+    pi2 = 10 * norm(grad(u), deg_quad)
     infc = InfConvolution(pi, pi2)
     prob.add_convex_term(infc)
     pobj, dobj = prob.optimize()
@@ -132,9 +138,19 @@ def test_infconvolution(norm, value):
 def test_conjugate(ball, value):
     prob, u, t, dx = generate_Cheeger_problem()
 
-    c = ball(grad(u), 1)
+    c = ball(grad(u), deg_quad)
     pi2 = Conjugate(grad(u), c)
     prob.add_convex_term(pi2)
     pobj, dobj = prob.optimize()
     assert np.isclose(pobj, value)
     assert np.isclose(dobj, value)
+
+
+def test_Cheeger():
+    prob, u, t, dx = generate_Cheeger_problem(50)
+    pi = L2Norm(grad(u), 2)
+    prob.add_convex_term(pi)
+    pobj, dobj = prob.optimize()
+
+
+test_Cheeger()

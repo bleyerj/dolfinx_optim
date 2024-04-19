@@ -33,7 +33,7 @@ def generate_3D_Cheeger_problem():
     def border(x):
         return np.full_like(x[0], True)
 
-    V0 = fem.TensorFunctionSpace(domain, ("DG", 0), shape=(3, 3))
+    V0 = fem.functionspace(domain, ("DG", 0, (3, 3)))
     dofs = fem.locate_dofs_geometrical(V0, border)
 
     X = np.random.rand(3, 3)
@@ -63,3 +63,6 @@ def test_norms(norm, value):
     pobj, dobj = prob.optimize()
     assert np.isclose(pobj, value(X))
     assert np.isclose(dobj, value(X))
+
+
+test_norms(LambdaMax, fun_eval[0])

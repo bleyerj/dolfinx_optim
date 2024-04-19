@@ -12,12 +12,13 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
 """
 import numpy as np
 import sys
-import mosek
 import mosek.fusion as mf
 import ufl
 from ufl.algorithms.apply_derivatives import apply_derivatives
+from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 import scipy.sparse
 from dolfinx import fem
+import dolfinx.fem.petsc
 from .utils import get_shape
 
 
@@ -70,10 +71,9 @@ def create_interpolation_matrix(operator, u, V2, dx):
     V1 = u.function_space
     v_ = ufl.TrialFunction(V1)
     v = ufl.TestFunction(V2)
-    new_op = ufl.replace(operator, {u: v_})
-    a_ufl = ufl.inner(new_op, v) * dx
-
-    A_petsc = fem.petsc.assemble_matrix(fem.form(a_ufl))
+    new_op = ufl.derivative(operator, u, v_)
+    a_ufl = ufl.dot(new_op, v) * dx
+    A_petsc = dolfinx.fem.petsc.assemble_matrix(fem.form(a_ufl))
     A_petsc.assemble()
 
     # mass matrix on V2
@@ -81,9 +81,19 @@ def create_interpolation_matrix(operator, u, V2, dx):
     one.vector.set(1.0)
     m_ufl = ufl.inner(one, v) * dx
     M_array = fem.assemble_vector(fem.form(m_ufl)).array
-
     A_coo = petsc_matrix_to_scipy(A_petsc, M_array=M_array)
     return scipy_matrix_to_mosek(A_coo)
+
+def get_value_array(u):
+    if u is None:
+        return None
+    elif isinstance(u, fem.Function):
+        return u.x.array
+    elif isinstance(u, int) or isinstance(u, float):
+        return u
+    else: # constant case
+        return u.value
+
 
 
 class MosekProblem:
@@ -116,7 +126,7 @@ class MosekProblem:
 
     def _default_parameters(self):
         return {
-            "presolve": "free",
+            "presolve": "off",
             "presolve_lindep": "off",
             "log_level": 10,
             "tol_rel_gap": 1e-7,
@@ -125,26 +135,41 @@ class MosekProblem:
             "dump_file": None,
         }
 
-    def _create_variable_vector(self, var, name, ux, lx):
-        if ux is None and lx is None:
-            domain = mf.Domain.unbounded()
-        elif ux is None:
-            domain = mf.Domain.greaterThan(lx)
-        elif lx is None:
-            domain = mf.Domain.greaterThan(ux)
-        else:
-            domain = mf.Domain.inRange(lx, ux)
-        if isinstance(var, fem.Function):
-            if name is None:
-                return self.M.variable(len(var.vector.array), domain)
+    def _create_variable_vector(self, var, name, ux, lx, cone):
+        if cone is not None:
+            n = cone.dim
+            m = len(var.vector.array) // n
+            domain = mosek_cone_domain(cone)
+            if cone.type == "sdp":
+                m = len(var.vector.array) // n**2
+                domain = mf.Domain.inPSDCone(n, m)
+                if name is not None:
+                    vec = self.M.variable(name, domain)
+                else:
+                    vec = self.M.variable(domain)
             else:
-                return self.M.variable(name, len(var.vector.array), domain)
+                if name is not None:
+                    vec = self.M.variable(name, [m, n], domain)
+                else:
+                    vec = self.M.variable([m, n], domain)
+            return vec.reshape(vec.getSize())
+
         else:
-            value = var.value
-            if len(value.shape) == 0:
-                size = 1
+            if ux is None and lx is None:
+                domain = mf.Domain.unbounded()
+            elif ux is None:
+                lxv = get_value_array(lx)
+                domain = mf.Domain.greaterThan(lxv)
+            elif lx is None:
+                uxv = get_value_array(ux)
+                domain = mf.Domain.greaterThan(uxv)
             else:
-                size = len(value)
+                lxv = get_value_array(lx)
+                uxv = get_value_array(ux)
+                domain = mf.Domain.inRange(lxv, uxv)
+            print(name, var)
+            var_values = get_value_array(var)
+            size = len(var_values)
             if name is None:
                 return self.M.variable(size, domain)
             else:
@@ -154,9 +179,11 @@ class MosekProblem:
         V = variable.function_space
         u_bc = fem.Function(V)
         u_bc.vector.set(np.inf)
+        
         fem.set_bc(u_bc.vector, to_list(bcs))
         dof_indices = np.where(u_bc.vector.array < np.inf)[0].astype(np.int32)
         bc_values = u_bc.vector.array[dof_indices]
+        
         self.M.constraint(vector.pick(dof_indices), mf.Domain.equalsTo(bc_values))
 
     def add_var(
@@ -197,38 +224,54 @@ class MosekProblem:
         """
         if not isinstance(V, list):
             V_list = [V]
+            bc_list = [bc]
         else:
             V_list = V
+            bc_list = bc
         nlist = len(V_list)
-        bc_list = to_list(bc, nlist)
+        if bc is None:
+            bc_list = [None] * nlist
 
         self.lx += to_list(lx, nlist)
         self.ux += to_list(ux, nlist)
         self.cones += to_list(cone, nlist)
-        self.bc_prim += to_list(bc_list, nlist)
+        self.bc_prim += bc_list
         self.variable_names = to_list(name, nlist)
         self.int_var += to_list(int_var, nlist)
 
         new_var = []
         for V, name in zip(V_list, self.variable_names):
             if isinstance(V, fem.FunctionSpace):
-                new_var.append(fem.Function(V, name=name))
+                var = fem.Function(V, name=name)
             elif type(V) == int:
                 if V <= 1:
                     value = 0.0
                 else:
                     value = np.zeros((V,))
-                new_var.append(fem.Constant(self.domain, value))
-
-        for var, bc, name, ux, lx in zip(
-            new_var, bc_list, self.variable_names, self.ux, self.lx
-        ):
+                var = fem.Constant(self.domain, value)
+            new_var.append(var)
+            
             vector = self._create_variable_vector(
-                var, name, ux, lx
+                var, name, ux, lx, cone
             )  # FIXME: better handle bcs ?
             if bc is not None:
                 self._add_boundary_conditions(var, vector, bc)
             self.vectors.append(vector)
+
+        # for i in range(len(new_var)):
+        #     var = new_var[i]
+        #     bc = bc_list[i]
+        #     ux = self.ux[i]
+        #     lx = self.lx[i]
+        #     cone = self.cones[i]
+        #     name = self.variable_names[i]
+        #     print(name, var.x.array)
+        #     vector = self._create_variable_vector(
+        #         var, name, ux, lx, cone
+        #     )  # FIXME: better handle bcs ?
+        #     if bc is not None:
+        #         self._add_boundary_conditions(var, vector, bc)
+        #     self.vectors.append(vector)
         self.variables += new_var
         self.Vx += V_list
 
@@ -306,7 +349,7 @@ class MosekProblem:
 
         elif arity == 1:
             ufl_element = A.arguments()[0].ufl_function_space().ufl_element()
-            V_cons = fem.FunctionSpace(self.domain, ufl_element)
+            V_cons = fem.functionspace(self.domain, ufl_element)
 
             for var, vec in zip(self.variables, self.vectors):
                 if isinstance(var, fem.Function):
@@ -314,7 +357,7 @@ class MosekProblem:
                     curr_form = ufl.derivative(A, var, dvar)
                     try:
                         # FIXME: need to apply bcs
-                        A_petsc = fem.petsc.assemble_matrix(fem.form(curr_form))
+                        A_petsc = dolfinx.fem.petsc.assemble_matrix(fem.form(curr_form))
                         A_petsc.assemble()
                         A_coo = petsc_matrix_to_scipy(A_petsc)
                         A_mosek = scipy_matrix_to_mosek(A_coo)
@@ -353,6 +396,7 @@ class MosekProblem:
         obj : linear form
         """
         for var, vec in zip(self.variables, self.vectors):
+            print(var.name, type(var))
             if isinstance(var, fem.Function):
                 var_ = ufl.TestFunction(var.function_space)
                 curr_form = apply_derivatives(ufl.derivative(obj, var, var_))
@@ -372,10 +416,15 @@ class MosekProblem:
         """Add the convex term `conv_fun` to the problem."""
         conv_fun._apply_conic_representation()
 
-        for var, name, ux, lx in zip(
-            conv_fun.variables, conv_fun.variable_names, conv_fun.ux, conv_fun.lx
-        ):
-            vector = self._create_variable_vector(var, name, ux, lx)
+        for i in range(len(conv_fun.variables)):
+            var = conv_fun.variables[i]
+            name = conv_fun.variable_names[i]
+            ux = conv_fun.ux[i]
+            lx = conv_fun.lx[i]
+            cone = conv_fun.cones[i]
+
+            vector = self._create_variable_vector(var, name, ux, lx, cone)
+            assert len(var.vector.array) == vector.getSize()
             self.variables.append(var)
             self.vectors.append(vector)
 
@@ -404,7 +453,6 @@ class MosekProblem:
                                 fem.form(conv_fun.scale_factor * conv_fun.objective)
                             )
                 else:
-                    print("Objective", conv_fun.objective)
                     var_ = ufl.TestFunction(var.function_space)
                     dobj = ufl.derivative(
                         conv_fun.scale_factor * conv_fun.objective, var, var_
@@ -428,7 +476,9 @@ class MosekProblem:
 
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
-                    curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
+                    curr_expr = apply_derivatives(
+                        ufl.derivative(apply_algebra_lowering(expr), var, var)
+                    )
 
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
@@ -494,7 +544,6 @@ class MosekProblem:
             curr_expr_list = []
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
-                    print("var conic", var)
                     curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
@@ -518,13 +567,14 @@ class MosekProblem:
             z_shape = get_shape(expr)
             if cone.type == "sdp":
                 d = cone.dim
-                print(z_in_cone.getSize(), conv_fun.ndof, d)
                 assert z_in_cone.getSize() == conv_fun.ndof * d * d
                 z_in_cone = mf.Expr.reshape(z_in_cone, [conv_fun.ndof, d, d])
             elif z_shape > 0:
+                expr_size = z_in_cone.getSize()
+                conv_fun_size = conv_fun.ndof * z_shape
                 assert (
-                    z_in_cone.getSize() == conv_fun.ndof * z_shape
-                ), "Wrong shape in conic constraint"
+                    expr_size == conv_fun_size
+                ), f"Wrong shape in conic constraint expression {expr_size} vs {conv_fun_size}"
                 z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, z_shape)
             else:
                 z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, 1)
@@ -537,6 +587,8 @@ class MosekProblem:
         ), "Available parameters are:\n{}".format(self._default_parameters())
 
         self.M.setSolverParam("autoUpdateSolInfo", "on")
+
+        self.M.setSolverParam("intpntSolveForm", self.parameters["solve_form"])
 
         # Set log level (integer parameter)
         self.M.setSolverParam("log", self.parameters["log_level"])
