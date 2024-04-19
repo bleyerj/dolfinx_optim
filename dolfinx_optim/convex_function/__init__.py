@@ -8,7 +8,7 @@
 """
 from .convex_term import ConvexTerm
 from .norms import L2Norm, L2Ball, L1Norm, L1Ball, LinfNorm, LinfBall, LpNorm, LpBall
-from .simple_terms import QuadraticTerm, AbsValue
+from .simple_terms import QuadraticTerm, AbsValue, LinearTerm
 from .epigraph import Epigraph
 from .perspective import Perspective
 from .infconvolution import InfConvolution

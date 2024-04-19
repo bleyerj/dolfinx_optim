@@ -11,6 +11,19 @@ from dolfinx_optim.utils import concatenate, get_shape
 from dolfinx_optim.cones import Quad, RQuad
 from dolfinx_optim.convex_function import ConvexTerm
 
+# TODO: add is_scalar decorator
+class LinearTerm(ConvexTerm):
+    """Define the linear function :math:`x`.
+
+    Parameters
+    ----------
+    x : UFL expression
+        optimization variable
+    """
+
+    def conic_repr(self, expr):
+        assert get_shape(expr)==0, "Linear term value applies only to scalar function"
+        self.add_linear_term(expr)
 
 class AbsValue(ConvexTerm):
     """Define the absolute value function :math:`|x|`."""
@@ -34,7 +47,7 @@ class QuadraticTerm(ConvexTerm):
 
     def conic_repr(self, expr):
         t = self.add_var()
-        stack = concatenate([1.0 / 2.0, t, expr])
+        stack = concatenate([1.0, t, expr])
         dim = get_shape(stack)
         self.add_conic_constraint(stack, RQuad(dim))
         self.add_linear_term(t)

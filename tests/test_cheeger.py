@@ -42,13 +42,11 @@ def generate_Cheeger_problem(N=1):
         return (
             np.isclose(x[1], 0)
             | np.isclose(x[0], 0)
-            | np.isclose(x[0], 1)
-            | np.isclose(x[1], 1)
         )
 
     f = fem.Constant(domain, 1.0)
 
-    V = fem.functionspace(domain, ("CG", 2))
+    V = fem.functionspace(domain, ("CG", 1))
     dofs = fem.locate_dofs_geometrical(V, border)
     bc = fem.dirichletbc(0.0, dofs, V)
 
@@ -153,4 +151,4 @@ def test_Cheeger():
     pobj, dobj = prob.optimize()
 
 
-test_Cheeger()
+test_conjugate(balls[-1], fun_eval[-1])
