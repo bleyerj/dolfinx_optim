@@ -82,7 +82,7 @@ def create_interpolation_matrix(operator, u, V2, dx):
     m_ufl = ufl.inner(one, v) * dx
     M_array = fem.assemble_vector(fem.form(m_ufl)).array
     A_coo = petsc_matrix_to_scipy(A_petsc, M_array=M_array)
-    return scipy_matrix_to_mosek(A_coo)
+    return scipy_matrix_to_mosek(A_coo), M_array
 
 def get_value_array(u):
     if u is None:
@@ -109,7 +109,6 @@ class MosekProblem:
         self.lx = []
         self.variables = []
         self.variable_names = []
-        self.int_var = []
         self.A = []
         self.bu = []
         self.bl = []
@@ -194,7 +193,6 @@ class MosekProblem:
         ux=None,
         bc=None,
         name=None,
-        int_var=False,
     ):
         """Add a (list of) optimization variable.
 
@@ -214,8 +212,6 @@ class MosekProblem:
             boundary conditions applied to the variables (None if no bcs)
         name : (list of) str
             name of the associated functions
-        int_var : (list of) bool
-            True if variable is an integer, False if it is continuous (default)
 
         Returns
         -------
@@ -232,15 +228,18 @@ class MosekProblem:
         if bc is None:
             bc_list = [None] * nlist
 
-        self.lx += to_list(lx, nlist)
-        self.ux += to_list(ux, nlist)
-        self.cones += to_list(cone, nlist)
+        lx_list = to_list(lx, nlist)
+        ux_list = to_list(ux, nlist)
+        cone_list = to_list(cone, nlist)
+        name_list = to_list(name, nlist)
+        self.lx += lx_list
+        self.ux += ux_list
+        self.cones += cone_list
         self.bc_prim += bc_list
-        self.variable_names = to_list(name, nlist)
-        self.int_var += to_list(int_var, nlist)
+        self.variable_names += name_list
 
         new_var = []
-        for V, name in zip(V_list, self.variable_names):
+        for i, (V, name) in enumerate(zip(V_list, name_list)):
             if isinstance(V, fem.FunctionSpace):
                 var = fem.Function(V, name=name)
             elif type(V) == int:
@@ -252,10 +251,10 @@ class MosekProblem:
             new_var.append(var)
             
             vector = self._create_variable_vector(
-                var, name, ux, lx, cone
+                var, name, ux_list[i], lx_list[i], cone_list[i]
             )  # FIXME: better handle bcs ?
-            if bc is not None:
-                self._add_boundary_conditions(var, vector, bc)
+            if bc_list[i] is not None:
+                self._add_boundary_conditions(var, vector, bc_list[i])
             self.vectors.append(vector)
 
         # for i in range(len(new_var)):
@@ -457,11 +456,14 @@ class MosekProblem:
                     dobj = ufl.derivative(
                         conv_fun.scale_factor * conv_fun.objective, var, var_
                     )
-                    c = fem.assemble_vector(fem.form(dobj)).array
-                try:
+                    if len(dobj.coefficients())>0:
+                        c = fem.assemble_vector(fem.form(dobj)).array
+                    else: 
+                        c=None    
+                if c is not None:            # try:
                     obj.append(mf.Expr.dot(c, vec))
-                except AttributeError:
-                    obj.append(mf.Expr.constTerm(0.0))
+                # except AttributeError:
+                #     obj.append(mf.Expr.constTerm(0.0))
         if len(obj) > 0:
             return mf.Expr.add(obj)
         else:
@@ -482,10 +484,11 @@ class MosekProblem:
 
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
-                        A_op = create_interpolation_matrix(
+                        A_op, M_array = create_interpolation_matrix(
                             curr_expr, var, cons["V"], conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
+                    # FIXME: handle non zero constant term
 
                 else:
                     pass  # FIXME: handle constant terms
@@ -547,7 +550,7 @@ class MosekProblem:
                     curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
-                        A_op = create_interpolation_matrix(
+                        A_op, M_array = create_interpolation_matrix(
                             curr_expr, var, V, conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
@@ -559,8 +562,9 @@ class MosekProblem:
                 b = expr - sum(curr_expr_list)
             else:
                 b = expr
+            print(b)
             b_vec = mf.Expr.constTerm(
-                fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array
+                fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array/M_array
             )
             expr_list.append(b_vec)
             z_in_cone = mf.Expr.add(expr_list)
@@ -667,9 +671,10 @@ class MosekProblem:
         elif sense in ["maximize", "max"]:
             self.sense = mf.ObjectiveSense.Maximize
 
-        if len(self.objectives) == 0:
-            raise ValueError("No objective function has been defined.")
-        self.M.objective(self.sense, mf.Expr.add(self.objectives))
+        if len(self.objectives) > 0:
+            self.M.objective(self.sense, mf.Expr.add(self.objectives))
+        # else:
+            # raise ValueError("No objective function has been defined.")
         self.M.writeTask("dump.ptf")
         self.M.setLogHandler(sys.stdout)
         self._set_task_parameters()
