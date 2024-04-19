@@ -9,6 +9,7 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
 """
 from abc import ABC, abstractmethod
 from dolfinx import fem
+from basix.ufl import quadrature_element
 import ufl
 from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 import mosek.fusion as mf
@@ -16,29 +17,46 @@ from dolfinx_optim.utils import to_vect, to_list, get_shape
 
 
 def generate_scalar_quadrature_functionspace(domain, deg_quad):
-    We = ufl.FiniteElement(
-        "Quadrature", domain.ufl_cell(), degree=deg_quad, quad_scheme="default"
+    # We = ufl.FiniteElement(
+    #     "Quadrature", domain.ufl_cell(), degree=deg_quad, quad_scheme="default"
+    # )
+    We = quadrature_element(
+        domain.topology.cell_name(), value_shape=(), scheme="default", degree=deg_quad
     )
-    W = fem.FunctionSpace(domain, We)
+    W = fem.functionspace(domain, We)
     return W
 
 
 def generate_quadrature_functionspace(domain, deg_quad, shape):
-    if shape == () or shape == 0:
-        return generate_scalar_quadrature_functionspace(domain, deg_quad)
-    try:
-        if len(shape) == 1:
-            dim = shape[0]
-    except TypeError:
-        dim = shape
-    We = ufl.VectorElement(
-        "Quadrature",
-        domain.ufl_cell(),
+    if shape == 0:
+        shape = ()
+    elif isinstance(shape, int):
+        shape = (shape,)
+    We = quadrature_element(
+        domain.topology.cell_name(),
+        value_shape=shape,
+        scheme="default",
         degree=deg_quad,
-        quad_scheme="default",
-        dim=dim,
     )
-    return fem.FunctionSpace(domain, We)
+    return fem.functionspace(domain, We)
+    # We = ufl.TensorElement(
+    #     "Quadrature",
+    #     domain.ufl_cell(),
+    #     degree=deg_quad,
+    #     quad_scheme="default",
+    #     shape=shape,
+    # )
+    #     return fem.FunctionSpace(domain, We)
+    # else:
+    #     raise NotImplementedError
+    # We = ufl.VectorElement(
+    #     "Quadrature",
+    #     domain.ufl_cell(),
+    #     degree=deg_quad,
+    #     quad_scheme="default",
+    #     dim=dim,
+    # )
+    # return fem.FunctionSpace(domain, We)
 
 
 def _get_mesh_from_expr(expr):
@@ -74,6 +92,7 @@ class ConvexTerm(ABC):
             self.domain, deg_quad, self.operand_shape
         )
         self.ndof = self.W.dofmap.index_map.size_global * self.W.dofmap.index_map_bs
+
         self.scale_factor = 1.0
         self.parameters = parameters
 
@@ -83,13 +102,10 @@ class ConvexTerm(ABC):
         self.conic_constraints = []
         self.ux = []
         self.lx = []
+        self.cones = []
         self._linear_objective = []
 
     def _apply_conic_representation(self):
-        # if self.is_operand_matrix:
-        #     op = to_mat(self.operand, False)
-        # else:
-        #     op = self.operand
         if self.parameters is None:
             self.conic_repr(self.operand)
         else:
@@ -126,19 +142,18 @@ class ConvexTerm(ABC):
         ]
         self.ux += to_list(ux, nlist)
         self.lx += to_list(lx, nlist)
+        self.cones += to_list(cone, nlist)
         self.variable_names += to_list(name, nlist)
         if not isinstance(dim, list):
             new_Y = fem.Function(new_V_add_var[0], name=name)
             new_var = new_Y
+
         else:
             new_Y = [
                 fem.Function(v, name=n)
                 for (v, n) in zip(new_V_add_var, to_list(name, nlist))
             ]
             new_var = to_list(new_Y, nlist)
-        if cone is not None:
-            for v, c in zip(new_var, cone):
-                self.add_conic_constraint(v, c)
         if isinstance(new_var, list):
             self.variables += new_var
             return tuple(new_var)
@@ -271,6 +286,7 @@ class ConvexTerm(ABC):
         self.scale_factor = fun.scale_factor
         self.ux = fun.ux
         self.lx = fun.lx
+        self.cones = fun.cones
         self.parameters = fun.parameters
         self._linear_objective = fun._linear_objective
 

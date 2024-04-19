@@ -19,14 +19,13 @@ class LambdaMax(ConvexTerm):
         d, d2 = get_shape(Expr)
         assert d == d2
         Id = ufl.Identity(d)
-        print(to_vect(Id, False))
         self.add_conic_constraint(t * Id - Expr, SDP(d))
         self.add_linear_term(t)
 
 
 class SpectralNorm(ConvexTerm):
     def conic_repr(self, expr):
-        t = self.add_var(name="t")
+        t = self.add_var()
         Expr = to_mat(expr, False)
         d1, d2 = get_shape(Expr)
         assert d2 <= d1, "Works only for rectangular matrix m x n with n <= m."
@@ -41,8 +40,8 @@ class NuclearNorm(ConvexTerm):
     def conic_repr(self, expr):
         Expr = to_mat(expr, False)
         d1, d2 = get_shape(Expr)
-        U = to_mat(self.add_var(d1**2), False)
-        V = to_mat(self.add_var(d2**2), False)
+        U = self.add_var((d1, d1))
+        V = self.add_var((d2, d2))
 
         Z = block_matrix([[U, Expr], [Expr.T, V]])
         self.add_conic_constraint(Z, SDP(d1 + d2))

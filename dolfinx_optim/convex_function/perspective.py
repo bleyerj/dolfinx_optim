@@ -50,6 +50,5 @@ class Perspective(ConvexTerm):
                 self.fun.operand,
                 self.variables,
             )
-            print("\n\n t0", constant)
             cons["expr"] = cons["expr"] - constant + (t + t0) * constant
         self.add_ineq_constraint(t + t0, bl=0)

@@ -6,9 +6,11 @@
 @Contact :   jeremy.bleyer@enpc.fr
 @Time    :   21/11/2023
 """
+from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 from dolfinx_optim.utils import (
     concatenate,
     get_shape,
+    to_mat,
     split_affine_expression,
     reshape,
     hstack,
@@ -34,57 +36,37 @@ class Conjugate(ConvexTerm):
         self.fun.change_operand(self.operand)
 
         c = sum(self.fun._linear_objective)
-        print("Num var", len(self.fun.variables), get_shape(expr))
         constraint = concatenate([-expr] + [0 * v for v in self.fun.variables])
         if c != 0:
             c_op, c_var, _ = split_affine_expression(
                 c, self.fun.operand, self.fun.variables
             )
             constraint += concatenate([c_op] + c_var)
-            print("", [c_op] + c_var)
-        print("Constraint shape", get_shape(constraint))
 
         for cons in self.fun.linear_constraints:
-            print(get_shape(cons["expr"]))
             A_op, A_var, b = split_affine_expression(
                 cons["expr"], self.fun.operand, self.fun.variables
             )
-            print("A_op shape:", A_op)
-            for a in A_var:
-                print("A_var shapes:", a.ufl_shape)
             A = hstack([A_op] + [a for a in A_var])
 
             d = cons["dim"]
-            print("Dimensions", A.ufl_shape, d)
 
             if cons["bu"] == cons["bl"]:
                 b = reshape(cons["bu"], d)
                 s = self.add_var(d)
                 self.add_linear_term(ufl.dot(s, b))
-                constraint += (
-                    ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
-                        transpose(A) * s
-                    )
-                )
+                constraint += apply_algebra_lowering(transpose(A) * s)
             else:
                 if cons["bu"] is not None:
                     bu = reshape(cons["bu"], d)
                     su = self.add_var(d, lx=0)
                     self.add_linear_term(ufl.dot(su, bu))
-                    constraint += (
-                        ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
-                            transpose(A) * su
-                        )
-                    )
+                    constraint += apply_algebra_lowering(transpose(A) * su)
                 if cons["bl"] is not None:
                     bl = reshape(cons["bl"], d)
                     sl = self.add_var(d, lx=0)
                     self.add_linear_term(-ufl.dot(sl, bl))
-                    constraint -= (
-                        ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
-                            transpose(A) * sl
-                        )
-                    )
+                    constraint -= apply_algebra_lowering(transpose(A) * sl)
 
         for cons in self.fun.conic_constraints:
             F_op, F_var, g = split_affine_expression(
@@ -94,11 +76,12 @@ class Conjugate(ConvexTerm):
             d = cons["dim"]
             sc = self.add_var(d)
             self.add_linear_term(ufl.dot(sc, g))
-            constraint -= ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
-                ufl.dot(F.T, sc)
-            )
-            self.add_conic_constraint(sc, cons["cone"].dual)
+            constraint -= apply_algebra_lowering(ufl.dot(F.T, sc))
+            if cons["cone"].type == "sdp":
+                self.add_conic_constraint(
+                    apply_algebra_lowering(to_mat(sc, False)), cons["cone"].dual
+                )
+            else:
+                self.add_conic_constraint(sc, cons["cone"].dual)
 
         self.add_eq_constraint(constraint)
-        print(self.linear_constraints)
-        print(self.conic_constraints)

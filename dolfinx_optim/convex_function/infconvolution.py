@@ -58,6 +58,7 @@ class InfConvolution(ConvexTerm):
             self.variable_names += fun.variable_names
             self.ux += fun.ux
             self.lx += fun.lx
+            self.cones += fun.cones
             self.scale_factor = 1.0
             self._linear_objective += [
                 fun.scale_factor * obj for obj in fun._linear_objective
