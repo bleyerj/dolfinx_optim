@@ -209,10 +209,8 @@ class ConvexTerm(ABC):
         if isinstance(bl, int):
             bl = float(bl)
         dim = get_shape(expr)
-        A_op, A_var, constant = split_affine_expression(
-            expr, self.operand, self.variables
-        )
-        new_expr = A_op + sum(A_var)
+        _, _, constant = split_affine_expression(expr, self.operand, self.variables)
+        new_expr = expr - constant
 
         if bu is not None:
             d1 = get_shape(bu)

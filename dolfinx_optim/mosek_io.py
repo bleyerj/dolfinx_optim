@@ -67,6 +67,15 @@ def scipy_matrix_to_mosek(A_coo):
     return mf.Matrix.sparse(nrow, ncol, A_coo.row, A_coo.col, A_coo.data)
 
 
+def create_mass_matrix(V2, dx):
+    # mass matrix on V2
+    one = fem.Function(V2)
+    v = ufl.TestFunction(V2)
+    one.vector.set(1.0)
+    m_ufl = ufl.inner(one, v) * dx
+    return fem.assemble_vector(fem.form(m_ufl)).array
+
+
 def create_interpolation_matrix(operator, u, V2, dx):
     V1 = u.function_space
     v_ = ufl.TrialFunction(V1)
@@ -76,11 +85,8 @@ def create_interpolation_matrix(operator, u, V2, dx):
     A_petsc = dolfinx.fem.petsc.assemble_matrix(fem.form(a_ufl))
     A_petsc.assemble()
 
-    # mass matrix on V2
-    one = fem.Function(V2)
-    one.vector.set(1.0)
-    m_ufl = ufl.inner(one, v) * dx
-    M_array = fem.assemble_vector(fem.form(m_ufl)).array
+    M_array = create_mass_matrix(V2, dx)
+
     A_coo = petsc_matrix_to_scipy(A_petsc, M_array=M_array)
     return scipy_matrix_to_mosek(A_coo), M_array
 
@@ -407,9 +413,10 @@ class MosekProblem:
         """
         for var, vec in zip(self.variables, self.vectors):
             if isinstance(var, fem.Function):
-                print(var.name, type(var))
                 var_ = ufl.TestFunction(var.function_space)
-                curr_form = apply_derivatives(ufl.derivative(obj, var, var_))
+                curr_form = apply_derivatives(
+                    apply_algebra_lowering(ufl.derivative(obj, var, var_))
+                )
                 if len(curr_form.arguments()) > 0:
                     c = fem.assemble_vector(fem.form(curr_form)).array
                     self.objectives.append(mf.Expr.dot(c, vec))
@@ -495,7 +502,7 @@ class MosekProblem:
 
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
-                        A_op, M_array = create_interpolation_matrix(
+                        A_op, _ = create_interpolation_matrix(
                             curr_expr, var, cons["V"], conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
@@ -505,6 +512,7 @@ class MosekProblem:
                     pass  # FIXME: handle constant terms
                     # raise NotImplementedError
 
+            M_array = create_mass_matrix(cons["V"], conv_fun.dx)
             if cons["bu"] is not None:
                 if isinstance(cons["bu"], float):
                     bu = fem.Function(cons["V"])
@@ -517,7 +525,7 @@ class MosekProblem:
                     bu = fem.assemble_vector(
                         fem.form(ufl.inner(lamb_, cons["bu"]) * conv_fun.dx)
                     )
-                    xbu = bu.array
+                    xbu = bu.array / M_array
             else:
                 xbu = None
             if cons["bl"] is not None:
@@ -532,11 +540,12 @@ class MosekProblem:
                     bl = fem.assemble_vector(
                         fem.form(ufl.inner(lamb_, cons["bl"]) * conv_fun.dx)
                     )
-                    xbl = bl.array
+                    xbl = bl.array / M_array
             else:
                 xbl = None
 
             if (xbu is not None) and (xbl is not None):
+                print([e.getShape() for e in expr_list], xbl.shape)
                 self.M.constraint(mf.Expr.add(expr_list), mf.Domain.inRange(xbl, xbu))
             elif xbu is not None:
                 self.M.constraint(mf.Expr.add(expr_list), mf.Domain.lessThan(xbu))

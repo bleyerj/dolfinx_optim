@@ -68,10 +68,6 @@ def L4_3Ball(*args):
     return LpBall(*args, 4.0 / 3.0)
 
 
-def L2Ball(*args):
-    return LpBall(*args, 2.0)
-
-
 norms = [L2Norm, LinfNorm, L1Norm, L4Norm]
 balls = [L2Ball, L1Ball, LinfBall, L4_3Ball]
 
@@ -151,5 +147,7 @@ def test_Cheeger():
     pobj, dobj = prob.optimize()
 
 
-for norm, ball, fun in zip(norms, balls, fun_eval):
-    test_conjugate(ball, fun)
+# for norm, ball, fun in zip(norms, balls, fun_eval):
+#     print(norm)
+#     test_perspectives(norm, fun)
+test_perspectives(norms[-1], fun_eval[-1])

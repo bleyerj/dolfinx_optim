@@ -279,17 +279,26 @@ def split_affine_expression(expr, operand, variables):
     else:
         e = ufl.variable(operand)
         new_expr = ufl.replace(expr, {operand: e})
+        new_expr = ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
+            new_expr
+        )
         linear_op = ufl.algorithms.apply_derivatives.apply_derivatives(
             ufl.diff(new_expr, e)
         )
         linear_var = [
-            ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
-                ufl.algorithms.apply_derivatives.apply_derivatives(ufl.diff(expr, v))
+            ufl.algorithms.apply_derivatives.apply_derivatives(
+                ufl.algorithms.apply_algebra_lowering.apply_algebra_lowering(
+                    ufl.diff(expr, v)
+                )
             )
             for v in variables
             if not isinstance(v, fem.Constant)
         ]
-        z = ufl.as_vector([0] * len(operand))
+        d = get_shape(operand)
+        if d == 0:
+            z = 0
+        else:
+            z = ufl.as_vector([0] * d)
         constant = ufl.replace(
             ufl.replace(expr, {operand: z}), {v: 0 * v for v in variables}
         )
