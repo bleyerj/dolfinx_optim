@@ -39,14 +39,11 @@ def generate_Cheeger_problem(N=1):
     )
 
     def border(x):
-        return (
-            np.isclose(x[1], 0)
-            | np.isclose(x[0], 0)
-        )
+        return np.isclose(x[1], 0) | np.isclose(x[0], 0)
 
     f = fem.Constant(domain, 1.0)
 
-    V = fem.functionspace(domain, ("CG", 1))
+    V = fem.functionspace(domain, ("P", 1))
     dofs = fem.locate_dofs_geometrical(V, border)
     bc = fem.dirichletbc(0.0, dofs, V)
 
@@ -71,8 +68,12 @@ def L4_3Ball(*args):
     return LpBall(*args, 4.0 / 3.0)
 
 
+def L2Ball(*args):
+    return LpBall(*args, 2.0)
+
+
 norms = [L2Norm, LinfNorm, L1Norm, L4Norm]
-balls = [L2Ball, L1Ball, LinfBall, L4Norm]
+balls = [L2Ball, L1Ball, LinfBall, L4_3Ball]
 
 x0 = np.full(2, 2.0)
 fun_eval = [
@@ -101,8 +102,7 @@ def test_epigraphs(norm, value):
     pi = norm(grad(u), deg_quad)
     epi = Epigraph(t, pi)
     prob.add_convex_term(epi)
-    with pytest.raises(ValueError):
-        pobj, dobj = prob.optimize()
+    pobj, dobj = prob.optimize()
     prob.add_obj_func(t * dx)
     pobj, dobj = prob.optimize()
     assert np.isclose(pobj, value)
@@ -151,4 +151,5 @@ def test_Cheeger():
     pobj, dobj = prob.optimize()
 
 
-test_conjugate(balls[-1], fun_eval[-1])
+for norm, ball, fun in zip(norms, balls, fun_eval):
+    test_conjugate(ball, fun)

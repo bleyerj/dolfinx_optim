@@ -84,6 +84,13 @@ def create_interpolation_matrix(operator, u, V2, dx):
     A_coo = petsc_matrix_to_scipy(A_petsc, M_array=M_array)
     return scipy_matrix_to_mosek(A_coo), M_array
 
+
+def is_scalar(arr):
+    return not isinstance(arr, (list, tuple, np.ndarray)) or (
+        isinstance(arr, np.ndarray) and arr.shape == ()
+    )
+
+
 def get_value_array(u):
     if u is None:
         return None
@@ -91,9 +98,8 @@ def get_value_array(u):
         return u.x.array
     elif isinstance(u, int) or isinstance(u, float):
         return u
-    else: # constant case
+    else:  # constant case
         return u.value
-
 
 
 class MosekProblem:
@@ -168,7 +174,12 @@ class MosekProblem:
                 domain = mf.Domain.inRange(lxv, uxv)
             print(name, var)
             var_values = get_value_array(var)
-            size = len(var_values)
+            if is_scalar(var_values):
+                size = 1
+            else:
+                size = len(var_values)
+            print(size, var_values)
+            print(domain._shape)
             if name is None:
                 return self.M.variable(size, domain)
             else:
@@ -178,11 +189,11 @@ class MosekProblem:
         V = variable.function_space
         u_bc = fem.Function(V)
         u_bc.vector.set(np.inf)
-        
+
         fem.set_bc(u_bc.vector, to_list(bcs))
         dof_indices = np.where(u_bc.vector.array < np.inf)[0].astype(np.int32)
         bc_values = u_bc.vector.array[dof_indices]
-        
+
         self.M.constraint(vector.pick(dof_indices), mf.Domain.equalsTo(bc_values))
 
     def add_var(
@@ -249,7 +260,7 @@ class MosekProblem:
                     value = np.zeros((V,))
                 var = fem.Constant(self.domain, value)
             new_var.append(var)
-            
+
             vector = self._create_variable_vector(
                 var, name, ux_list[i], lx_list[i], cone_list[i]
             )  # FIXME: better handle bcs ?
@@ -395,8 +406,8 @@ class MosekProblem:
         obj : linear form
         """
         for var, vec in zip(self.variables, self.vectors):
-            print(var.name, type(var))
             if isinstance(var, fem.Function):
+                print(var.name, type(var))
                 var_ = ufl.TestFunction(var.function_space)
                 curr_form = apply_derivatives(ufl.derivative(obj, var, var_))
                 if len(curr_form.arguments()) > 0:
@@ -456,11 +467,11 @@ class MosekProblem:
                     dobj = ufl.derivative(
                         conv_fun.scale_factor * conv_fun.objective, var, var_
                     )
-                    if len(dobj.coefficients())>0:
+                    if len(dobj.coefficients()) > 0:
                         c = fem.assemble_vector(fem.form(dobj)).array
-                    else: 
-                        c=None    
-                if c is not None:            # try:
+                    else:
+                        c = None
+                if c is not None:  # try:
                     obj.append(mf.Expr.dot(c, vec))
                 # except AttributeError:
                 #     obj.append(mf.Expr.constTerm(0.0))
@@ -564,7 +575,8 @@ class MosekProblem:
                 b = expr
             print(b)
             b_vec = mf.Expr.constTerm(
-                fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array/M_array
+                fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array
+                / M_array
             )
             expr_list.append(b_vec)
             z_in_cone = mf.Expr.add(expr_list)
@@ -674,7 +686,7 @@ class MosekProblem:
         if len(self.objectives) > 0:
             self.M.objective(self.sense, mf.Expr.add(self.objectives))
         # else:
-            # raise ValueError("No objective function has been defined.")
+        # raise ValueError("No objective function has been defined.")
         self.M.writeTask("dump.ptf")
         self.M.setLogHandler(sys.stdout)
         self._set_task_parameters()

@@ -13,7 +13,13 @@ from basix.ufl import quadrature_element
 import ufl
 from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 import mosek.fusion as mf
-from dolfinx_optim.utils import to_vect, to_list, get_shape
+from dolfinx_optim.utils import (
+    to_vect,
+    to_list,
+    get_shape,
+    split_affine_expression,
+    reshape,
+)
 
 
 def generate_scalar_quadrature_functionspace(domain, deg_quad):
@@ -161,7 +167,7 @@ class ConvexTerm(ABC):
             self.variables.append(new_var)
             return new_var
 
-    def add_eq_constraint(self, Az, b=0.0, name=None):
+    def add_eq_constraint(self, expr, b=0.0, name=None):
         """
         Add an equality constraint :math:`Az=b`.
 
@@ -181,7 +187,7 @@ class ConvexTerm(ABC):
         """
         if isinstance(b, int):
             b = float(b)
-        self.add_ineq_constraint(Az, b, b, name)
+        self.add_ineq_constraint(expr, b, b, name)
 
     def add_ineq_constraint(self, expr, bu=None, bl=None, name=None):
         """
@@ -203,25 +209,28 @@ class ConvexTerm(ABC):
         if isinstance(bl, int):
             bl = float(bl)
         dim = get_shape(expr)
-        # _, _, constant = split_affine_expression(expr, self.operand, self.variables)
-        # print(get_shape(constant), constant)
-        # if bu is not None:
-        #     d1 = get_shape(bu)
-        #     d2 = get_shape(constant)
-        #     if d1 != d2:
-        #         assert d1 == 0, "Rhs should be a constant, shape mismatch!"
-        #         bu = reshape(bu, d2)
-        #     bu -= constant
-        # if bl is not None:
-        #     d1 = get_shape(bl)
-        #     d2 = get_shape(constant)
-        #     if d1 != d2:
-        #         assert d1 == 0, "Rhs should be a constant, shape mismatch!"
-        #         bl = reshape(bl, d2)
-        #     bl -= constant
+        A_op, A_var, constant = split_affine_expression(
+            expr, self.operand, self.variables
+        )
+        new_expr = A_op + sum(A_var)
+
+        if bu is not None:
+            d1 = get_shape(bu)
+            d2 = get_shape(constant)
+            if d1 != d2:
+                assert d1 == 0, "Rhs should be a constant, shape mismatch!"
+                bu = reshape(bu, d2)
+            bu -= constant
+        if bl is not None:
+            d1 = get_shape(bl)
+            d2 = get_shape(constant)
+            if d1 != d2:
+                assert d1 == 0, "Rhs should be a constant, shape mismatch!"
+                bl = reshape(bl, d2)
+            bl -= constant
         self.linear_constraints.append(
             {
-                "expr": expr,
+                "expr": new_expr,
                 "bu": bu,
                 "bl": bl,
                 "dim": dim,

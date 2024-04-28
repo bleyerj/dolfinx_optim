@@ -65,4 +65,4 @@ def test_norms(norm, value):
     assert np.isclose(dobj, value(X))
 
 
-test_norms(LambdaMax, fun_eval[0])
+# test_norms(LambdaMax, fun_eval[0])
