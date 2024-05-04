@@ -22,9 +22,14 @@ import ufl
 from ufl import dot, grad
 from dolfinx import fem, mesh, io, plot
 from dolfinx_optim.mosek_io import MosekProblem
-from dolfinx_optim.convex_function import L1Norm, L2Norm, LinfNorm
+from dolfinx_optim.convex_function import L1Norm, L2Norm, LinfNorm, LpNorm
 
-norms = {"l2": L2Norm, "l1": L1Norm, "linf": LinfNorm}
+
+def LpNorm4(*args):
+    return LpNorm(*args, 4)
+
+
+norms = {"l2": L2Norm, "l1": L1Norm, "linf": LinfNorm, "lp4": LpNorm4}
 
 
 def Cheeger_pb(N: int, interp: str, degree: int, norm_type: str = "l2"):
@@ -50,7 +55,12 @@ def Cheeger_pb(N: int, interp: str, degree: int, norm_type: str = "l2"):
     )
 
     def border(x):
-        return np.isclose(x[1], 0) | np.isclose(x[0], 0)
+        return (
+            np.isclose(x[1], 0)
+            | np.isclose(x[0], 0)
+            | np.isclose(x[1], 1)
+            | np.isclose(x[0], 1)
+        )
 
     f = fem.Constant(domain, 1.0)
 
@@ -65,7 +75,7 @@ def Cheeger_pb(N: int, interp: str, degree: int, norm_type: str = "l2"):
     # Choose norm type using predefined functions
 
     # Choose quadrature scheme depending on chosen interpolation degree
-    F = norms[norm_type](grad(u), degree)
+    F = norms[norm_type](grad(u), 2 * degree)
 
     prob.add_convex_term(F)
 
@@ -84,20 +94,15 @@ def Cheeger_pb(N: int, interp: str, degree: int, norm_type: str = "l2"):
     u_grid = pyvista.UnstructuredGrid(u_topology, u_cell_types, u_geometry)
     u_grid.point_data["Displacement"] = u.x.array
     u_grid.set_active_scalars("Displacement")
-    warped = u_grid.warp_by_scalar("Displacement", factor=5)
 
-    plotter = pyvista.Plotter()
-    plotter.add_mesh(
-        warped,
-        show_scalar_bar=True,
-        scalars="Displacement",
-    )
-    edges = warped.extract_all_edges()
+    plotter = pyvista.Plotter(off_screen=True)
+    plotter.add_mesh(u_grid, show_scalar_bar=True, scalars="Displacement", cmap="Blues")
+    edges = u_grid.extract_all_edges()
     plotter.add_mesh(edges, color="k", line_width=1)
-    pyvista.start_xvfb(wait=0.1)
-    plotter.show()
+
+    plotter.view_xy()
     plotter.screenshot("Cheeger_set.png")
     return pobj
 
 
-Cheeger_pb(50, "CG", degree=2, norm_type="l2")
+Cheeger_pb(50, "Q", degree=1, norm_type="lp4")
