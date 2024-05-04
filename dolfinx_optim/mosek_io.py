@@ -178,14 +178,11 @@ class MosekProblem:
                 lxv = get_value_array(lx)
                 uxv = get_value_array(ux)
                 domain = mf.Domain.inRange(lxv, uxv)
-            print(name, var)
             var_values = get_value_array(var)
             if is_scalar(var_values):
                 size = 1
             else:
                 size = len(var_values)
-            print(size, var_values)
-            print(domain._shape)
             if name is None:
                 return self.M.variable(size, domain)
             else:
@@ -366,6 +363,7 @@ class MosekProblem:
         elif arity == 1:
             ufl_element = A.arguments()[0].ufl_function_space().ufl_element()
             V_cons = fem.functionspace(self.domain, ufl_element)
+            # TODO: add possibility to pass directly an assembled matrix (comply with dolfinx_mpc)
 
             for var, vec in zip(self.variables, self.vectors):
                 if isinstance(var, fem.Function):
@@ -395,11 +393,12 @@ class MosekProblem:
             if type(bl) in [float, int]:
                 xbl = np.full(expr_tot.getSize(), bl)
             else:
-                xbl = fem.assemble_vector(fem.form(bl))
+                xbl = fem.assemble_vector(fem.form(bl)).array
             if type(bu) in [float, int]:
                 xbu = np.full(expr_tot.getSize(), bu)
             else:
-                xbu = fem.assemble_vector(fem.form(bu))
+                xbu = fem.assemble_vector(fem.form(bu)).array
+
             constraint = self.M.constraint(expr_tot, mf.Domain.inRange(xbl, xbu))
             self.constraints.update({name: (constraint, V_cons)})
 
@@ -545,16 +544,22 @@ class MosekProblem:
                 xbl = None
 
             if (xbu is not None) and (xbl is not None):
-                print([e.getShape() for e in expr_list], xbl.shape)
-                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.inRange(xbl, xbu))
+                constraint = self.M.constraint(
+                    mf.Expr.add(expr_list), mf.Domain.inRange(xbl, xbu)
+                )
             elif xbu is not None:
-                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.lessThan(xbu))
+                constraint = self.M.constraint(
+                    mf.Expr.add(expr_list), mf.Domain.lessThan(xbu)
+                )
             elif xbl is not None:
-                self.M.constraint(mf.Expr.add(expr_list), mf.Domain.greaterThan(xbl))
+                constraint = self.M.constraint(
+                    mf.Expr.add(expr_list), mf.Domain.greaterThan(xbl)
+                )
             else:
                 raise NotImplementedError(
                     "Linear inequality constraint must have bounds"
                 )
+            self.constraints.update({cons["name"]: (constraint, cons["V"])})
 
     def _apply_conic_constraints(self, conv_fun):
         for cons in conv_fun.conic_constraints:
@@ -567,7 +572,9 @@ class MosekProblem:
             curr_expr_list = []
             for var, vec in zip(self.variables, self.vectors):
                 if not isinstance(var, fem.Constant):
-                    curr_expr = apply_derivatives(ufl.derivative(expr, var, var))
+                    curr_expr = apply_derivatives(
+                        apply_algebra_lowering(ufl.derivative(expr, var, var))
+                    )
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
                         A_op, M_array = create_interpolation_matrix(
@@ -582,7 +589,6 @@ class MosekProblem:
                 b = expr - sum(curr_expr_list)
             else:
                 b = expr
-            print(b)
             b_vec = mf.Expr.constTerm(
                 fem.assemble_vector(fem.form(ufl.inner(b, v) * conv_fun.dx)).array
                 / M_array
@@ -604,7 +610,8 @@ class MosekProblem:
             else:
                 z_in_cone = mf.Expr.reshape(z_in_cone, conv_fun.ndof, 1)
 
-            self.M.constraint(z_in_cone, mosek_cone_domain(cone))
+            constraint = self.M.constraint(z_in_cone, mosek_cone_domain(cone))
+            self.constraints.update({cons["name"]: (constraint, cons["V"])})
 
     def _set_task_parameters(self):
         assert all(

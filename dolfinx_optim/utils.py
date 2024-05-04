@@ -54,7 +54,7 @@ def half_vect2subl(index_list, d):
     return [subl[i] for i in index_list]
 
 
-def to_vect(X, symmetric=True):
+def to_vect(X, symmetric=False):
     if symmetric:
         raise NotImplementedError
     else:
@@ -62,7 +62,7 @@ def to_vect(X, symmetric=True):
         return as_vector([X[i, j] for i in range(d1) for j in range(d2)])
 
 
-def to_mat(X, symmetric=True, shape=None):
+def to_mat(X, symmetric=False, shape=None):
     if symmetric:
         raise NotImplementedError
     else:
@@ -74,7 +74,7 @@ def to_mat(X, symmetric=True, shape=None):
             assert (
                 len(X) == d1 * d2
             ), f"Vector of size {len(X)} cannot be written as {d1}x{d2}."
-        return as_matrix([[X[i + d1 * j] for j in range(d2)] for i in range(d1)])
+        return as_matrix([[X[j + d2 * i] for j in range(d2)] for i in range(d1)])
 
 
 # def to_vect(X, symmetric=True):
@@ -105,54 +105,6 @@ def to_mat(X, symmetric=True, shape=None):
 #             return as_vector(components)
 #     else:
 #         raise ValueError("Variable must be a square tensor")
-
-
-# def to_mat(X, symmetric=True):
-#     """Transform vector of components (diagonal spanning) into tensor.
-
-#     Parameters
-#     ----------
-#     X : UFL vector expression
-#         a d*(d+1)/2 vector if the d x d tensor is symmetric, a d**2 vector otherwise
-#     symmetric: bool
-#         indicates if the returned tensor is symmetric or not
-
-#     Returns
-#     -------
-#     UFL tensor expression
-#         a d x d tensor
-#     """
-#     s = shape(X)
-#     buff = 0
-#     if len(s) == 1:
-#         if symmetric:
-#             d = int(-1 + (1 + 8 * s[0]) ** 0.5) // 2
-#             assert (
-#                 s[0] == d * (d + 1) // 2
-#             ), "Vector shape does not correspond to a lower triangular part"
-
-#             a = np.zeros((d, d), dtype="int")
-#             for k in range(d):
-#                 for i in range(k, d):
-#                     a[i, i - k] = buff
-#                     a[i - k, i] = buff
-#                     buff += 1
-#         else:
-#             d = int(sqrt(s[0]))
-#             assert s[0] == d**2, "Vector shape must be d**2 for dimension d."
-#             a = np.zeros((d, d), dtype="int")
-#             for i in range(d):
-#                 a[i, i] = i
-#             buff = d
-#             for k in range(1, d):
-#                 for i in range(k, d):
-#                     a[i - k, i] = buff
-#                     a[i, i - k] = buff + 1
-#                     buff += 2
-#         mat = [[X[int(a[i, j])] for j in range(d)] for i in range(d)]
-#         return as_matrix(mat)
-#     else:
-#         raise ValueError("Variable must be a vector")
 
 
 def concatenate(vectors):
@@ -186,8 +138,9 @@ def vstack(arrays):
 
 def hstack(arrays):
     """Vertical stack of vectors/matrix."""
-    if all([len(a.ufl_shape) <= 1 for a in arrays]):
-        return concatenate(arrays)
+    shapes = [a.ufl_shape for a in arrays]
+    if all([len(s) <= 1 for s in shapes]):
+        return as_matrix([[a[i] for a in arrays] for i in range(shapes[0][0])])
 
     shapes = [shape(a)[0] for a in arrays]
     assert len(set(shapes)) == 1, "Arrays must have matching dimensions."

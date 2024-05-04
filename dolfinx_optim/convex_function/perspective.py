@@ -36,13 +36,17 @@ class Perspective(ConvexTerm):
 
         self.linear_constraints = []
         for cons in self.fun.linear_constraints:
+            new_cons = cons
             d = get_shape(cons["expr"])
             if cons["bu"] is not None:
                 buv = reshape(cons["bu"], d)
-                self.add_ineq_constraint(cons["expr"] - buv * t, bu=buv * t0)
+                new_cons["expr"] -= buv * t
+                new_cons["bu"] = buv * t0
             if cons["bl"] is not None:
                 blv = reshape(cons["bl"], d)
-                self.add_ineq_constraint(cons["expr"] - blv * t, bl=blv * t0)
+                new_cons["expr"] -= blv * t
+                new_cons["bl"] = blv * t0
+            self.linear_constraints.append(new_cons)
 
         for cons in self.conic_constraints:
             linear_op, linear_var, constant = split_affine_expression(

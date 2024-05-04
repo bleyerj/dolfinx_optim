@@ -98,7 +98,6 @@ def test_epigraphs(norm, value):
     pi = norm(grad(u), deg_quad)
     epi = Epigraph(t, pi)
     prob.add_convex_term(epi)
-    pobj, dobj = prob.optimize()
     prob.add_obj_func(t * dx)
     pobj, dobj = prob.optimize()
     assert np.isclose(pobj, value)
@@ -150,4 +149,5 @@ def test_Cheeger():
 # for norm, ball, fun in zip(norms, balls, fun_eval):
 #     print(norm)
 #     test_perspectives(norm, fun)
-test_perspectives(norms[-1], fun_eval[-1])
+# test_norms(norms[1], fun_eval[1])
+test_perspectives(norms[1], fun_eval[1])

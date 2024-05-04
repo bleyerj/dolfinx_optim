@@ -33,8 +33,8 @@ def to_ball(norm, k, *args):
 #     return to_ball(LinfNorm, k, *args)
 
 
-# def LpBall(*args, k=1.0):
-#     return to_ball(LpNorm, k, *args)
+def LpBall(*args, k=1.0):
+    return to_ball(LpNorm, k, *args)
 
 
 class L2Ball(ConvexTerm):
@@ -127,20 +127,20 @@ class LpNorm(ConvexTerm):
         self.add_linear_term(t)
 
 
-class LpBall(ConvexTerm):
-    """Define the Lp-ball constraint :math:`||x||_p <= 1.0`."""
+# class LpBall(ConvexTerm):
+#     """Define the Lp-ball constraint :math:`||x||_p <= 1.0`."""
 
-    def __init__(self, operand, deg_quad, p):
-        super().__init__(operand, deg_quad, parameters=(p,))
+#     def __init__(self, operand, deg_quad, p):
+#         super().__init__(operand, deg_quad, parameters=(p,))
 
-    def conic_repr(self, expr, p):
-        d = get_shape(expr)
-        if d == 0:
-            stack = concatenate([1.0, 1.0, expr])
-            self.add_conic_constraint(stack, Pow(3, 1 / p))
-        else:
-            r = self.add_var(d)
-            self.add_eq_constraint(sum(r), b=1.0)
-            for i in range(d):
-                stack = concatenate([r[i], 1.0, expr[i]])
-                self.add_conic_constraint(stack, Pow(3, 1 / p))
+#     def conic_repr(self, expr, p):
+#         d = get_shape(expr)
+#         if d == 0:
+#             stack = concatenate([1.0, 1.0, expr])
+#             self.add_conic_constraint(stack, Pow(3, 1 / p))
+#         else:
+#             r = self.add_var(d)
+#             self.add_eq_constraint(sum(r), b=1.0)
+#             for i in range(d):
+#                 stack = concatenate([r[i], 1.0, expr[i]])
+#                 self.add_conic_constraint(stack, Pow(3, 1 / p))
