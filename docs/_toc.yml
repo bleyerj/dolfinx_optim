@@ -1,0 +1,10 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: index
+title: dolfinx_optim Documentation
+
+chapters:
+- file: demos/viscoplasticity/viscoplasticity.md
+- file: api.rst
