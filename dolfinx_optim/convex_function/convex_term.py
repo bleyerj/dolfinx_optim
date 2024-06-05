@@ -22,18 +22,15 @@ from dolfinx_optim.utils import (
 )
 
 
-def generate_scalar_quadrature_functionspace(domain, deg_quad):
-    # We = ufl.FiniteElement(
-    #     "Quadrature", domain.ufl_cell(), degree=deg_quad, quad_scheme="default"
-    # )
+def generate_scalar_quadrature_functionspace(domain, deg_quad, scheme="default"):
     We = quadrature_element(
-        domain.topology.cell_name(), value_shape=(), scheme="default", degree=deg_quad
+        domain.topology.cell_name(), value_shape=(), scheme=scheme, degree=deg_quad
     )
     W = fem.functionspace(domain, We)
     return W
 
 
-def generate_quadrature_functionspace(domain, deg_quad, shape):
+def generate_quadrature_functionspace(domain, deg_quad, shape, scheme="default"):
     if shape == 0:
         shape = ()
     elif isinstance(shape, int):
@@ -41,28 +38,10 @@ def generate_quadrature_functionspace(domain, deg_quad, shape):
     We = quadrature_element(
         domain.topology.cell_name(),
         value_shape=shape,
-        scheme="default",
+        scheme=scheme,
         degree=deg_quad,
     )
     return fem.functionspace(domain, We)
-    # We = ufl.TensorElement(
-    #     "Quadrature",
-    #     domain.ufl_cell(),
-    #     degree=deg_quad,
-    #     quad_scheme="default",
-    #     shape=shape,
-    # )
-    #     return fem.FunctionSpace(domain, We)
-    # else:
-    #     raise NotImplementedError
-    # We = ufl.VectorElement(
-    #     "Quadrature",
-    #     domain.ufl_cell(),
-    #     degree=deg_quad,
-    #     quad_scheme="default",
-    #     dim=dim,
-    # )
-    # return fem.FunctionSpace(domain, We)
 
 
 def _get_mesh_from_expr(expr):
@@ -74,14 +53,20 @@ def _get_mesh_from_expr(expr):
 
 
 class ConvexTerm(ABC):
-    def __init__(self, operand, deg_quad, parameters=None):
+    def __init__(self, operand, deg_quad, quadrature_scheme="default", parameters=None):
         self.domain = _get_mesh_from_expr(operand)
         self.deg_quad = deg_quad
-        self.W = generate_scalar_quadrature_functionspace(self.domain, self.deg_quad)
+        self.quad_scheme = quadrature_scheme
+        self.W = generate_scalar_quadrature_functionspace(
+            self.domain, self.deg_quad, self.quad_scheme
+        )
         self.dx = ufl.Measure(
             "dx",
             domain=self.domain,
-            metadata={"quadrature_degree": deg_quad, "quadrature_scheme": "default"},
+            metadata={
+                "quadrature_degree": deg_quad,
+                "quadrature_scheme": self.quad_scheme,
+            },
         )
 
         self.operand_shape = ufl.shape(operand)
@@ -95,7 +80,7 @@ class ConvexTerm(ABC):
         )  # use variable to differentiate expressions
 
         self.W_exp = generate_quadrature_functionspace(
-            self.domain, deg_quad, self.operand_shape
+            self.domain, deg_quad, self.operand_shape, self.quad_scheme
         )
         self.ndof = self.W.dofmap.index_map.size_global * self.W.dofmap.index_map_bs
 
@@ -143,7 +128,9 @@ class ConvexTerm(ABC):
         dim_list = to_list(dim)
         nlist = len(dim_list)
         new_V_add_var = [
-            generate_quadrature_functionspace(self.domain, self.deg_quad, d)
+            generate_quadrature_functionspace(
+                self.domain, self.deg_quad, d, self.quad_scheme
+            )
             for d in dim_list
         ]
         self.ux += to_list(ux, nlist)
@@ -232,7 +219,9 @@ class ConvexTerm(ABC):
                 "bu": bu,
                 "bl": bl,
                 "dim": dim,
-                "V": generate_quadrature_functionspace(self.domain, self.deg_quad, dim),
+                "V": generate_quadrature_functionspace(
+                    self.domain, self.deg_quad, dim, self.quad_scheme
+                ),
                 "name": name,
             }
         )
@@ -253,7 +242,9 @@ class ConvexTerm(ABC):
                 "expr": expr,
                 "cone": cone,
                 "dim": dim,
-                "V": generate_quadrature_functionspace(self.domain, self.deg_quad, dim),
+                "V": generate_quadrature_functionspace(
+                    self.domain, self.deg_quad, dim, self.quad_scheme
+                ),
                 "name": name,
             }
         )

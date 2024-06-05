@@ -677,7 +677,7 @@ class MosekProblem:
             print("Solver information:\n{}".format(info))
         return info
 
-    def optimize(self, sense="min", get_bound_dual=False):
+    def optimize(self, sense="min", dump=False):
         """
         Write the problem in Mosek format and solves.
 
@@ -685,14 +685,15 @@ class MosekProblem:
         ----------
         sense : {"min[imize]", "max[imize]"}
             sense of optimization
-        get_bound_dual : bool
-            if True, optimal dual variable bounds will be stored in `self.sux` and
-            `self.slx`
+        dump : bool
+            dumps the problem to a .ptf file format, default=False
 
         Returns
         -------
         pobj : float
-            the computed optimal value
+            the computed primal optimal value
+        dobj : float
+            the computed dual optimal value
         """
         if sense in ["minimize", "min"]:
             self.sense = mf.ObjectiveSense.Minimize
@@ -701,9 +702,8 @@ class MosekProblem:
 
         if len(self.objectives) > 0:
             self.M.objective(self.sense, mf.Expr.add(self.objectives))
-        # else:
-        # raise ValueError("No objective function has been defined.")
-        self.M.writeTask("dump.ptf")
+        if dump:
+            self.M.writeTask(f"{self.name}.ptf")
         self.M.setLogHandler(sys.stdout)
         self._set_task_parameters()
         self.M.solve()
