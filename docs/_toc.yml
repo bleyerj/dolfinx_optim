@@ -5,6 +5,13 @@ format: jb-book
 root: index
 title: dolfinx_optim Documentation
 
-chapters:
-- file: demos/viscoplasticity/viscoplasticity.md
-- file: api.rst
+
+parts:
+  - caption: Documented demos
+    chapters:
+      - file: demos/viscoplasticity/viscoplasticity.md
+      - file: demos/3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.md
+      - file: demos/cartoon_texture_decomposition/cartoon_texture_decomposition.md
+  - caption: API
+    chapters:
+      - file: api.rst
