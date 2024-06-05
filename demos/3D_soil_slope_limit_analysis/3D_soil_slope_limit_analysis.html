@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Three-dimensional limit analysis problem using Semi-Definite Programming &#8212; dolfinx_optim</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'demos/3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Cartoon-texture oscillation decomposition demo" href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html" />
+    <link rel="prev" title="Viscoplastic fluid" href="../viscoplasticity/viscoplasticity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dolfinx_optim</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    dolfinx_optim documentation
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html">Cartoon-texture oscillation decomposition demo</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/dolfinx_optim.html">dolfinx_optim</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.html">dolfinx_optim.convex_function</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.conjugate.html">dolfinx_optim.convex_function.conjugate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.convex_term.html">dolfinx_optim.convex_function.convex_term</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.eigenvalues.html">dolfinx_optim.convex_function.eigenvalues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.epigraph.html">dolfinx_optim.convex_function.epigraph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.infconvolution.html">dolfinx_optim.convex_function.infconvolution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.norms.html">dolfinx_optim.convex_function.norms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.partial_minimization.html">dolfinx_optim.convex_function.partial_minimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.perspective.html">dolfinx_optim.convex_function.perspective</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.simple_terms.html">dolfinx_optim.convex_function.simple_terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.mosek_io.html">dolfinx_optim.mosek_io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.utils.html">dolfinx_optim.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Three-dimensional limit analysis problem using Semi-Definite Programming</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-formulation">Problem formulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conic-reformulation">Conic reformulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="three-dimensional-limit-analysis-problem-using-semi-definite-programming">
+<h1>Three-dimensional limit analysis problem using Semi-Definite Programming<a class="headerlink" href="#three-dimensional-limit-analysis-problem-using-semi-definite-programming" title="Link to this heading">#</a></h1>
+<p>In this demo, we consider a classical limit analysis problem, namely a slope stability problem for a cohesive-frictional material described by a Mohr-Coulomb criterion. The geometry being three-dimensional in this example, the corresponding problem will be a Semi-Definite Programming (SDP) problem. We show how to formulate such constraints using the <code class="docutils literal notranslate"><span class="pre">dolfinx_optim</span></code> package.</p>
+<p>In the following, we will denote by <span class="math notranslate nohighlight">\(\mathbb{S}_n\)</span> the set of symmetric <span class="math notranslate nohighlight">\(n\times n\)</span> matrices.</p>
+<section id="problem-formulation">
+<h2>Problem formulation<a class="headerlink" href="#problem-formulation" title="Link to this heading">#</a></h2>
+<p>We consider a soil domain <span class="math notranslate nohighlight">\(\Omega = [0;L]\times [0;W] \times [0;H]\)</span> with homogeneous Dirichlet boundary conditions <span class="math notranslate nohighlight">\(\boldsymbol{u}=0\)</span> on the right <span class="math notranslate nohighlight">\(x=L\)</span> and bottom <span class="math notranslate nohighlight">\(z=0\)</span>. The remaining boundaries have homogeneous Neumann boundary conditions. The loading consists of a gravitational body force <span class="math notranslate nohighlight">\(\boldsymbol{f}=(0,0,-\gamma)\)</span> with <span class="math notranslate nohighlight">\(\gamma\)</span> being  the soil self-weight. The soil obeys a Mohr-Coulomb criterion of cohesion <span class="math notranslate nohighlight">\(c\)</span> and internal friction angle <span class="math notranslate nohighlight">\(\phi\)</span>, i.e. the stress state <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\in \mathbb{S}_3\)</span> must satisfy <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\in G\)</span> where:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a27826c4-a661-4d98-b843-b3aa74e0e076">
+<span class="eqno">()<a class="headerlink" href="#equation-a27826c4-a661-4d98-b843-b3aa74e0e076" title="Permalink to this equation">#</a></span>\[\begin{equation}
+G=\left\{\boldsymbol{\sigma}\in \mathbb{S}_3 \text{ s.t. } \sigma_M - a\sigma_m \leq \dfrac{2c\cos\phi}{1+\sin\phi}\right\}
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(a=\dfrac{1-\sin\phi}{1+\sin\phi}\)</span>, <span class="math notranslate nohighlight">\(\sigma_M = \max_{I} \{\sigma_I\}\)</span> and <span class="math notranslate nohighlight">\(\sigma_m = \min_I \{\sigma_I\}\)</span> with <span class="math notranslate nohighlight">\(\sigma_I\)</span> being the eigenvalues of <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)</span>.</p>
+<p>The limit analysis problem amounts to finding the slope stability factor given by <span class="math notranslate nohighlight">\(SF=\lambda^+\dfrac{\gamma H}{c}\)</span> where <span class="math notranslate nohighlight">\(\lambda^+\)</span> is obtained from solving:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-7ca50fde-06f3-4302-b55a-0b246d5326ce">
+<span class="eqno">()<a class="headerlink" href="#equation-7ca50fde-06f3-4302-b55a-0b246d5326ce" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\begin{array}{rl} 
+\displaystyle{\lambda^+ = \inf_{\boldsymbol{u}}} &amp; \displaystyle{\int_\Omega \pi(\nabla^s \boldsymbol{u}) \,\text{d}\Omega}\\
+\text{s.t.} &amp; \displaystyle{\int_{\Omega} \boldsymbol{f}\cdot\boldsymbol{u} \,\text{d}\Omega = 1}
+\end{array}
+\end{equation}\]</div>
+<p>in which <span class="math notranslate nohighlight">\(\nabla^s \boldsymbol{u} = \frac{1}{2}(\nabla \boldsymbol{u} + \nabla \boldsymbol{u}^T)\)</span> is the symmetric gradient and <span class="math notranslate nohighlight">\(\pi\)</span> is the support function of the convex set <span class="math notranslate nohighlight">\(G\)</span>:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\pi(\boldsymbol{d}) &amp;= \sup_{\boldsymbol{\sigma}\in G} \{\boldsymbol{\sigma}:\boldsymbol{d}\}\\
+&amp;= \begin{cases}
+c \cot\phi \operatorname{tr}(\boldsymbol{d}) &amp; \text{if } \displaystyle{\operatorname{tr}(\boldsymbol{d}) \geq \sin\phi\left(\sum_I |d_I|\right)} \\
++\infty &amp; \text{otherwise}
+\end{cases}
+\end{align*}\]</div>
+</section>
+<section id="conic-reformulation">
+<h2>Conic reformulation<a class="headerlink" href="#conic-reformulation" title="Link to this heading">#</a></h2>
+<p>Following <span id="id1">[<a class="reference internal" href="#id5" title="Christopher M Martin and Athanasios Makrodimopoulos. Finite-element limit analysis of mohr–coulomb materials in 3d using semidefinite programming. Journal of engineering mechanics, 134(4):339–347, 2008.">Martin and Makrodimopoulos, 2008</a>]</span>, the above support function can be expressed equivalently in a conic-representable fashion using two auxiliary SDP variables <span class="math notranslate nohighlight">\(\boldsymbol{Y}_1,\boldsymbol{Y}_2\)</span> as follows:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-44729900-752e-4c08-8fdc-57b85349de52">
+<span class="eqno">()<a class="headerlink" href="#equation-44729900-752e-4c08-8fdc-57b85349de52" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\begin{array}{rl} 
+\displaystyle{\pi(\boldsymbol{d}) = \inf_{\boldsymbol{Y}_1,\boldsymbol{Y}_2\in \mathbb{S}_3}} &amp; \dfrac{2c\cos\phi}{1+\sin\phi}\operatorname{tr}(\boldsymbol{Y}_1)\\
+\text{s.t.} &amp; \boldsymbol{d} = \boldsymbol{Y}_1 - \boldsymbol{Y}_2\\
+&amp; a\operatorname{tr}(\boldsymbol{Y}_1)=\operatorname{tr}(\boldsymbol{Y}_2)\\
+&amp; \boldsymbol{Y}_1 \succeq 0, \boldsymbol{Y}_2\succeq 0
+\end{array}
+\end{equation}\]</div>
+</section>
+<section id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Link to this heading">#</a></h2>
+<p>We first important relevant packages and define the box mesh.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">fem</span><span class="p">,</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.mosek_io</span> <span class="kn">import</span> <span class="n">MosekProblem</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.convex_function</span> <span class="kn">import</span> <span class="n">ConvexTerm</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.cones</span> <span class="kn">import</span> <span class="n">SDP</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.utils</span> <span class="kn">import</span> <span class="n">to_vect</span>
+
+<span class="n">L</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">Nz</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_box</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">)],</span> <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">Nz</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we used on purpose only 1 element in the <span class="math notranslate nohighlight">\(y\)</span>-direction with quite a large width in order to reproduce a 2D plane-strain situation for which we have a good approximation of the exact solution and limit the computation time of this demo.</p>
+<p>We then define the conic representation of the Mohr-Coulomb support function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.0</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MohrCoulomb</span><span class="p">(</span><span class="n">ConvexTerm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SDP implementation of Mohr-Coulomb criterion.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">conic_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">Y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_var</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">cone</span><span class="o">=</span><span class="n">SDP</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">Y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_var</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">cone</span><span class="o">=</span><span class="n">SDP</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_eq_constraint</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">to_vect</span><span class="p">(</span><span class="n">Y1</span><span class="p">)</span> <span class="o">+</span> <span class="n">to_vect</span><span class="p">(</span><span class="n">Y2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_eq_constraint</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">Y2</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">Y1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_linear_term</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">Y1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the above, symmetric <span class="math notranslate nohighlight">\(n\times n\)</span> matrix variables are created. The SDP constraint is enforced through the cone <code class="docutils literal notranslate"><span class="pre">SDP(3)</span></code>. Note that equality constraints expect scalar or vectors so that we use the <code class="docutils literal notranslate"><span class="pre">to_vect</span></code> utility function to reshape the matrix variables to a vector form.</p>
+<p>We can now set up the loading, function spaces and boundary conditions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">gamma</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">border</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">L</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+
+
+<span class="n">gdim</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">functionspace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">gdim</span><span class="p">,)))</span>
+<span class="n">bc_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_geometrical</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">border</span><span class="p">)</span>
+<span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">gdim</span><span class="p">,)),</span> <span class="n">bc_dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now initiate the <code class="docutils literal notranslate"><span class="pre">MosekProblem</span></code> object and first add the linear equality constraint:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">MosekProblem</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s2">&quot;3D limit analysis&quot;</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Collapse mechanism&quot;</span><span class="p">)</span>
+
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_eq_constraint</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">u</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now add the convex term corresponding to the support function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">crit</span> <span class="o">=</span> <span class="n">MohrCoulomb</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">sym</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">)),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_convex_term</span><span class="p">(</span><span class="n">crit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The problem can then be solved and results are exported to Paraview.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pobj</span><span class="p">,</span> <span class="n">dobj</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">VTKFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&quot;results.pvd&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">vtk</span><span class="p">:</span>
+    <span class="n">vtk</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Problem
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Name                   : 3D limit analysis
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Objective sense        : minimize        
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Type                   : CONIC (conic optimization problem)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Constraints            : 96730           
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Affine conic cons.     : 0               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Disjunctive cons.      : 0               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Cones                  : 0               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Scalar variables       : 15130           
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Matrix variables       : 19200 (scalarized: 115200)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Integer variables      : 0               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer started.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GP based matrix reordering started.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GP based matrix reordering terminated.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - threads                : 14              
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - solved problem         : the primal      
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - Constraints            : 96730           
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - Cones                  : 1               
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - Scalar variables       : 15130             conic                  : 15130           
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - Semi-definite variables: 19200             scalarized             : 115200          
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - setup time             : 2.78            
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - dense det. time        : 1.12              GP order time          : 0.21            
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - nonzeros before factor : 3.89e+06          after factor           : 6.91e+06        
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - dense dim.             : 11786             flops                  : 5.47e+11        
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - GP saved nzs           : 5.44e+05          GP saved flops         : 2.37e+09        
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0   6.4e+01  1.0e+00  9.3e+00  0.00e+00   8.313843876e+00   0.000000000e+00   1.0e+00  2.89  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1   6.0e+01  9.4e-01  4.2e+01  -1.96e+01  2.057973683e+01   2.220911241e+01   9.4e-01  5.98  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2   5.4e+01  8.5e-01  6.3e+01  -3.74e+01  1.541073344e+00   6.470667017e+01   8.5e-01  8.65  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3   4.3e+01  6.8e-01  6.1e+01  -1.94e+00  1.953587175e+00   9.416024834e+01   6.8e-01  11.35 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4   3.0e+01  4.7e-01  5.3e+01  -1.69e+00  2.877919262e+00   1.476198772e+02   4.7e-01  14.14 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5   1.0e+01  1.6e-01  2.4e+01  -1.15e+00  9.257383903e+00   2.735340275e+02   1.6e-01  17.02 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>6   2.3e+00  3.6e-02  2.7e+00  2.91e-01   1.778475369e+01   7.996443998e+01   3.6e-02  20.07 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7   4.0e-01  6.2e-03  4.7e-02  1.26e+00   3.875455863e+00   4.510374853e+00   6.2e-03  23.44 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>8   1.9e-01  3.0e-03  1.3e-02  4.28e+00   1.289498450e+00   1.509526752e+00   3.0e-03  26.30 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>9   9.9e-02  1.5e-03  4.1e-03  2.09e+00   9.199815082e-01   9.991602610e-01   1.5e-03  29.14 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10  5.6e-02  8.7e-04  1.5e-03  1.53e+00   8.107590068e-01   8.460483001e-01   8.7e-04  32.01 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>11  1.0e-02  1.6e-04  7.5e-05  1.31e+00   7.169651108e-01   7.194055361e-01   1.6e-04  35.27 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12  1.9e-03  3.0e-05  2.7e-06  1.06e+00   6.994801453e-01   6.995547014e-01   3.0e-05  38.75 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>13  4.0e-04  6.3e-06  1.3e-07  1.01e+00   6.958774407e-01   6.958786193e-01   6.3e-06  42.21 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>14  1.7e-04  2.7e-06  3.0e-08  1.00e+00   6.953302559e-01   6.953302373e-01   2.7e-06  45.22 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>15  2.9e-05  4.5e-07  6.2e-10  1.00e+00   6.949877854e-01   6.949875713e-01   4.5e-07  48.73 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>16  1.6e-05  2.5e-07  2.4e-10  9.97e-01   6.949594176e-01   6.949592945e-01   2.5e-07  51.91 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>17  8.4e-07  3.7e-08  4.3e-12  9.96e-01   6.949278248e-01   6.949278054e-01   3.7e-08  55.37 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer terminated. Time: 55.47   
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interior-point solution summary
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Problem status  : PRIMAL_AND_DUAL_FEASIBLE
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Solution status : OPTIMAL
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Primal.  obj: 6.9492782476e-01    nrm: 1e+01    Viol.  con: 3e-06    var: 0e+00    barvar: 0e+00  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Dual.    obj: 6.9492780542e-01    nrm: 8e-01    Viol.  con: 0e+00    var: 8e-11    barvar: 2e-09  
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>We can then check the solution compared with the exact solution provided by <span id="id2">[<a class="reference internal" href="#id6" title="Wai-Fah Chen. Limit analysis and soil plasticity. Elsevier, 2013.">Chen, 2013</a>]</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;2D factor [Chen] (for phi=30°):&quot;</span><span class="p">,</span> <span class="mf">6.69</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computed factor:&quot;</span><span class="p">,</span> <span class="n">pobj</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">gamma</span><span class="o">*</span><span class="n">H</span><span class="o">/</span><span class="n">c</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2D factor [Chen] (for phi=30°): 6.69
+Computed factor: 6.949278247567571
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="" src="../../_images/collapse_mechanism.gif" /></p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id6" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Che13</a><span class="fn-bracket">]</span></span>
+<p>Wai-Fah Chen. <em>Limit analysis and soil plasticity</em>. Elsevier, 2013.</p>
+</div>
+<div class="citation" id="id5" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">MM08</a><span class="fn-bracket">]</span></span>
+<p>Christopher M Martin and Athanasios Makrodimopoulos. Finite-element limit analysis of mohr–coulomb materials in 3d using semidefinite programming. <em>Journal of engineering mechanics</em>, 134(4):339–347, 2008.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./demos/3D_soil_slope_limit_analysis"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../viscoplasticity/viscoplasticity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Viscoplastic fluid</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Cartoon-texture oscillation decomposition demo</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-formulation">Problem formulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conic-reformulation">Conic reformulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jeremy Bleyer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
