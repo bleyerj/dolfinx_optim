@@ -173,10 +173,14 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documented demos</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="demos/viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demos/3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demos/cartoon_texture_decomposition/cartoon_texture_decomposition.html">Cartoon-texture oscillation decomposition demo</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/dolfinx_optim.html">dolfinx_optim</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
@@ -303,6 +307,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-and-usage">Installation and usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citing">Citing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-the-author">About the author</a></li>
 </ul>
             </nav>
@@ -358,6 +363,39 @@ document.write(`
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
 <p>All this work is licensed under the <a class="reference external" href="http://creativecommons.org/licenses/by-sa/4.0/%3E">Creative Commons Attribution-ShareAlike 4.0 International License</a> <img alt="license" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />.</p>
+</section>
+<section id="citing">
+<h2>Citing<a class="headerlink" href="#citing" title="Link to this heading">#</a></h2>
+<p>Papers related to this project can be cited as:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://doi.org/10.1145/3393881">Bleyer, Jeremy. “Automating the formulation and resolution of convex variational problems: applications from image processing to computational mechanics.” ACM Transactions on Mathematical Software (TOMS) 46.3 (2020): 1-33.</a></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">bleyer2020automating</span><span class="p">,</span>
+  <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">Automating</span> <span class="n">the</span> <span class="n">formulation</span> <span class="ow">and</span> <span class="n">resolution</span> <span class="n">of</span> <span class="n">convex</span> <span class="n">variational</span> <span class="n">problems</span><span class="p">:</span> <span class="n">applications</span> <span class="kn">from</span> <span class="nn">image</span> <span class="n">processing</span> <span class="n">to</span> <span class="n">computational</span> <span class="n">mechanics</span><span class="p">},</span>
+  <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Bleyer</span><span class="p">,</span> <span class="n">Jeremy</span><span class="p">},</span>
+  <span class="n">journal</span><span class="o">=</span><span class="p">{</span><span class="n">ACM</span> <span class="n">Transactions</span> <span class="n">on</span> <span class="n">Mathematical</span> <span class="n">Software</span> <span class="p">(</span><span class="n">TOMS</span><span class="p">)},</span>
+  <span class="n">volume</span><span class="o">=</span><span class="p">{</span><span class="mi">46</span><span class="p">},</span>
+  <span class="n">number</span><span class="o">=</span><span class="p">{</span><span class="mi">3</span><span class="p">},</span>
+  <span class="n">pages</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="o">--</span><span class="mi">33</span><span class="p">},</span>
+  <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2020</span><span class="p">},</span>
+  <span class="n">publisher</span><span class="o">=</span><span class="p">{</span><span class="n">ACM</span> <span class="n">New</span> <span class="n">York</span><span class="p">,</span> <span class="n">NY</span><span class="p">,</span> <span class="n">USA</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference external" href="https://link.springer.com/article/10.1007/s10957-022-02105-z">Bleyer, Jeremy. “Applications of conic programming in non-smooth mechanics.” Journal of Optimization Theory and Applications (2022): 1-33.</a></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">bleyer2022applications</span><span class="p">,</span>
+  <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">Applications</span> <span class="n">of</span> <span class="n">conic</span> <span class="n">programming</span> <span class="ow">in</span> <span class="n">non</span><span class="o">-</span><span class="n">smooth</span> <span class="n">mechanics</span><span class="p">},</span>
+  <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Bleyer</span><span class="p">,</span> <span class="n">Jeremy</span><span class="p">},</span>
+  <span class="n">journal</span><span class="o">=</span><span class="p">{</span><span class="n">Journal</span> <span class="n">of</span> <span class="n">Optimization</span> <span class="n">Theory</span> <span class="ow">and</span> <span class="n">Applications</span><span class="p">},</span>
+  <span class="n">pages</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="o">--</span><span class="mi">33</span><span class="p">},</span>
+  <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2022</span><span class="p">},</span>
+  <span class="n">publisher</span><span class="o">=</span><span class="p">{</span><span class="n">Springer</span><span class="p">}</span>
+<span class="p">}</span>
+
+</pre></div>
+</div>
 </section>
 <section id="about-the-author">
 <h2>About the author<a class="headerlink" href="#about-the-author" title="Link to this heading">#</a></h2>
@@ -438,6 +476,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-and-usage">Installation and usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citing">Citing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-the-author">About the author</a></li>
 </ul>
   </nav></div>

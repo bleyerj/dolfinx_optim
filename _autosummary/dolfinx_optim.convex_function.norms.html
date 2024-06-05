@@ -172,10 +172,14 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documented demos</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../demos/viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demos/3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demos/cartoon_texture_decomposition/cartoon_texture_decomposition.html">Cartoon-texture oscillation decomposition demo</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="dolfinx_optim.html">dolfinx_optim</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
@@ -319,22 +323,22 @@ document.write(`
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L1Ball</span></code>(operand, deg_quad[, parameters])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L1Ball</span></code>(operand, deg_quad[, ...])</p></td>
 <td><p>Define the L1-norm ball <span class="math notranslate nohighlight">\(||x||_1 \leq 1\)</span>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L1Norm</span></code>(operand, deg_quad[, parameters])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L1Norm</span></code>(operand, deg_quad[, ...])</p></td>
 <td><p>Define the L1-norm function <span class="math notranslate nohighlight">\(||x||_1\)</span>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L2Ball</span></code>(operand, deg_quad[, parameters])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L2Ball</span></code>(operand, deg_quad[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L2Norm</span></code>(operand, deg_quad[, parameters])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">L2Norm</span></code>(operand, deg_quad[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LinfBall</span></code>(operand, deg_quad[, parameters])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LinfBall</span></code>(operand, deg_quad[, ...])</p></td>
 <td><p>Define the Linf-norm ball <span class="math notranslate nohighlight">\(||x||_\infty \leq 1\)</span>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LinfNorm</span></code>(operand, deg_quad[, parameters])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LinfNorm</span></code>(operand, deg_quad[, ...])</p></td>
 <td><p>Define the Linf-norm function <span class="math notranslate nohighlight">\(||x||_\infty\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LpNorm</span></code>(operand, deg_quad, p)</p></td>

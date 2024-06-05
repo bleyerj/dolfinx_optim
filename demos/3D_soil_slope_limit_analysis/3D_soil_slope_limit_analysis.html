@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
@@ -172,10 +172,14 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documented demos</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html">Cartoon-texture oscillation decomposition demo</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/dolfinx_optim.html">dolfinx_optim</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
@@ -319,14 +323,14 @@ document.write(`
 <section id="problem-formulation">
 <h2>Problem formulation<a class="headerlink" href="#problem-formulation" title="Link to this heading">#</a></h2>
 <p>We consider a soil domain <span class="math notranslate nohighlight">\(\Omega = [0;L]\times [0;W] \times [0;H]\)</span> with homogeneous Dirichlet boundary conditions <span class="math notranslate nohighlight">\(\boldsymbol{u}=0\)</span> on the right <span class="math notranslate nohighlight">\(x=L\)</span> and bottom <span class="math notranslate nohighlight">\(z=0\)</span>. The remaining boundaries have homogeneous Neumann boundary conditions. The loading consists of a gravitational body force <span class="math notranslate nohighlight">\(\boldsymbol{f}=(0,0,-\gamma)\)</span> with <span class="math notranslate nohighlight">\(\gamma\)</span> being  the soil self-weight. The soil obeys a Mohr-Coulomb criterion of cohesion <span class="math notranslate nohighlight">\(c\)</span> and internal friction angle <span class="math notranslate nohighlight">\(\phi\)</span>, i.e. the stress state <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\in \mathbb{S}_3\)</span> must satisfy <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\in G\)</span> where:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a27826c4-a661-4d98-b843-b3aa74e0e076">
-<span class="eqno">()<a class="headerlink" href="#equation-a27826c4-a661-4d98-b843-b3aa74e0e076" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b0a60d89-2483-498f-a7f4-73f59363ec00">
+<span class="eqno">(1)<a class="headerlink" href="#equation-b0a60d89-2483-498f-a7f4-73f59363ec00" title="Permalink to this equation">#</a></span>\[\begin{equation}
 G=\left\{\boldsymbol{\sigma}\in \mathbb{S}_3 \text{ s.t. } \sigma_M - a\sigma_m \leq \dfrac{2c\cos\phi}{1+\sin\phi}\right\}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a=\dfrac{1-\sin\phi}{1+\sin\phi}\)</span>, <span class="math notranslate nohighlight">\(\sigma_M = \max_{I} \{\sigma_I\}\)</span> and <span class="math notranslate nohighlight">\(\sigma_m = \min_I \{\sigma_I\}\)</span> with <span class="math notranslate nohighlight">\(\sigma_I\)</span> being the eigenvalues of <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)</span>.</p>
 <p>The limit analysis problem amounts to finding the slope stability factor given by <span class="math notranslate nohighlight">\(SF=\lambda^+\dfrac{\gamma H}{c}\)</span> where <span class="math notranslate nohighlight">\(\lambda^+\)</span> is obtained from solving:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7ca50fde-06f3-4302-b55a-0b246d5326ce">
-<span class="eqno">()<a class="headerlink" href="#equation-7ca50fde-06f3-4302-b55a-0b246d5326ce" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fd562ae7-d0ca-4448-9581-54d884e0459c">
+<span class="eqno">(2)<a class="headerlink" href="#equation-fd562ae7-d0ca-4448-9581-54d884e0459c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{array}{rl} 
 \displaystyle{\lambda^+ = \inf_{\boldsymbol{u}}} &amp; \displaystyle{\int_\Omega \pi(\nabla^s \boldsymbol{u}) \,\text{d}\Omega}\\
 \text{s.t.} &amp; \displaystyle{\int_{\Omega} \boldsymbol{f}\cdot\boldsymbol{u} \,\text{d}\Omega = 1}
@@ -345,8 +349,8 @@ c \cot\phi \operatorname{tr}(\boldsymbol{d}) &amp; \text{if } \displaystyle{\ope
 <section id="conic-reformulation">
 <h2>Conic reformulation<a class="headerlink" href="#conic-reformulation" title="Link to this heading">#</a></h2>
 <p>Following <span id="id1">[<a class="reference internal" href="#id5" title="Christopher M Martin and Athanasios Makrodimopoulos. Finite-element limit analysis of mohr–coulomb materials in 3d using semidefinite programming. Journal of engineering mechanics, 134(4):339–347, 2008.">Martin and Makrodimopoulos, 2008</a>]</span>, the above support function can be expressed equivalently in a conic-representable fashion using two auxiliary SDP variables <span class="math notranslate nohighlight">\(\boldsymbol{Y}_1,\boldsymbol{Y}_2\)</span> as follows:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-44729900-752e-4c08-8fdc-57b85349de52">
-<span class="eqno">()<a class="headerlink" href="#equation-44729900-752e-4c08-8fdc-57b85349de52" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5ea95208-768a-469a-8ade-58a36e809a51">
+<span class="eqno">(3)<a class="headerlink" href="#equation-5ea95208-768a-469a-8ade-58a36e809a51" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{array}{rl} 
 \displaystyle{\pi(\boldsymbol{d}) = \inf_{\boldsymbol{Y}_1,\boldsymbol{Y}_2\in \mathbb{S}_3}} &amp; \dfrac{2c\cos\phi}{1+\sin\phi}\operatorname{tr}(\boldsymbol{Y}_1)\\
 \text{s.t.} &amp; \boldsymbol{d} = \boldsymbol{Y}_1 - \boldsymbol{Y}_2\\
@@ -517,10 +521,10 @@ c \cot\phi \operatorname{tr}(\boldsymbol{d}) &amp; \text{if } \displaystyle{\ope
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer  - Semi-definite variables: 19200             scalarized             : 115200          
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - setup time             : 2.78            
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - setup time             : 2.72            
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - dense det. time        : 1.12              GP order time          : 0.21            
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - dense det. time        : 1.10              GP order time          : 0.21            
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor     - nonzeros before factor : 3.89e+06          after factor           : 6.91e+06        
@@ -535,61 +539,61 @@ c \cot\phi \operatorname{tr}(\boldsymbol{d}) &amp; \text{if } \displaystyle{\ope
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ITE PFEAS    DFEAS    GFEAS    PRSTATUS   POBJ              DOBJ              MU       TIME  
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0   6.4e+01  1.0e+00  9.3e+00  0.00e+00   8.313843876e+00   0.000000000e+00   1.0e+00  2.89  
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0   6.4e+01  1.0e+00  9.3e+00  0.00e+00   8.313843876e+00   0.000000000e+00   1.0e+00  2.82  
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1   6.0e+01  9.4e-01  4.2e+01  -1.96e+01  2.057973683e+01   2.220911241e+01   9.4e-01  5.98  
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1   6.0e+01  9.4e-01  4.2e+01  -1.96e+01  2.057973683e+01   2.220911241e+01   9.4e-01  5.82  
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2   5.4e+01  8.5e-01  6.3e+01  -3.74e+01  1.541073344e+00   6.470667017e+01   8.5e-01  8.65  
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2   5.4e+01  8.5e-01  6.3e+01  -3.74e+01  1.541073344e+00   6.470667017e+01   8.5e-01  8.39  
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3   4.3e+01  6.8e-01  6.1e+01  -1.94e+00  1.953587175e+00   9.416024834e+01   6.8e-01  11.35 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3   4.3e+01  6.8e-01  6.1e+01  -1.94e+00  1.953587175e+00   9.416024834e+01   6.8e-01  11.03 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4   3.0e+01  4.7e-01  5.3e+01  -1.69e+00  2.877919262e+00   1.476198772e+02   4.7e-01  14.14 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4   3.0e+01  4.7e-01  5.3e+01  -1.69e+00  2.877919262e+00   1.476198772e+02   4.7e-01  13.72 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5   1.0e+01  1.6e-01  2.4e+01  -1.15e+00  9.257383903e+00   2.735340275e+02   1.6e-01  17.02 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5   1.0e+01  1.6e-01  2.4e+01  -1.15e+00  9.257383903e+00   2.735340275e+02   1.6e-01  16.53 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>6   2.3e+00  3.6e-02  2.7e+00  2.91e-01   1.778475369e+01   7.996443998e+01   3.6e-02  20.07 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>6   2.3e+00  3.6e-02  2.7e+00  2.91e-01   1.778475369e+01   7.996443998e+01   3.6e-02  19.50 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7   4.0e-01  6.2e-03  4.7e-02  1.26e+00   3.875455863e+00   4.510374853e+00   6.2e-03  23.44 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7   4.0e-01  6.2e-03  4.7e-02  1.26e+00   3.875455863e+00   4.510374853e+00   6.2e-03  22.83 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>8   1.9e-01  3.0e-03  1.3e-02  4.28e+00   1.289498450e+00   1.509526752e+00   3.0e-03  26.30 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>8   1.9e-01  3.0e-03  1.3e-02  4.28e+00   1.289498450e+00   1.509526752e+00   3.0e-03  25.59 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>9   9.9e-02  1.5e-03  4.1e-03  2.09e+00   9.199815082e-01   9.991602610e-01   1.5e-03  29.14 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>9   9.9e-02  1.5e-03  4.1e-03  2.09e+00   9.199815082e-01   9.991602610e-01   1.5e-03  28.47 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10  5.6e-02  8.7e-04  1.5e-03  1.53e+00   8.107590068e-01   8.460483001e-01   8.7e-04  32.01 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10  5.6e-02  8.7e-04  1.5e-03  1.53e+00   8.107590068e-01   8.460483001e-01   8.7e-04  31.28 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>11  1.0e-02  1.6e-04  7.5e-05  1.31e+00   7.169651108e-01   7.194055361e-01   1.6e-04  35.27 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>11  1.0e-02  1.6e-04  7.5e-05  1.31e+00   7.169651108e-01   7.194055361e-01   1.6e-04  34.40 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12  1.9e-03  3.0e-05  2.7e-06  1.06e+00   6.994801453e-01   6.995547014e-01   3.0e-05  38.75 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12  1.9e-03  3.0e-05  2.7e-06  1.06e+00   6.994801453e-01   6.995547014e-01   3.0e-05  37.72 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>13  4.0e-04  6.3e-06  1.3e-07  1.01e+00   6.958774407e-01   6.958786193e-01   6.3e-06  42.21 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>13  4.0e-04  6.3e-06  1.3e-07  1.01e+00   6.958774407e-01   6.958786193e-01   6.3e-06  41.12 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>14  1.7e-04  2.7e-06  3.0e-08  1.00e+00   6.953302559e-01   6.953302373e-01   2.7e-06  45.22 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>14  1.7e-04  2.7e-06  3.0e-08  1.00e+00   6.953302559e-01   6.953302373e-01   2.7e-06  44.09 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>15  2.9e-05  4.5e-07  6.2e-10  1.00e+00   6.949877854e-01   6.949875713e-01   4.5e-07  48.73 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>15  2.9e-05  4.5e-07  6.2e-10  1.00e+00   6.949877854e-01   6.949875713e-01   4.5e-07  47.43 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>16  1.6e-05  2.5e-07  2.4e-10  9.97e-01   6.949594176e-01   6.949592945e-01   2.5e-07  51.91 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>16  1.6e-05  2.5e-07  2.4e-10  9.97e-01   6.949594176e-01   6.949592945e-01   2.5e-07  50.59 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>17  8.4e-07  3.7e-08  4.3e-12  9.96e-01   6.949278248e-01   6.949278054e-01   3.7e-08  55.37 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>17  8.4e-07  3.7e-08  4.3e-12  9.96e-01   6.949278248e-01   6.949278054e-01   3.7e-08  53.95 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer terminated. Time: 55.47   
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizer terminated. Time: 54.04   
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
