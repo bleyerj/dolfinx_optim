@@ -1,0 +1,985 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Elastoplasticity with exponential isotropic hardening &#8212; dolfinx_optim</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'demos/elastoplasticity/elastoplasticity_exponential_hardening';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Cartoon-texture oscillation decomposition demo" href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html" />
+    <link rel="prev" title="Viscoplastic fluid" href="../viscoplasticity/viscoplasticity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dolfinx_optim</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    dolfinx_optim documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documented demos</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Elastoplasticity with exponential isotropic hardening</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html">Cartoon-texture oscillation decomposition demo</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/dolfinx_optim.html">dolfinx_optim</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.html">dolfinx_optim.convex_function</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.conjugate.html">dolfinx_optim.convex_function.conjugate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.convex_term.html">dolfinx_optim.convex_function.convex_term</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.eigenvalues.html">dolfinx_optim.convex_function.eigenvalues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.epigraph.html">dolfinx_optim.convex_function.epigraph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.infconvolution.html">dolfinx_optim.convex_function.infconvolution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.norms.html">dolfinx_optim.convex_function.norms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.partial_minimization.html">dolfinx_optim.convex_function.partial_minimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.perspective.html">dolfinx_optim.convex_function.perspective</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/dolfinx_optim.convex_function.simple_terms.html">dolfinx_optim.convex_function.simple_terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.mosek_io.html">dolfinx_optim.mosek_io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/dolfinx_optim.utils.html">dolfinx_optim.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Elastoplasticity with exponential isotropic hardening</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-energy-and-dissipation-potential">Free-energy and dissipation potential</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incremental-pseudo-potential">Incremental pseudo-potential</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-generation">Mesh generation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conic-reformulation-and-implementation">Conic reformulation and implementation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conic-reformulation-of-the-elastic-energy">Conic reformulation of the elastic energy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hardening-stored-energy">Hardening stored energy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plastic-dissipation-potential">Plastic dissipation potential</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-the-incremental-variational-problem">Implementation of the incremental variational problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="elastoplasticity-with-exponential-isotropic-hardening">
+<h1>Elastoplasticity with exponential isotropic hardening<a class="headerlink" href="#elastoplasticity-with-exponential-isotropic-hardening" title="Link to this heading">#</a></h1>
+<p><span class="math notranslate nohighlight">\(\newcommand{\beps}{\boldsymbol{\varepsilon}}
+\newcommand{\bepsp}{\boldsymbol{\varepsilon}^\text{p}}
+\newcommand{\Depsp}{\Delta\boldsymbol{\varepsilon}^\text{p}}
+\newcommand{\bepsel}{\boldsymbol{\varepsilon}^\text{el}}
+\newcommand{\bu}{\boldsymbol{u}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\KK}{\mathbb{K}}
+\newcommand{\JJ}{\mathbb{J}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\Kk}{\mathcal{K}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\dev}{\operatorname{dev}}
+\newcommand{\bf}{\boldsymbol{f}}
+\newcommand{\dOm}{\text{d}\Omega}
+\DeclareMathOperator*{argmin}{arg\min}
+\newcommand{\bC}{\boldsymbol{C}}
+\newcommand{\bQ}{\boldsymbol{Q}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\T}{^\text{T}}\)</span></p>
+<p>In this demo, we show how to formulate an elastoplastic problem using an incremental variational formulation. We particularize the behavior to a plane strain von Mises yield criterion and an exponential isotropic hardening.</p>
+<section id="free-energy-and-dissipation-potential">
+<h2>Free-energy and dissipation potential<a class="headerlink" href="#free-energy-and-dissipation-potential" title="Link to this heading">#</a></h2>
+<p>In the framework of generalized standard materials <span id="id1">[<a class="reference internal" href="#id5" title="Bernard Halphen and Quoc Son Nguyen. Sur les matériaux standard généralisés. Journal de mécanique, 14(1):39–63, 1975.">Halphen and Nguyen, 1975</a>]</span>, the considered constitutive model is described by:</p>
+<ul class="simple">
+<li><p>a choice of state variables consisting of the total strain <span class="math notranslate nohighlight">\(\beps\)</span>, the plastic strain <span class="math notranslate nohighlight">\(\bepsp\)</span> and the cumulated equivalent plastic strain <span class="math notranslate nohighlight">\(p\)</span>;</p></li>
+<li><p>its free energy density <span class="math notranslate nohighlight">\(\psi\)</span> consisting of a stored elastic and hardening potentials:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\psi(\beps,\bepsp,p) = \psi_\text{el}(\beps-\bepsp)+\psi_\text{h}(p)
+\]</div>
+<ul class="simple">
+<li><p>its dissipation potential <span class="math notranslate nohighlight">\(\phi(\dot{\bepsp},\dot{p})\)</span></p></li>
+</ul>
+<p>We will assume isotropic linear elasticity:</p>
+<div class="math notranslate nohighlight">
+\[
+\psi_\text{el}(\beps^\text{el}) = \dfrac{1}{2}\beps^\text{el}:\CC:\beps^\text{el} = \dfrac{\kappa}{2}(\tr(\beps^\text{el}))^2 + \mu \dev(\beps^\text{el}):\dev(\beps^\text{el})
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kappa\)</span> is the compressibility modulus, <span class="math notranslate nohighlight">\(\mu\)</span> the shear modulus and <span class="math notranslate nohighlight">\(\dev(\beps^\text{el})\)</span> the deviatoric elastic strain. Note that splitting the elastic energy into spherical and deviatoric components will later prove useful for the conic reformulation</p>
+<p>The hardening potential is assumed to be of exponential type as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\psi_\text{h}(p) = (\sigma_u-\sigma_0)(p+\frac{1}{\omega}\exp(-\omega p))
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma_0\)</span> (resp. <span class="math notranslate nohighlight">\(\sigma_u\)</span>) is the initial (resp. ultimate) yield strength and <span class="math notranslate nohighlight">\(\omega\)</span> a saturation parameter.</p>
+<p>Finally, we assume a <span class="math notranslate nohighlight">\(J_2\)</span>-plasticity dissipation potential:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\phi(\dot{\bepsp}, \dot{p}) = \begin{cases}
+\sqrt{\frac{2}{3}}\sigma_0\|\dot{\bepsp}\|=\sigma_0\dot{p} &amp; \text{if } \tr(\dot{\bepsp})=0 \\
++\infty &amp; \text{otherwise}
+\end{cases}
+\end{split}\]</div>
+<p>Note that we included in the above the link between the scalar cumulated plastic strain rate and the plastic strain rate tensor <span class="math notranslate nohighlight">\(\dot{p}=\sqrt{\frac{2}{3}}\|\dot{\bepsp}\|\)</span> which will later slightly be reformulated in conic form.</p>
+</section>
+<section id="incremental-pseudo-potential">
+<h2>Incremental pseudo-potential<a class="headerlink" href="#incremental-pseudo-potential" title="Link to this heading">#</a></h2>
+<p>It can be shown that the solution at time <span class="math notranslate nohighlight">\(t_{n+1}\)</span> in terms of displacement <span class="math notranslate nohighlight">\(\bu\)</span>, plastic strain <span class="math notranslate nohighlight">\(\bepsp\)</span> and cumulated plastic strain <span class="math notranslate nohighlight">\(p\)</span> can be obtained as the solution to the following minimization principle <span id="id2">[<a class="reference internal" href="#id6" title="Michael Ortiz and Laurent Stainier. The variational formulation of viscoplastic constitutive updates. Computer methods in applied mechanics and engineering, 171(3-4):419–444, 1999.">Ortiz and Stainier, 1999</a>]</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+(\bu_{n+1},\bepsp_{n+1},p_{n+1}) = \argmin_{(\bu,\bepsp,p)} \int_{t_n}^{t_{n+1}}\int_{\Omega}(\dot{\psi}(\beps,\bepsp, p)+\phi(\dot{\bepsp},\dot{p}))\dOm\,\text{dt} - \int_{t_n}^{t_{n+1}} \mathcal{P}_\text{ext}\,\text{dt}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beps = \nabla^s\bu\)</span>, <span class="math notranslate nohighlight">\(\mathcal{P}_\text{ext}\)</span> is the power of external loads which we assume to consist only of fixed body forces <span class="math notranslate nohighlight">\(\bf_{n+1}\)</span> on the time step.</p>
+<p>Further introducing a backward-Euler approximation for the plastic strain variables evolution :</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\bepsp} \approx \dfrac{\Depsp}{\Delta t}, \quad \dot{p}\approx\dfrac{\Delta p}{\Delta t}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Depsp = \bepsp-\bepsp_n\)</span> and <span class="math notranslate nohighlight">\(\Delta p=p-p_n\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[
+(\bu_{n+1},\bepsp_{n+1},p_{n+1}) \approx \argmin_{(\bu,\bepsp,p)} \int_{\Omega}\left(\psi(\beps,\bepsp, p)-\psi(\beps_n,\bepsp_n, p_n)+\Delta t\phi\left(\dfrac{\Depsp}{\Delta t},\dfrac{\Delta p}{\Delta t}\right)\right)\dOm - \int_\Omega \bf_{n+1}\cdot(\bu-\bu_n) \dOm
+\]</div>
+<p>which is a variational problem involving an incremental pseudo-potential:</p>
+<div class="math notranslate nohighlight" id="equation-incremental-potential">
+<span class="eqno">(4)<a class="headerlink" href="#equation-incremental-potential" title="Link to this equation">#</a></span>\[\begin{split}\begin{align*}
+J(\beps,\bepsp, p) &amp;= \psi(\beps,\bepsp, p)-\psi(\beps_n,\bepsp_n, p_n)+\Delta t\phi\left(\dfrac{\Depsp}{\Delta t},\dfrac{\Delta p}{\Delta t}\right)\\
+&amp;= \psi(\beps,\bepsp, p)-\psi(\beps_n,\bepsp_n, p_n)+\phi(\Depsp,\Delta p)
+\end{align*}\end{split}\]</div>
+<p>in which the time increment <span class="math notranslate nohighlight">\(\Delta t\)</span> disappears since the behavior is rate-independent (<span class="math notranslate nohighlight">\(\phi\)</span> being a positively homogeneous convex function).</p>
+</section>
+<section id="mesh-generation">
+<h2>Mesh generation<a class="headerlink" href="#mesh-generation" title="Link to this heading">#</a></h2>
+<p>We start by importing the relevant packages and functions we will use.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">fem</span><span class="p">,</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.mosek_io</span> <span class="kn">import</span> <span class="n">MosekProblem</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.convex_function</span> <span class="kn">import</span> <span class="n">ConvexTerm</span><span class="p">,</span> <span class="n">QuadraticTerm</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.cones</span> <span class="kn">import</span> <span class="n">Quad</span><span class="p">,</span> <span class="n">Exp</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.utils</span> <span class="kn">import</span> <span class="n">tail</span><span class="p">,</span> <span class="n">concatenate</span><span class="p">,</span> <span class="n">to_vect</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We create a rectangular plate with two circular notches on its sides using <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> Python API.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate_notched_plate</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">mesh_size</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">gmsh</span>
+    <span class="kn">from</span> <span class="nn">dolfinx.io.gmshio</span> <span class="kn">import</span> <span class="n">model_to_mesh</span>
+
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;General.Terminal&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># to disable meshing info</span>
+
+    <span class="n">gdim</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">mesh_comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+    <span class="n">model_rank</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">mesh_comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="n">model_rank</span><span class="p">:</span>
+        <span class="n">rectangle</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addRectangle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">hole1</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addDisk</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">R</span><span class="p">,</span>
+            <span class="n">R</span><span class="p">,</span>
+            <span class="n">zAxis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">xAxis</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">hole2</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">addDisk</span><span class="p">(</span>
+            <span class="n">W</span><span class="p">,</span>
+            <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">R</span><span class="p">,</span>
+            <span class="n">R</span><span class="p">,</span>
+            <span class="n">zAxis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">xAxis</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">cut</span><span class="p">([(</span><span class="n">gdim</span><span class="p">,</span> <span class="n">rectangle</span><span class="p">)],</span> <span class="p">[(</span><span class="n">gdim</span><span class="p">,</span> <span class="n">hole1</span><span class="p">),</span> <span class="p">(</span><span class="n">gdim</span><span class="p">,</span> <span class="n">hole2</span><span class="p">)])</span>
+        <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">occ</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+
+        <span class="n">volumes</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getEntities</span><span class="p">(</span><span class="n">gdim</span><span class="p">)</span>
+        <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">gdim</span><span class="p">,</span> <span class="p">[</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Plate&quot;</span><span class="p">)</span>
+        <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">gdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bottom&quot;</span><span class="p">)</span>
+        <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">addPhysicalGroup</span><span class="p">(</span><span class="n">gdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Top&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">field_tag</span> <span class="o">=</span> <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;Box&quot;</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;VIn&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">mesh_size</span><span class="p">))</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;VOut&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">mesh_size</span><span class="p">))</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;XMin&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;XMax&quot;</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;YMin&quot;</span><span class="p">,</span> <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;YMax&quot;</span><span class="p">,</span> <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="n">field_tag</span><span class="p">,</span> <span class="s2">&quot;Thickness&quot;</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">setAsBackgroundMesh</span><span class="p">(</span><span class="n">field_tag</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.CharacteristicLengthMin&quot;</span><span class="p">,</span> <span class="n">mesh_size</span><span class="p">)</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">setNumber</span><span class="p">(</span><span class="s2">&quot;Mesh.CharacteristicLengthMax&quot;</span><span class="p">,</span> <span class="n">mesh_size</span><span class="p">)</span>
+
+        <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">gdim</span><span class="p">)</span>
+
+        <span class="n">domain</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">facets</span> <span class="o">=</span> <span class="n">model_to_mesh</span><span class="p">(</span>
+            <span class="n">gmsh</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">mesh_comm</span><span class="p">,</span>
+            <span class="n">model_rank</span><span class="p">,</span>
+            <span class="n">gdim</span><span class="o">=</span><span class="n">gdim</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">gmsh</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">domain</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">facets</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>We generate the mesh and define the different physical constants for the problem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">W</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">R</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mi">16</span><span class="o">*</span><span class="n">R</span>
+<span class="n">mesh_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">]</span>
+<span class="n">domain</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">facets</span> <span class="o">=</span> <span class="n">generate_notched_plate</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">mesh_sizes</span><span class="p">)</span>
+
+<span class="c1"># elastic parameters</span>
+<span class="n">E</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">210e3</span><span class="p">)</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="c1"># yield stress</span>
+<span class="n">sig0</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">450.0</span><span class="p">)</span>
+<span class="c1"># ultimate stress</span>
+<span class="n">sigu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">715.0</span><span class="p">)</span>
+<span class="c1"># Saturation parameter</span>
+<span class="n">om</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">)</span>
+
+
+<span class="n">mu</span> <span class="o">=</span> <span class="n">E</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span>
+<span class="n">lamb</span> <span class="o">=</span> <span class="n">E</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nu</span><span class="p">)</span>
+<span class="n">kappa</span> <span class="o">=</span> <span class="n">lamb</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">mu</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="conic-reformulation-and-implementation">
+<h2>Conic reformulation and implementation<a class="headerlink" href="#conic-reformulation-and-implementation" title="Link to this heading">#</a></h2>
+<p>The incremental potential <a class="reference internal" href="#equation-incremental-potential">(4)</a> consists of three different terms: the elastic energy <span class="math notranslate nohighlight">\(\psi_\text{el}(\beps-\bepsp)\)</span>, the hardening potential <span class="math notranslate nohighlight">\(\psi_\text{h}(p)\)</span> and the dissipation potential <span class="math notranslate nohighlight">\(\phi(\Depsp,\Delta p)\)</span>, the free energy evaluated at time <span class="math notranslate nohighlight">\(t_n\)</span> being a constant which can be ignored in the energy minimization process. We now discuss the conic reformulation for each of these three terms.</p>
+<section id="conic-reformulation-of-the-elastic-energy">
+<h3>Conic reformulation of the elastic energy<a class="headerlink" href="#conic-reformulation-of-the-elastic-energy" title="Link to this heading">#</a></h3>
+<p>The elastic energy density is a quadratic form of the elastic strain <span class="math notranslate nohighlight">\(\bepsel\)</span> which we denote as <span class="math notranslate nohighlight">\(\frac{1}{2}\bx\T \bC \bx\)</span>. Obtaining a conic representation of a quadratic form requires going through a Cholesky factorization of the matrix <span class="math notranslate nohighlight">\(\bC=\bQ\T\bQ\)</span> so that <span class="math notranslate nohighlight">\(\frac{1}{2}\bx\T \bC \bx = \frac{1}{2}\|\bQ\bx\|_2^2\)</span>. Although this process could be done algebraically using vector notations and the matrix representation of the elastic moduli tensor <span class="math notranslate nohighlight">\(\CC\)</span>, it can also be done directly using tensor notations, indeed the latter can also be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\CC = 3\kappa \JJ + 2\mu \KK
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\JJ\)</span> and <span class="math notranslate nohighlight">\(\KK\)</span> are the classical spherical and deviatoric projectors i.e. such that <span class="math notranslate nohighlight">\(\JJ:\beps=\dfrac{1}{3}\tr(\beps)\)</span> and <span class="math notranslate nohighlight">\(\KK:\beps=\dev(\beps)\)</span> for any symmetric second-rank tensor <span class="math notranslate nohighlight">\(\beps\)</span>. These fourth-rank tensors are orthogonal projectors i.e.:</p>
+<div class="math notranslate nohighlight">
+\[
+\JJ:\JJ = \JJ, \quad \KK:\KK = \KK, \quad \JJ:\KK=0
+\]</div>
+<p>Using this result, we can easily define the factorization of the elastic moduli tensor as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{Q} = \sqrt{3\kappa}\JJ+\sqrt{2\mu}\KK
+\]</div>
+<p>such that <span class="math notranslate nohighlight">\(\CC=\mathbb{Q}:\mathbb{Q}\)</span>.</p>
+<p>We then define useful functions to implement the elastic constitutive equation, either in its original form (function <code class="docutils literal notranslate"><span class="pre">sigma</span></code> which will be used for postprocessing) or in its factorized form (<code class="docutils literal notranslate"><span class="pre">factorized_elastic_term</span></code>). The problem is solved in plane strain 2D but it is more convenient to use expressions of the various potentials in their 3D form. We thus define a 3D gradient operator from a 2D vectorial field <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p>
+<p>As a result, the elastic energy will simply be a <code class="docutils literal notranslate"><span class="pre">QuadraticTerm</span></code> of the <code class="docutils literal notranslate"><span class="pre">factorized_elastic_term</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sig</span><span class="p">(</span><span class="n">eps</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dev</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">factorized_elastic_term</span><span class="p">(</span><span class="n">eps</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span>
+    <span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dev</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">grad_3D</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="hardening-stored-energy">
+<h3>Hardening stored energy<a class="headerlink" href="#hardening-stored-energy" title="Link to this heading">#</a></h3>
+<p>Let us now consider the hardening potential:</p>
+<div class="math notranslate nohighlight">
+\[
+\psi_\text{h}(p) = (\sigma_u-\sigma_0)(p+\frac{1}{\omega}\exp(-\omega p))
+\]</div>
+<p>which consists of a linear and an exponential term. This potential defines the following hardening thermodynamic force:</p>
+<div class="math notranslate nohighlight">
+\[
+R(p) = (\sigma_u-\sigma_0)(1-\exp(-\omega p))
+\]</div>
+<p>which will increase the yield stress from <span class="math notranslate nohighlight">\(\sigma_0\)</span> at <span class="math notranslate nohighlight">\(p=0\)</span> to <span class="math notranslate nohighlight">\(\sigma_u\)</span> when <span class="math notranslate nohighlight">\(p\to\infty\)</span>.</p>
+<p>Regarding the conic formulation, we need to reformulate the exponential term as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\exp(-\omega p) = \min \:r_0 \quad \text{s.t. } \exp(-\omega p) \leq r_0
+\]</div>
+<p>This non-linear constraint can be reformulated using an <em>exponential</em> cone defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+\Kk_\text{exp} = \{\boldsymbol{z} \in \RR^{3} \text{ s.t. } \boldsymbol{z}=(z_0, z_1, z_2) \text{ and } z_0 \geq z_1\exp(z_2/z_1), \:\: z_0,z_1\geq 0\}
+\]</div>
+<p>as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\exp(-\omega p) \leq r_0 \quad \Leftrightarrow \quad r_1=1, \:, r_2=-\omega p, \: (r_0, r_1, r_2)\in \Kk_\text{exp}
+\]</div>
+<p>the implementation of which reads as:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HardeningStoredEnergy</span><span class="p">(</span><span class="n">ConvexTerm</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">conic_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_var</span><span class="p">()</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">([</span><span class="n">r</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="n">om</span> <span class="o">*</span> <span class="n">p</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_conic_constraint</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">Exp</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_linear_term</span><span class="p">((</span><span class="n">sigu</span> <span class="o">-</span> <span class="n">sig0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">om</span> <span class="o">*</span> <span class="n">r</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plastic-dissipation-potential">
+<h3>Plastic dissipation potential<a class="headerlink" href="#plastic-dissipation-potential" title="Link to this heading">#</a></h3>
+<p>Finally, we reformulate the plastic dissipation potential by introducing a slack variable <span class="math notranslate nohighlight">\(t\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{rl} \phi(\Depsp, \Delta p) = \min  &amp;\sqrt{\frac{2}{3}}\sigma_0 t\\
+\text{s.t.} &amp; \|\Depsp\|\leq t \\
+&amp; \tr(\Depsp)=0 \end{array}
+\end{split}\]</div>
+<p>Now, recall that we must also enforce the link between <span class="math notranslate nohighlight">\(\Depsp\)</span> and <span class="math notranslate nohighlight">\(\Delta p\)</span> which is <span class="math notranslate nohighlight">\(\sqrt{\frac{2}{3}}\|\Depsp\| = \Delta p\)</span>. We could add this as an extra constraint but we can benefit here from the presence of the slack variable <span class="math notranslate nohighlight">\(t\)</span> to use <span class="math notranslate nohighlight">\(\Delta p\)</span> instead for the conic reformulation of the norm as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{rl} \phi(\Depsp, \Delta p) = \min &amp; \sigma_0 \Delta p\\
+\text{s.t.} &amp; \sqrt{\frac{2}{3}}\|\Depsp\|\leq \Delta p \\
+&amp; \tr(\Depsp)=0 \end{array}
+\end{split}\]</div>
+<p>where it is clear that the equality will be enforced at the optimum.</p>
+<p>Finally, we introduce <span class="math notranslate nohighlight">\(Y_0 = \Delta p = p-p_n\)</span> and <span class="math notranslate nohighlight">\(\bar{\boldsymbol{Y}} = \sqrt{\frac{2}{3}}(\bepsp-\bepsp_n)\)</span> so that the conic constraint <span class="math notranslate nohighlight">\(\|\bar{\boldsymbol{Y}}\|\leq Y_0\)</span> now becomes <span class="math notranslate nohighlight">\(\boldsymbol{Y}=( Y_0,\bar{\boldsymbol{Y}})  \in \mathcal{Q}_5\)</span>. Note that we must account for the out-of-plane plastic strain component <span class="math notranslate nohighlight">\(\varepsilon^p_{zz}\)</span> despite the fact that we look for a plane strain displacement solution.</p>
+<p>The concrete implementation reads as follows accounting for the fact that <code class="docutils literal notranslate"><span class="pre">vonMisesDissipation</span></code> will be a function of <span class="math notranslate nohighlight">\(\texttt{X}=(p,\bepsp)\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">vonMisesDissipation</span><span class="p">(</span><span class="n">ConvexTerm</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">conic_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+
+        <span class="n">dp</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">depsp</span> <span class="o">=</span> <span class="n">tail</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+            <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)])</span>
+        <span class="p">)</span>  <span class="c1"># used for Voigt notation for tensors</span>
+
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">([</span><span class="n">dp</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">depsp</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_eq_constraint</span><span class="p">(</span><span class="n">depsp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">depsp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">depsp</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_conic_constraint</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">Quad</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_linear_term</span><span class="p">(</span><span class="n">sig0</span> <span class="o">*</span> <span class="n">dp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="implementation-of-the-incremental-variational-problem">
+<h2>Implementation of the incremental variational problem<a class="headerlink" href="#implementation-of-the-incremental-variational-problem" title="Link to this heading">#</a></h2>
+<p>We now define the relevant function spaces associated with the discretization of the displacement and plastic field. We also initialize functions <code class="docutils literal notranslate"><span class="pre">p_old</span></code> and <code class="docutils literal notranslate"><span class="pre">epsp_old</span></code> to account for the history dependence of the plastic evolution. The vertical stress <code class="docutils literal notranslate"><span class="pre">sigyy</span></code> serves only for postprocessing purposes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># P2 interpolation for velocity</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">functionspace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,)))</span>
+<span class="n">Vuy</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
+<span class="n">Vepsp</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">functionspace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)))</span>
+<span class="n">Vp</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">Vepsp</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
+
+<span class="n">p_old</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Vp</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Previous_cumulated_plastic_strain&quot;</span><span class="p">)</span>
+<span class="n">epsp_old</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Vepsp</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Previous_plastic_strain&quot;</span><span class="p">)</span>
+<span class="n">sigyy</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Vp</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Vertical_stress&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We then define the corresponding boundary conditions and surface integration measure.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bottom_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">top_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">facets</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+
+<span class="n">Uimp</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">bottom_dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">),</span>
+    <span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">Uimp</span><span class="p">,</span> <span class="n">top_dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">facets</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The plate is first loaded by progressively increasing the applied displacement up to a maximum strain <code class="docutils literal notranslate"><span class="pre">Eps</span></code>. Then, we perform a partial unloading up to a strain level of <code class="docutils literal notranslate"><span class="pre">0.5*Eps</span></code>. The loading stage is imposed using <code class="docutils literal notranslate"><span class="pre">Nincr</span></code> load increments, the unloading stage is here elastic and is imposed using only one increment.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Eps</span> <span class="o">=</span> <span class="mf">8e-2</span>
+
+<span class="n">Nincr</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">t_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Nincr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">Sig</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">t_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Increment </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">t_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">Uimp</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Eps</span><span class="o">/</span><span class="n">H</span><span class="o">*</span><span class="n">t</span>
+
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">MosekProblem</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s2">&quot;Elastoplastic step&quot;</span><span class="p">)</span>
+
+    <span class="n">u</span><span class="p">,</span> <span class="n">epsp</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">V</span><span class="p">,</span> <span class="n">Vepsp</span><span class="p">,</span> <span class="n">Vp</span><span class="p">],</span>
+        <span class="n">bc</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Displacement&quot;</span><span class="p">,</span> <span class="s2">&quot;Plastic_strain&quot;</span><span class="p">,</span> <span class="s2">&quot;Cumulated_plastic_strain&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">eps_el</span> <span class="o">=</span> <span class="n">grad_3D</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">(</span>
+        <span class="p">[[</span><span class="n">epsp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">epsp</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">epsp</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">epsp</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">epsp</span><span class="p">[</span><span class="mi">2</span><span class="p">]]]</span>
+    <span class="p">)</span>
+
+    <span class="n">deg_quad</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">elasticity</span> <span class="o">=</span> <span class="n">QuadraticTerm</span><span class="p">(</span><span class="n">to_vect</span><span class="p">(</span><span class="n">factorized_elastic_term</span><span class="p">(</span><span class="n">eps_el</span><span class="p">)),</span> <span class="n">deg_quad</span><span class="p">)</span>
+    <span class="n">hardening</span> <span class="o">=</span> <span class="n">HardeningStoredEnergy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">deg_quad</span><span class="p">)</span>
+    <span class="n">dissipation</span> <span class="o">=</span> <span class="n">vonMisesDissipation</span><span class="p">(</span><span class="n">concatenate</span><span class="p">([</span><span class="n">p</span><span class="o">-</span><span class="n">p_old</span><span class="p">,</span> <span class="n">epsp</span><span class="o">-</span><span class="n">epsp_old</span><span class="p">]),</span> <span class="n">deg_quad</span><span class="p">)</span>
+
+    <span class="n">prob</span><span class="o">.</span><span class="n">add_convex_term</span><span class="p">(</span><span class="n">elasticity</span><span class="p">)</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">add_convex_term</span><span class="p">(</span><span class="n">hardening</span><span class="p">)</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">add_convex_term</span><span class="p">(</span><span class="n">dissipation</span><span class="p">)</span>
+
+    <span class="n">prob</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">p_old</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+    <span class="n">epsp</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">epsp_old</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">sig</span><span class="p">(</span><span class="n">eps_el</span><span class="p">)</span>
+    <span class="n">sig_exp</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">sigma</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">Vp</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
+    <span class="n">sigyy</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">sig_exp</span><span class="p">)</span>
+
+
+    <span class="n">Sig</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">sigyy</span><span class="o">*</span><span class="n">ds</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span><span class="o">/</span><span class="n">W</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 1/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 2/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 3/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 4/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 5/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 6/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 7/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 8/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 9/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 10/11
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Increment 11/11
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>Below, we plot the evolution of the effective vertical stress as a function of the imposed loading. One can observe an initial elastic phase followed by a strongly non-linear hardening phase. Note the effective stress seems to approach the value in red given by <span class="math notranslate nohighlight">\(\dfrac{2}{\sqrt{3}}\sigma_u(1-2R/W) f\)</span> where <span class="math notranslate nohighlight">\(f\approx 2\ln(2)\)</span> which is an upper-bound estimate of the plate collapse load. As expected for plasticity problems, the unloading stage is indeed elastic and exhibits residual stresses.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Eps</span> <span class="o">*</span> <span class="n">t_list</span><span class="p">,</span> <span class="n">Sig</span><span class="p">,</span> <span class="s2">&quot;-ok&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigu</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C3&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Vertical strain&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Effective vertical stress&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/eecb389e8b3e131f06694a7821873159c8d85ac69e241c5f711b222fb0a2b8b9.png" src="../../_images/eecb389e8b3e131f06694a7821873159c8d85ac69e241c5f711b222fb0a2b8b9.png" />
+</div>
+</div>
+<p>We can also plot the distribution of equivalent plastic strain <span class="math notranslate nohighlight">\(p\)</span> at the final stage using <code class="docutils literal notranslate"><span class="pre">pyvista</span></code>. One can clearly observe the formation of plastic hinges near the clamped supports and a more diffuse plastic field at the beam mid-span.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">plot</span> 
+
+<span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">geometry</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">vtk_mesh</span><span class="p">(</span><span class="n">Vp</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&quot;Plastic_strain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;Plastic_strain&quot;</span><span class="p">)</span>
+<span class="n">pl</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Reds&quot;</span><span class="p">,</span> <span class="n">scalar_bar_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+<span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/743a4735a0e296d1a1154440ad315579eb59f50c17deee8a51f6d9e1cbd22683.png" src="../../_images/743a4735a0e296d1a1154440ad315579eb59f50c17deee8a51f6d9e1cbd22683.png" />
+</div>
+</div>
+<p>We can also check that this incremental formulation is not very sensitive to the number of increments in a monotonic loading process.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">style</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;-ob&quot;</span><span class="p">,</span> <span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;^r&quot;</span><span class="p">]):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;elastoplasticity_</span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s2">steps.csv&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">style</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s2"> steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Vertical strain&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Effective vertical stress&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/826fe0441995e7f91fd06c6337343eead987427f493072355ddce486d932e0bb.png" src="../../_images/826fe0441995e7f91fd06c6337343eead987427f493072355ddce486d932e0bb.png" />
+</div>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id5" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">HN75</a><span class="fn-bracket">]</span></span>
+<p>Bernard Halphen and Quoc Son Nguyen. Sur les matériaux standard généralisés. <em>Journal de mécanique</em>, 14(1):39–63, 1975.</p>
+</div>
+<div class="citation" id="id6" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">OS99</a><span class="fn-bracket">]</span></span>
+<p>Michael Ortiz and Laurent Stainier. The variational formulation of viscoplastic constitutive updates. <em>Computer methods in applied mechanics and engineering</em>, 171(3-4):419–444, 1999.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./demos/elastoplasticity"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../viscoplasticity/viscoplasticity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Viscoplastic fluid</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../cartoon_texture_decomposition/cartoon_texture_decomposition.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Cartoon-texture oscillation decomposition demo</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-energy-and-dissipation-potential">Free-energy and dissipation potential</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incremental-pseudo-potential">Incremental pseudo-potential</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-generation">Mesh generation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conic-reformulation-and-implementation">Conic reformulation and implementation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conic-reformulation-of-the-elastic-energy">Conic reformulation of the elastic energy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hardening-stored-energy">Hardening stored energy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plastic-dissipation-potential">Plastic dissipation potential</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-the-incremental-variational-problem">Implementation of the incremental variational problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jeremy Bleyer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

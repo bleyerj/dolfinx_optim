@@ -63,7 +63,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="API Reference" href="../../api.html" />
-    <link rel="prev" title="Three-dimensional limit analysis problem using Semi-Definite Programming" href="../3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html" />
+    <link rel="prev" title="Elastoplasticity with exponential isotropic hardening" href="../elastoplasticity/elastoplasticity_exponential_hardening.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -174,8 +174,9 @@
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documented demos</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elastoplasticity/elastoplasticity_exponential_hardening.html">Elastoplasticity with exponential isotropic hardening</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Cartoon-texture oscillation decomposition demo</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
@@ -319,7 +320,7 @@ document.write(`
 <h1>Cartoon-texture oscillation decomposition demo<a class="headerlink" href="#cartoon-texture-oscillation-decomposition-demo" title="Link to this heading">#</a></h1>
 <section id="problem-setting">
 <h2>Problem setting<a class="headerlink" href="#problem-setting" title="Link to this heading">#</a></h2>
-<p>We consider an image processing problem which consists in decomposing an image <span class="math notranslate nohighlight">\(y=u+v\)</span> into a cartoon-like component <span class="math notranslate nohighlight">\(u\)</span> and a texture component <span class="math notranslate nohighlight">\(v\)</span> (here we assume that the image is not noisy). The cartoon layer <span class="math notranslate nohighlight">\(u\)</span> captures flat regions separated by sharp edges, whereas the texture component <span class="math notranslate nohighlight">\(v\)</span> contains the high frequency oscillations. There are many existing models to perform such a decomposition, in the following, we implement the model proposed by Y. Meyer <span id="id1">[<a class="reference internal" href="#id7" title="Yves Meyer. Oscillating patterns in image processing and nonlinear evolution equations: the fifteenth Dean Jacqueline B. Lewis memorial lectures. Volume 22. American Mathematical Soc., 2001.">Meyer, 2001</a>]</span>:
+<p>We consider an image processing problem which consists in decomposing an image <span class="math notranslate nohighlight">\(y=u+v\)</span> into a cartoon-like component <span class="math notranslate nohighlight">\(u\)</span> and a texture component <span class="math notranslate nohighlight">\(v\)</span> (here we assume that the image is not noisy). The cartoon layer <span class="math notranslate nohighlight">\(u\)</span> captures flat regions separated by sharp edges, whereas the texture component <span class="math notranslate nohighlight">\(v\)</span> contains the high frequency oscillations. There are many existing models to perform such a decomposition, in the following, we implement the model proposed by Y. Meyer <span id="id1">[<a class="reference internal" href="#id14" title="Yves Meyer. Oscillating patterns in image processing and nonlinear evolution equations: the fifteenth Dean Jacqueline B. Lewis memorial lectures. Volume 22. American Mathematical Soc., 2001.">Meyer, 2001</a>]</span>:
 <span class="math notranslate nohighlight">\(\newcommand{\dOm}{\,\text{d}\Omega}\newcommand{\div}{\operatorname{div}}\)</span></p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{array}{rl}
@@ -328,7 +329,7 @@ document.write(`
 \\
 \text{where} &amp;  \displaystyle{\|v\|_G = \inf_{\boldsymbol{g}\in L^{\infty}(\Omega;\mathbb{R}^2)} \left\{\left\|\sqrt{g_1^2+g_2^2}\right\|_{\infty} \text{ s.t. } v=\div \boldsymbol{g}\right\}}
 \end{array} \end{split}\]</div>
-<p>This model favors flat regions in <span class="math notranslate nohighlight">\(u\)</span> due to the use of the TV norm and oscillatory regions in <span class="math notranslate nohighlight">\(v\)</span> since <span class="math notranslate nohighlight">\(\|v\|_G\)</span> increases for characteristic functions. Following <span id="id2">[<a class="reference internal" href="#id8" title="Pierre Weiss, Laure Blanc-Féraud, and Gilles Aubert. Efficient schemes for total variation minimization under constraints in image processing. SIAM journal on Scientific Computing, 31(3):2047–2080, 2009.">Weiss <em>et al.</em>, 2009</a>]</span>, we reformulate the model as:</p>
+<p>This model favors flat regions in <span class="math notranslate nohighlight">\(u\)</span> due to the use of the TV norm and oscillatory regions in <span class="math notranslate nohighlight">\(v\)</span> since <span class="math notranslate nohighlight">\(\|v\|_G\)</span> increases for characteristic functions. Following <span id="id2">[<a class="reference internal" href="#id15" title="Pierre Weiss, Laure Blanc-Féraud, and Gilles Aubert. Efficient schemes for total variation minimization under constraints in image processing. SIAM journal on Scientific Computing, 31(3):2047–2080, 2009.">Weiss <em>et al.</em>, 2009</a>]</span>, we reformulate the model as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{array}{rl}
 \displaystyle{\inf_{u,\boldsymbol{g}}} &amp; \displaystyle{\int_\Omega \|\nabla u\|_2 \dOm} \\
@@ -512,11 +513,11 @@ document.write(`
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
-<div class="citation" id="id7" role="doc-biblioentry">
+<div class="citation" id="id14" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">Mey01</a><span class="fn-bracket">]</span></span>
 <p>Yves Meyer. <em>Oscillating patterns in image processing and nonlinear evolution equations: the fifteenth Dean Jacqueline B. Lewis memorial lectures</em>. Volume 22. American Mathematical Soc., 2001.</p>
 </div>
-<div class="citation" id="id8" role="doc-biblioentry">
+<div class="citation" id="id15" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">WBFeraudA09</a><span class="fn-bracket">]</span></span>
 <p>Pierre Weiss, Laure Blanc-Féraud, and Gilles Aubert. Efficient schemes for total variation minimization under constraints in image processing. <em>SIAM journal on Scientific Computing</em>, 31(3):2047–2080, 2009.</p>
 </div>
@@ -556,12 +557,12 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html"
+       href="../elastoplasticity/elastoplasticity_exponential_hardening.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Three-dimensional limit analysis problem using Semi-Definite Programming</p>
+        <p class="prev-next-title">Elastoplasticity with exponential isotropic hardening</p>
       </div>
     </a>
     <a class="right-next"

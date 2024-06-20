@@ -13,14 +13,41 @@ kernelspec:
 
 # Viscoplastic fluid
 
-We consider the steady-state 2D flow of a viscoplastic Bingham fluid in a lid-driven cavity.
+Viscoplastic or yield-stress fluids are a particular class of non-Newtonian fluids which
+behave like a standard Newtonian fluid only if the local stress reaches a critical threshold, the fluid *yield stress* $\tau_0$. If the stress is below $\tau_0$, the fluid behaves like a rigid solid. Such fluids occur in many industrial applications such as civil engineering (fresh concrete), petroleum or cosmetics (crude oil, toothpaste, foams, mayonnaise), natural hazards (lava, muds), etc. One of the most simple model to describe such fluids is the *Bingham* model which assumes a linear Newtonian behavior, characterized by a viscosity $\mu$, above the yield stress. For recent reviews on yield stress fluids, we refer to {cite:p}`balmforth2014yielding,coussot2017bingham`.
 
-See more details in (Bleyer, 2015 and 2016)
-- https://dx.doi.org/10.1016/j.cma.2017.11.006
-- https://dx.doi.org/10.1016/j.cma.2014.10.008
-$\newcommand{\bu}{\boldsymbol{u}}\newcommand{\be}{\boldsymbol{e}}\newcommand{\dOm}{\text{d}\,\Omega}\newcommand{\bD}{\boldsymbol{D}}$
+There numerical resolution is notoriously difficult due to the non-smooth character of their behavior and of the underlying variational principle. Here, we show how computing such flows can be achieved using conic programming and interior-point solvers, for more details see {cite:p}`bleyer2015efficient,bleyer2018advances`.
+$\newcommand{\bu}{\boldsymbol{u}}\newcommand{\be}{\boldsymbol{e}}\newcommand{\bd}{\boldsymbol{d}}\newcommand{\bf}{\boldsymbol{f}}\newcommand{\dOm}{\,\text{d}\Omega}\newcommand{\bD}{\boldsymbol{D}}$
 
-+++
+## Variational principle
+
+In the case of a steady-state flow under a body force $\boldsymbol{f}$, the solution velocity field $\bu$ is obtained from the following minimum principle:
+
+```{math}
+\begin{array}{rl}
+\displaystyle{\min_{\bu}} & \displaystyle{\int_{\Omega} \phi(\bd)\dOm - \int_{\Omega}\boldsymbol{f}\cdot\bu\dOm}\\
+\text{s.t.} & \bd = \text{sym}(\nabla \bu)\\
+& \operatorname{div}\bu = 0
+\end{array}
+```
+
+where $\phi(\bd)$ is the dissipation potential corresponding to the material. In the case of a Bingham material characterized by a viscosity $\mu$ and a yield stress $\tau_0$, the potential is given by:
+
+\begin{equation*}
+\phi(\bd) = \mu\bd:\bd + \sqrt{2}\tau_0 \sqrt{\bd:\bd}
+\end{equation*}
+
+```{note}
+For a Herschel-Bulkley fluid, the viscous part is a power-law characterized by a viscosity coefficient $K$ and an exponent $m$. The potential is given by:
+
+\begin{equation*}
+\phi(\bd) = \dfrac{K}{m+1}2^{(m+1)/2}\|\bd\|^{m+1} + \sqrt{2}\tau_0 \sqrt{\bd:\bd}
+\end{equation*}
+```
+
+## Implementation
+
+We consider the problem of a lid-driven square cavity. No slip boundary conditions are enforced on all boundaries except on the top boundary on which a uniform velocity $\bu=\be_x$ is imposed.
 
 We first import the relevant modules and create a square mesh.
 
@@ -76,7 +103,7 @@ bc = [
 We now start defining the optimization problem by adding the velocity $\bu$ as an optimization variable on a $\mathbb{P}_2$ function space, constrained to the previously defined boundary conditions. We also enforce the mass conservation condition by adding the following constraint: 
 
 $$
-\int_\Omega p\:\text{div}(\bu)\: \dOm = 0 \quad \forall p\in V_p
+\int_\Omega p\:\operatorname{div}(\bu)\: \dOm = 0 \quad \forall p\in V_p
 $$
 
 where $V_p$ is the pressure space for pressure test functions $p$ (used here as Lagrange multipliers). We use a Lagrange $\mathbb{P}_1$ function space for its discretization, thereby corresponding to a Taylor-Hood mixed formulation. 
@@ -97,7 +124,7 @@ prob.add_eq_constraint(mass_conserv)
 We now define the fluid viscosity $\mu$ and yield stress $\tau_0$. The Bingham number $\text{Bi}=\tau_0 L/\mu V$ represents the proportion of plastic behavior with respect to the viscous behavior. We also introduce a vector representation for the strain rate field such that:
 
 $$
-\|\boldsymbol{d}|_2^2 = \sum d_i^2 = \bD:\bD=D_{ij}D_{ij}
+\|\boldsymbol{d}\|_2^2 = \sum d_i^2 = \bD:\bD=D_{ij}D_{ij}
 $$
 where $\bD=\text{sym}(\nabla \bu)$ the strain rate tensor and $\boldsymbol{d}$ its vectorial representation. We then define the viscous potential $\mu\bD:\bD$ with a `QuadraticTerm` and the plastic potential $\sqrt{2}\tau_0\sqrt{\bD:\bD}$ with a `L2Norm`.
 
@@ -126,6 +153,8 @@ prob.parameters["tol_rel_gap"] = 1e-6
 prob.optimize()
 ```
 
+We plot the resulting velocity contour lines
+
 We finally compare the horizontal velocity profile against previous solutions for some Bingham numbers along vertical line $x=0.5$.
 
 ```{code-cell} ipython3
@@ -142,7 +171,7 @@ try:
     plt.plot(
         data[:, i + 1],
         data[:, 0],
-        "o",
+        "oC3",
         markersize=4,
         label="solution from [Bleyer et al., 2015]",
     )
@@ -152,4 +181,10 @@ plt.legend()
 plt.xlabel("$y$ coordinate")
 plt.ylabel("Velocity $u_x$")
 plt.show()
+```
+
+## References
+
+```{bibliography}
+:filter: docname in docnames
 ```
