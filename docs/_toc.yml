@@ -9,8 +9,9 @@ title: dolfinx_optim Documentation
 parts:
   - caption: Documented demos
     chapters:
-      - file: demos/viscoplasticity/viscoplasticity.md
       - file: demos/3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.md
+      - file: demos/viscoplasticity/viscoplasticity.md
+      - file: demos/elastoplasticity/elastoplasticity_exponential_hardening.md
       - file: demos/cartoon_texture_decomposition/cartoon_texture_decomposition.md
   - caption: API
     chapters:
