@@ -15,4 +15,4 @@ parts:
       - file: demos/cartoon_texture_decomposition/cartoon_texture_decomposition.md
   - caption: API
     chapters:
-      - file: api.rst
+      - file: api/api.rst
