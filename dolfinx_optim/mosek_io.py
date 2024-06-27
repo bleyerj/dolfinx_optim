@@ -717,6 +717,13 @@ class MosekProblem:
 
         return self.M.primalObjValue(), self.M.dualObjValue()
 
+    def get_dual_var(self, var):
+        for _var, _vec in zip(self.variables, self.vectors):
+            if var == _var:
+                V = var.function_space
+                M = create_mass_matrix(V, ufl.dx)
+                return _vec.dual() / M
+
     def get_lagrange_multiplier(self, name):
         constraint, V_cons = self.constraints[name]
         lag = fem.Function(V_cons, name=name)
