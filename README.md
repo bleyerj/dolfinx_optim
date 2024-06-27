@@ -1,92 +1,79 @@
 # dolfinx_optim
 
+`dolfinx_optim` is a convex optimization add-on package to the `FEniCSx` finite-element library. It provides a simple Domain-Specific Language through FEniCSx `dolfinx` Python interface for solving convex optimization problems. In particular, it relies on the `Mosek` mathematical programming library. `Mosek` provides a state-of-the art interior-point solver for linear programming (LP), convex quadratic programming (QP), second-order conic programming (SOCP) and semi-definite programming (SDP).
+
+* Github repository: https://github.com/bleyerj/dolfinx_optim
+* Online documentation: https://bleyerj.github.io/dolfinx_optim/
 
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Prerequisites
+**dolfinx_optim** requires: 
+* **FEniCSx** (v.0.8), see [installation instructions here](https://fenicsproject.org/download/).
+* **MOSEK** (>= version 10 with its Python Fusion interface), see [installation instructions here](https://www.mosek.com/downloads/). The Python interface can be simply installed via `pip`:
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.enpc.fr/navier-fenics/dolfinx_optim.git
-git branch -M main
-git push -uf origin main
+pip install -f https://download.mosek.com/stable/wheel/index.html Mosek
 ```
 
-## Integrate with your tools
+Mosek is a commercial software so users need a valid Mosek license. Free unlimited licenses are available for education and research purposes, see the [Academic License section](https://www.mosek.com/products/academic-licenses/).
 
-- [ ] [Set up project integrations](https://gitlab.enpc.fr/navier-fenics/dolfinx_optim/-/settings/integrations)
+## Installation and usage
+Simply clone the [`dolfinx_optim` public repository](https://github.com/bleyerj/dolfinx_optim)
+```
+https://github.com/bleyerj/dolfinx_optim
+```
+and install the package by typing
+```
+pip install dolfinx_optim/ --user
+```
 
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Features
+Current version supports variational problem formulations resulting in Linear Programs, Second-Order Cone Programs, Semi-Definite Programs and Power or Exponential cone programs.
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+All this work is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/>) ![license](https://i.creativecommons.org/l/by-sa/4.0/88x31.png).
+
+## Citing
+
+Papers related to this project can be cited as:
+
+- [Bleyer, Jeremy. "Automating the formulation and resolution of convex variational problems: applications from image processing to computational mechanics." ACM Transactions on Mathematical Software (TOMS) 46.3 (2020): 1-33.](https://doi.org/10.1145/3393881)
+```
+@article{bleyer2020automating,
+  title={Automating the formulation and resolution of convex variational problems: applications from image processing to computational mechanics},
+  author={Bleyer, Jeremy},
+  journal={ACM Transactions on Mathematical Software (TOMS)},
+  volume={46},
+  number={3},
+  pages={1--33},
+  year={2020},
+  publisher={ACM New York, NY, USA}
+}
+```
+
+- [Bleyer, Jeremy. "Applications of conic programming in non-smooth mechanics." Journal of Optimization Theory and Applications (2022): 1-33.](https://link.springer.com/article/10.1007/s10957-022-02105-z)
+```
+@article{bleyer2022applications,
+  title={Applications of conic programming in non-smooth mechanics},
+  author={Bleyer, Jeremy},
+  journal={Journal of Optimization Theory and Applications},
+  pages={1--33},
+  year={2022},
+  publisher={Springer}
+}
+```
+
+## About the author
+
+[Jeremy Bleyer](https://bleyerj.github.io/) is a researcher in Solid and Structural Mechanics at [Laboratoire Navier](https://navier-lab.fr), a joint research  (UMR 8205) of [Ecole Nationale des Ponts et Chaussées](http://www.enpc.fr),
+[Université Gustave Eiffel](https://www.univ-gustave-eiffel.fr/) and [CNRS](http://www.cnrs.fr).
+
+[{fas}`at` jeremy.bleyer@enpc.fr](mailto:jeremy.bleyer@enpc.fr)
+
+[{fab}`linkedin` jeremy-bleyer](http://www.linkedin.com/in/jérémy-bleyer-0aabb531)
+
+<a href="https://orcid.org/0000-0001-8212-9921">
+<img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_32x32.png" width="16" height="16" />
+ 0000-0001-8212-9921
+</a>
