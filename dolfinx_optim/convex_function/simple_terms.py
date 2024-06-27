@@ -11,22 +11,30 @@ from dolfinx_optim.utils import concatenate, get_shape
 from dolfinx_optim.cones import Quad, RQuad
 from dolfinx_optim.convex_function import ConvexTerm
 
+
 # TODO: add is_scalar decorator
 class LinearTerm(ConvexTerm):
     """Define the linear function :math:`x`.
 
     Parameters
     ----------
-    x : UFL expression
-        optimization variable
+    operand : scalar UFL expression
+        optimization variable :math:`x`
     """
 
     def conic_repr(self, expr):
-        assert get_shape(expr)==0, "Linear term value applies only to scalar function"
+        assert get_shape(expr) == 0, "Linear term value applies only to scalar function"
         self.add_linear_term(expr)
 
+
 class AbsValue(ConvexTerm):
-    """Define the absolute value function :math:`|x|`."""
+    """Define the absolute value function :math:`|x|`.
+
+    Parameters
+    ----------
+    operand : scalar UFL expression
+        optimization variable :math:`x`
+    """
 
     def conic_repr(self, expr):
         assert get_shape(expr) == 0, "Absolute value applies only to scalar function"
@@ -41,8 +49,8 @@ class QuadraticTerm(ConvexTerm):
 
     Parameters
     ----------
-    x : UFL expression
-        optimization variable
+    operand : UFL expression
+        optimization variable :math:`x`
     """
 
     def conic_repr(self, expr):
@@ -54,12 +62,12 @@ class QuadraticTerm(ConvexTerm):
 
 
 class QuadOverLin(ConvexTerm):
-    """Define the quadratic over linear function :math:`(t,x) \to x^T x/t`.
+    """Define the quadratic over linear function :math:`(t,x) \\to x^T x/t`.
 
     Parameters
     ----------
-    expr : UFL expression
-        expr = (t, x)
+    operand : UFL expression
+        block optimization variable `operand = (t, x)`
     """
 
     def conic_repr(self, expr):

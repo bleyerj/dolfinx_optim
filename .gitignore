@@ -73,8 +73,9 @@ docs/_templates
 # ignore copied medias from notebooks
 docs/*.gif
 docs/*.png
-docs/demos # ignore symbolic link
+docs/demos
 docs/*.csv
+docs/*/_autosummary
 
 # FEniCS failures
 jitfailure*

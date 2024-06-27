@@ -37,24 +37,8 @@ def LpBall(*args, k=1.0):
     return to_ball(LpNorm, k, *args)
 
 
-class L2Ball(ConvexTerm):
-    def conic_repr(self, expr):
-        stack = concatenate([1.0, expr])
-        dim = get_shape(stack)
-        self.add_conic_constraint(stack, Quad(dim))
-
-
-class L2Norm(ConvexTerm):
-    def conic_repr(self, expr):
-        t = self.add_var()
-        stack = concatenate([t, expr])
-        dim = get_shape(stack)
-        self.add_conic_constraint(stack, Quad(dim))
-        self.add_linear_term(t)
-
-
 class L1Ball(ConvexTerm):
-    """Define the L1-norm ball :math:`||x||_1 \leq 1`."""
+    """Define the L1-norm ball constraint :math:`||x||_1 \leq 1`."""
 
     def conic_repr(self, expr):
         d = get_shape(expr)
@@ -68,8 +52,17 @@ class L1Ball(ConvexTerm):
         self.add_ineq_constraint(obj, bu=1.0)
 
 
+class L2Ball(ConvexTerm):
+    """Define the L2-norm ball constraint :math:`||x||_2 \leq 1`."""
+
+    def conic_repr(self, expr):
+        stack = concatenate([1.0, expr])
+        dim = get_shape(stack)
+        self.add_conic_constraint(stack, Quad(dim))
+
+
 class LinfBall(ConvexTerm):
-    """Define the Linf-norm ball :math:`||x||_\infty \leq 1`."""
+    """Define the Linf-norm ball constraint :math:`||x||_\infty \leq 1`."""
 
     def conic_repr(self, expr):
         self.add_ineq_constraint(expr, bu=1.0)
@@ -91,6 +84,17 @@ class L1Norm(ConvexTerm):
         self.add_linear_term(obj)
 
 
+class L2Norm(ConvexTerm):
+    """Define the L2-norm function :math:`||x||_2`."""
+
+    def conic_repr(self, expr):
+        t = self.add_var()
+        stack = concatenate([t, expr])
+        dim = get_shape(stack)
+        self.add_conic_constraint(stack, Quad(dim))
+        self.add_linear_term(t)
+
+
 class LinfNorm(ConvexTerm):
     """Define the Linf-norm function :math:`||x||_\infty`."""
 
@@ -107,7 +111,7 @@ class LinfNorm(ConvexTerm):
 
 
 class LpNorm(ConvexTerm):
-    """Define the Linf-norm function :math:`||x||_p`."""
+    """Define the Lp-norm function :math:`||x||_p`."""
 
     def __init__(self, operand, deg_quad, p):
         super().__init__(operand, deg_quad, parameters=(p,))

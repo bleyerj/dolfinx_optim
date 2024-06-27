@@ -107,10 +107,7 @@ class ConvexTerm(ABC):
         Add a (list of) auxiliary optimization variable.
 
         These variables are local and their interpolation is defined through the chosen
-        quadrature scheme. They are added to the block structure of the optimization
-        problem by following their order of declaration. Inside a ConvexFunction, the
-        block structure is :math:`z=[X, Y_0, Y_1, \\ldots, Y_n]` where :math:`X` is the
-        global declared variable and each :math:`Y_i` are the additional variables.
+        quadrature scheme.
 
         Parameters
         ----------
@@ -121,7 +118,7 @@ class ConvexTerm(ABC):
         ux : float, Function
             upper bound on variable :math:`x\\leq u_x`
         lx : float, Function
-            lower bound on variable :math:`x\\leq l_x`
+            lower bound on variable :math:`l_x\\leq x`
         name : str
             variable name
         """
@@ -156,17 +153,14 @@ class ConvexTerm(ABC):
 
     def add_eq_constraint(self, expr, b=0.0, name=None):
         """
-        Add an equality constraint :math:`Az=b`.
+        Add an equality constraint :math:`expr=b`.
 
-        `z` can contain a linear combination of X and local variables.
+        `expr` can contain an affine combination of optimization variables.
 
         Parameters
         ----------
-        Az : UFL expression
-            a UFL linear combination of X and local variables defining the
-            linear constraint. We still support expressing Az as a list of
-            linear expressions of X and local variable blocks. Use 0 or None for
-            an empty block.
+        expr : UFL expression
+            a UFL affine combination of variables
         b : float, expression
             corresponding right-hand side
         name : str, optional
@@ -251,12 +245,12 @@ class ConvexTerm(ABC):
 
     def add_linear_term(self, expr):
         """
-        Add a linear combination term of X and local variables.
+        Add a linear expression of variables.
 
         Parameters
         ----------
         expr : UFL expression
-            a UFL linear combination of X and local variables defining the
+            a UFL linear combination of variables defining the
             linear objective.
         """
         self._linear_objective.append(expr)

@@ -69,7 +69,7 @@ class SDP(Cone):
     """
     The cone of positive semi-definite matrices.
 
-    :math:`\\mathcal{{S}}=\\{{\\boldsymbol{{X}} \\text{ s.t. }
+    :math:`\\mathcal{{S}}=\\{{\\boldsymbol{{X}}\\in \\mathbb{R}^{n\times n} \\text{ s.t. }
     \\boldsymbol{{X}}=\\boldsymbol{{X}}^T \\text{ and }
     \\boldsymbol{{X}}\\succeq 0\\}}`
 
@@ -98,33 +98,41 @@ class Pow(Cone):
     Parameters
     ----------
     dim : int
-        [description]
+        dimension of the cone (>= 3)
     alpha : float
         Power-cone exponent, must be between 0 and 1.
     """
 
     def __init__(self, dim: int, alpha: float):
         self.dim = dim
+        assert dim >= 3, "Dimension of the cone should be at least 3."
         assert 0 < float(alpha) < 1, "Exponent alpha must be between 0 and 1."
         self.alpha = alpha
         self.type = "ppow"
 
     @property
     def dual(self):
+        """The dual power cone."""
+
         p = Pow(self.dim, self.alpha)
         p.type = "dpow"
         return p
 
 
 class Exp(Cone):
-    """The primal exponential cone."""
+    """The primal exponential cone.
 
-    def __init__(self, dim: int):
-        self.dim = dim
+    :math:`\\mathcal{K}_\\text{exp} = \\{{x=(x_0,x_1,x_2) \\text{ s.t. }
+    x_0 \\geq x_1\\exp(x_2/x_1), \\:\\: x_0,x_1\\geq 0\\}}`
+    """
+
+    def __init__(self):
+        self.dim = 3
         self.type = "pexp"
 
     @property
     def dual(self):
-        p = Exp(self.dim)
+        """The dual exponential cone."""
+        p = Exp()
         p.type = "dexp"
         return p

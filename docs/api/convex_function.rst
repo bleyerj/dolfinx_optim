@@ -26,7 +26,7 @@
    :exclude-members: conic_repr
 
 :mod:`eigenvalues`
-------------
+------------------
 
 .. automodule:: dolfinx_optim.convex_function.eigenvalues
    :members:
@@ -34,7 +34,7 @@
 
 
 :mod:`conjugate`
----------------------
+----------------
 
 .. autoclass:: dolfinx_optim.convex_function.conjugate.Conjugate
 
@@ -45,7 +45,7 @@
 .. autoclass:: dolfinx_optim.convex_function.perspective.Perspective
 
 :mod:`epigraph`
-------------------
+---------------
 
 .. autoclass:: dolfinx_optim.convex_function.epigraph.Epigraph
 
@@ -55,7 +55,7 @@
 .. autoclass:: dolfinx_optim.convex_function.infconvolution.InfConvolution
 
 :mod:`partial_minimization`
----------------------
+---------------------------
 
 .. autoclass:: dolfinx_optim.convex_function.partial_minimization.PartialMinimization
 

@@ -13,6 +13,10 @@ from dolfinx_optim.cones import SDP, Quad
 
 
 class LambdaMax(ConvexTerm):
+    """Define the maximum eigenvalue function
+    :math:`\\boldsymbol{X}\\in \\mathcal{S}_n \\to
+    \\lambda_{max}(\\boldsymbol{X})`."""
+
     def conic_repr(self, expr):
         t = self.add_var()
         Expr = to_mat(expr, False)
@@ -23,7 +27,27 @@ class LambdaMax(ConvexTerm):
         self.add_linear_term(t)
 
 
+class SpectralRadius(ConvexTerm):
+    """Define the spectral radius function
+    :math:`\\boldsymbol{X}\\in \\mathcal{S}_n \\to
+    \max_i\\{{|\\lambda_i(\\boldsymbol{X})|\\}}`."""
+
+    def conic_repr(self, expr):
+        t = self.add_var()
+        Expr = to_mat(expr, False)
+        d, d2 = get_shape(Expr)
+        assert d == d2
+        Id = ufl.Identity(d)
+        self.add_conic_constraint(t * Id - Expr, SDP(d))
+        self.add_conic_constraint(Expr + t * Id, SDP(d))
+        self.add_linear_term(t)
+
+
 class SpectralNorm(ConvexTerm):
+    """Define the spectral norm function
+    :math:`\\boldsymbol{X}\\in \\mathcal{S}_n \\to
+    \sqrt{\\lambda_{max}(\\boldsymbol{X}^T\\boldsymbol{X})}`."""
+
     def conic_repr(self, expr):
         t = self.add_var()
         Expr = to_mat(expr, False)
@@ -37,6 +61,10 @@ class SpectralNorm(ConvexTerm):
 
 
 class NuclearNorm(ConvexTerm):
+    """Define the nuclear norm function
+    :math:`\\boldsymbol{X}\\in \\mathcal{S}_n \\to
+    \\text{tr}(\sqrt{\\boldsymbol{X}^T\\boldsymbol{X}})`."""
+
     def conic_repr(self, expr):
         Expr = to_mat(expr, False)
         d1, d2 = get_shape(Expr)
@@ -49,6 +77,10 @@ class NuclearNorm(ConvexTerm):
 
 
 class FrobeniusNorm(ConvexTerm):
+    """Define the Froebenius norm function
+    :math:`\\boldsymbol{X}\\in \\mathcal{S}_n \\to
+    \sqrt{\\text{tr}(\\boldsymbol{X}^T\\boldsymbol{X})}`."""
+
     def conic_repr(self, expr):
         t = self.add_var()
         d = get_shape(expr)
