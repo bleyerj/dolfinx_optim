@@ -32,28 +32,6 @@ def to_list(a, n=1):
         return a
 
 
-def subk_list(d):
-    """Generate list of subk indices for block triplet format for dimension d."""
-    return [i for k in range(d) for i in range(k, d)]
-
-
-def subl_list(d):
-    """Generate list of subl indices for block triplet format for dimension d."""
-    return [i - k for k in range(d) for i in range(k, d)]
-
-
-def half_vect2subk(index_list, d):
-    """Return the subk index for a d-dimensional SDP variable half vector."""
-    subk = subk_list(d)
-    return [subk[i] for i in index_list]
-
-
-def half_vect2subl(index_list, d):
-    """Return the subl index for a d-dimensional SDP variable half vector."""
-    subl = subl_list(d)
-    return [subl[i] for i in index_list]
-
-
 def to_vect(X, symmetric=False):
     if symmetric:
         raise NotImplementedError
@@ -75,36 +53,6 @@ def to_mat(X, symmetric=False, shape=None):
                 len(X) == d1 * d2
             ), f"Vector of size {len(X)} cannot be written as {d1}x{d2}."
         return as_matrix([[X[j + d2 * i] for j in range(d2)] for i in range(d1)])
-
-
-# def to_vect(X, symmetric=True):
-#     """
-#     Transform a tensor into vector by spanning diagonals.
-
-#     Parameters
-#     ----------
-#     symmetric: bool
-#         indicates if the tensor X must be considered as symmetric or not
-
-#     Returns
-#     -------
-#     UFL vector expression
-#         a d*(d+1)/2 vector if the d x d tensor is symmetric, a d**2 vector otherwise
-#     """
-#     s = shape(X)
-#     if len(s) == 2 and s[0] == s[1]:
-#         d = s[0]
-#         if symmetric:
-#             return as_vector([X[i - k, i] for k in range(d) for i in range(k, d)])
-#         else:
-#             components = [X[i, i] for i in range(d)]
-#             lower_diags = [X[i, i - k] for k in range(1, d) for i in range(k, d)]
-#             upper_diags = [X[i - k, i] for k in range(1, d) for i in range(k, d)]
-#             diags = (upper_diags, lower_diags)
-#             components += [diag[i] for i in range(len(upper_diags)) for diag in diags]
-#             return as_vector(components)
-#     else:
-#         raise ValueError("Variable must be a square tensor")
 
 
 def concatenate(vectors):
@@ -175,55 +123,9 @@ def get_slice(x, start=0, end=None, step=None):
     return as_vector([x[i] for i in range(start, end, step)])
 
 
-def add_zeros(x, npad: int, pos: int = 0):
-    """Vector padding with zeros.
-
-    Parameters
-    ----------
-    x : UFL vector
-        the intial vector
-    npad : int
-        number of padding zeros
-    pos : int, optional
-        position at which zeros are added, by default 0 (start), -1 to add at the end
-
-    Returns
-    -------
-    UFL vector
-        the new vector with zeros
-    """
-    assert npad > 0
-    dim_x = shape(x)[0]
-    x_list = [x[i] for i in range(dim_x)]
-    zeros = [0] * npad
-    if pos == 0:
-        return as_vector(zeros + x_list)
-    elif pos == -1:
-        return as_vector(x_list + zeros)
-
-
 def tail(x):
     """Get the tail x[1:] of a vector."""
     return get_slice(x, start=1)
-
-
-def local_frame(n):
-    """Compute projector on facet local frame (n, t1, t2)."""
-    dim = shape(n)[0]
-    if dim == 2:
-        t = as_vector([-n[1], n[0]])
-        e1 = as_vector([1.0, 0.0])
-        e2 = as_vector([0.0, 1.0])
-        return outer(e1, n) + outer(e2, t)
-    else:
-        ei = as_vector(np.random.rand(3))
-        t1 = cross(n, ei)
-        t1 /= sqrt(dot(t1, t1))
-        t2 = cross(n, t1)
-        e1 = as_vector([1.0, 0.0, 0.0])
-        e2 = as_vector([0.0, 1.0, 0.0])
-        e3 = as_vector([0.0, 0.0, 1.0])
-        return outer(e1, n) + outer(e2, t1) + outer(e3, t2)
 
 
 def split_affine_expression(expr, operand, variables):

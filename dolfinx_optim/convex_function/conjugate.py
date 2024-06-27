@@ -9,7 +9,6 @@
 from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 from dolfinx_optim.utils import (
     concatenate,
-    get_shape,
     to_mat,
     split_affine_expression,
     reshape,
@@ -27,6 +26,13 @@ def transpose(A):
 
 
 class Conjugate(ConvexTerm):
+    """Transforms a function :math:`f(x)` into its Legendre-Fenchel conjugate:
+
+    .. math::
+
+        f^*(z) = \\sup_{x} z^Tx - f(x)
+    """
+
     def __init__(self, z, fun):
         self.fun = fun
         super().__init__(z, fun.deg_quad)

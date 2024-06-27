@@ -12,6 +12,15 @@ import ufl
 
 
 class PartialMinimization(ConvexTerm):
+    """Performs a partial minimization of function :math:`f(x)` over some coordinates given by a set of `indices`:
+
+    .. math::
+
+        \\underline{f}(x) = \\inf_{z_i \\text{ if } i\in\\texttt{indices}} f(z)
+
+    where :math:`x=(z_j)_{j\\notin \\texttt{indices}}`.
+    """
+
     def __init__(self, fun, indices):
         self.fun = fun
         expr = fun.operand

@@ -11,6 +11,13 @@ from dolfinx_optim.convex_function import ConvexTerm
 
 
 class Epigraph(ConvexTerm):
+    """Transforms a function :math:`f(x)` into its epigraph constraint:
+
+    .. math::
+
+        (t, x)\\in \\text{epi}_f = \\{{(t, x) \\text{ s.t. } f(x)\\leq t\\}}
+    """
+
     def __init__(self, t, fun):
         self.fun = fun
         expr = fun.operand

@@ -19,15 +19,8 @@ from ufl.algorithms.apply_algebra_lowering import apply_algebra_lowering
 import scipy.sparse
 from dolfinx import fem
 import dolfinx.fem.petsc
-from .utils import get_shape
-
-
-def to_list(a, n=1):
-    """Transform `a` to list of length `n`."""
-    if type(a) not in [list, tuple]:
-        return [a] * n
-    else:
-        return a
+from dolfinx_optim.utils import get_shape, to_list
+from dolfinx_optim.convex_function import ConvexTerm
 
 
 def mosek_cone_domain(K):
@@ -49,7 +42,7 @@ def mosek_cone_domain(K):
         raise NotImplementedError(f'Cone type "{K.type}" is not available.')
 
 
-def petsc_matrix_to_scipy(A_petsc, M_array=None):
+def _petsc_matrix_to_scipy(A_petsc, M_array=None):
     """
     Utility function to converts a PETSc matrix to a scipy sparse coo matrix
 
@@ -62,12 +55,12 @@ def petsc_matrix_to_scipy(A_petsc, M_array=None):
     return A_csr.tocoo()
 
 
-def scipy_matrix_to_mosek(A_coo):
+def _scipy_matrix_to_mosek(A_coo):
     nrow, ncol = A_coo.shape
     return mf.Matrix.sparse(nrow, ncol, A_coo.row, A_coo.col, A_coo.data)
 
 
-def create_mass_matrix(V2, dx):
+def _create_mass_matrix(V2, dx):
     # mass matrix on V2
     one = fem.Function(V2)
     v = ufl.TestFunction(V2)
@@ -76,7 +69,7 @@ def create_mass_matrix(V2, dx):
     return fem.assemble_vector(fem.form(m_ufl)).array
 
 
-def create_interpolation_matrix(operator, u, V2, dx):
+def _create_interpolation_matrix(operator, u, V2, dx):
     V1 = u.function_space
     v_ = ufl.TrialFunction(V1)
     v = ufl.TestFunction(V2)
@@ -85,10 +78,10 @@ def create_interpolation_matrix(operator, u, V2, dx):
     A_petsc = dolfinx.fem.petsc.assemble_matrix(fem.form(a_ufl))
     A_petsc.assemble()
 
-    M_array = create_mass_matrix(V2, dx)
+    M_array = _create_mass_matrix(V2, dx)
 
-    A_coo = petsc_matrix_to_scipy(A_petsc, M_array=M_array)
-    return scipy_matrix_to_mosek(A_coo), M_array
+    A_coo = _petsc_matrix_to_scipy(A_petsc, M_array=M_array)
+    return _scipy_matrix_to_mosek(A_coo), M_array
 
 
 def is_scalar(arr):
@@ -109,9 +102,17 @@ def get_value_array(u):
 
 
 class MosekProblem:
-    """A generic optimization problem using the Mosek optimization solver."""
+    """A generic optimization problem using the Mosek optimization solver.
 
-    def __init__(self, domain, name):
+    Parameters
+    ----------
+    domain : dolfinx.mesh.Mesh
+        Underlying mesh.
+    name : str
+        Problem name.
+    """
+
+    def __init__(self, domain: dolfinx.mesh.Mesh, name: str):
         self.name = name
         self.Vx = []
         self.Vy = []
@@ -297,23 +298,20 @@ class MosekProblem:
         """
         Add a linear equality constraint :math:`Ax = b`.
 
-        The constraint matrix A is expressed through a bilinear form involving
-        the corresponding Lagrange multiplier defined on the space Vy.
+        The constraint matrix A is expressed through a linear form involving optimization variables
+        and Lagrange multiplier test functions.
         The right-hand side is a linear form involving the same Lagrange multiplier.
         Naming the constraint enables to retrieve the corresponding Lagrange multiplier
         optimal value.
 
         Parameters
         ----------
-        Vy : `FunctionSpace`
-            FunctionSpace of the corresponding Lagrange multiplier
-        A : function
-            A function of signature `y -> bilinear_form` where the function
-            argument `y` is the constraint Lagrange multiplier.
-        b : float, function
-            A float or a function of signature `y -> linear_form` where the function
-            argument `y` is the constraint Lagrange multiplier (default is 0.0)
-        bc : DirichletBC
+        A : Form
+            A linear form involving optimization variables. If A contains constant terms, the latter are
+            transferred to the right-hand side b.
+        b : float, Form
+            Right-hand side as a float or a linear form involving the same Lagrange multipliers as in A
+        bc : `dolfinx.fem.dirichletbc`
             boundary conditions to apply on the Lagrange multiplier (will be
             applied to all columns of the constraint when possible)
         name : str
@@ -321,29 +319,26 @@ class MosekProblem:
         """
         self.add_ineq_constraint(A, b, b, bc, name)
 
-    def add_ineq_constraint(self, A=None, bu=None, bl=None, bc=None, name=None):
+    def add_ineq_constraint(self, A=None, bl=None, bu=None, bc=None, name=None):
         """
         Add a linear inequality constraint :math:`b_l \\leq Ax \\leq b_u`.
 
-        The constraint matrix A is expressed through a bilinear form involving
-        the corresponding Lagrange multiplier defined on the space Vy.
-        The right-hand sides are linear forms involving the same Lagrange multiplier.
+        The constraint matrix A is expressed through a linear form involving optimization variables
+        and Lagrange multiplier test functions.
+        The right-hand side is a linear form involving the same Lagrange multiplier.
         Naming the constraint enables to retrieve the corresponding Lagrange multiplier
         optimal value.
 
         Parameters
         ----------
-        Vy : `FunctionSpace`
-            FunctionSpace of the corresponding Lagrange multiplier
-        A : function
-            A function of signature `y -> bilinear_form` where the function
-            argument `y` is the constraint Lagrange multiplier.
-        bl : float, function
-            A float or a function of signature `y -> linear_form` where the function
-            argument `y` is the constraint Lagrange multiplier (default is 0.0)
-        bu : float, function
-            same as bl
-        bc : DirichletBC
+        A : Form
+            A linear form involving optimization variables. If A contains constant terms, the latter are
+            transferred to the right-hand side b.
+        bl : float, Form
+            Lower-bound as a float or a linear form involving the same Lagrange multipliers as in A
+        bu : float, Form
+            Same as bl.
+        bc : `dolfinx.fem.dirichletbc`
             boundary conditions to apply on the Lagrange multiplier (will be
             applied to all columns of the constraint when possible)
         name : str
@@ -373,8 +368,8 @@ class MosekProblem:
                         # FIXME: need to apply bcs
                         A_petsc = dolfinx.fem.petsc.assemble_matrix(fem.form(curr_form))
                         A_petsc.assemble()
-                        A_coo = petsc_matrix_to_scipy(A_petsc)
-                        A_mosek = scipy_matrix_to_mosek(A_coo)
+                        A_coo = _petsc_matrix_to_scipy(A_petsc)
+                        A_mosek = _scipy_matrix_to_mosek(A_coo)
                         expr.append(mf.Expr.mul(A_mosek, vec))
                     except:
                         print("Empty block, skipping")
@@ -428,7 +423,7 @@ class MosekProblem:
                     c.append(fem.assemble_scalar(fem.form(obj)) - c0)
                 self.objectives.append(mf.Expr.dot(np.array(c), vec))
 
-    def add_convex_term(self, conv_fun):
+    def add_convex_term(self, conv_fun: ConvexTerm):
         """Add the convex term `conv_fun` to the problem."""
         conv_fun._apply_conic_representation()
 
@@ -501,7 +496,7 @@ class MosekProblem:
 
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
-                        A_op, _ = create_interpolation_matrix(
+                        A_op, _ = _create_interpolation_matrix(
                             curr_expr, var, cons["V"], conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
@@ -511,7 +506,7 @@ class MosekProblem:
                     pass  # FIXME: handle constant terms
                     # raise NotImplementedError
 
-            M_array = create_mass_matrix(cons["V"], conv_fun.dx)
+            M_array = _create_mass_matrix(cons["V"], conv_fun.dx)
             if cons["bu"] is not None:
                 if isinstance(cons["bu"], float):
                     bu = fem.Function(cons["V"])
@@ -577,7 +572,7 @@ class MosekProblem:
                     )
                     if not curr_expr == 0:  # if derivative is zero ignore
                         curr_expr_list.append(curr_expr)
-                        A_op, M_array = create_interpolation_matrix(
+                        A_op, M_array = _create_interpolation_matrix(
                             curr_expr, var, V, conv_fun.dx
                         )
                         expr_list.append(mf.Expr.mul(A_op, vec))
@@ -718,13 +713,17 @@ class MosekProblem:
         return self.M.primalObjValue(), self.M.dualObjValue()
 
     def get_dual_var(self, var):
+        """Retrieves dual variable function associated with `var`."""
         for _var, _vec in zip(self.variables, self.vectors):
             if var == _var:
                 V = var.function_space
-                M = create_mass_matrix(V, ufl.dx)
-                return _vec.dual() / M
+                dvar = fem.Function(V, name=f"Dual_{var.name}")
+                M = _create_mass_matrix(V, ufl.dx)
+                dvar.x.array[:] = _vec.dual() / M
+                return dvar
 
     def get_lagrange_multiplier(self, name):
+        """Retrieves Lagrange multiplier function associated with constraint `name`."""
         constraint, V_cons = self.constraints[name]
         lag = fem.Function(V_cons, name=name)
         lag.vector.array[:] = constraint.dual()

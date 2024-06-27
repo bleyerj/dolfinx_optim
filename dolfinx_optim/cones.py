@@ -17,8 +17,10 @@ class Quad(Cone):
     """
     The quadratic cone.
 
-    :math:`\\mathcal{Q}=\\{{x=(x_0,\\bar{{x}})
-    \\text{ s.t. } \\|\\bar{{x}}\\|_2 \\leq x_0\\}}`
+    .. math::
+
+        \\mathcal{Q}=\\{{x=(x_0,\\bar{{x}})
+        \\text{ s.t. } \\|\\bar{{x}}\\|_2 \\leq x_0\\}}
 
     Parameters
     ----------
@@ -39,8 +41,10 @@ class RQuad(Cone):
     """
     The rotated quadratic cone.
 
-    :math:`\\mathcal{Q}_r=\\{{x=(x_0,x_1,\\bar{{x}})
-    \\text{ s.t. } \\|\\bar{{x}}\\|_2^2 \\leq 2x_0x_1\\}}`
+    .. math::
+
+    \\mathcal{Q}_r=\\{{x=(x_0,x_1,\\bar{{x}})
+    \\text{ s.t. } \\|\\bar{{x}}\\|_2^2 \\leq 2x_0x_1\\}}
 
     Parameters
     ----------
@@ -69,9 +73,11 @@ class SDP(Cone):
     """
     The cone of positive semi-definite matrices.
 
-    :math:`\\mathcal{{S}}=\\{{\\boldsymbol{{X}}\\in \\mathbb{R}^{n\times n} \\text{ s.t. }
-    \\boldsymbol{{X}}=\\boldsymbol{{X}}^T \\text{ and }
-    \\boldsymbol{{X}}\\succeq 0\\}}`
+    .. math::
+
+        \\mathcal{{S}}=\\{{\\boldsymbol{{X}}\\in \\mathbb{R}^{n\times n} \\text{ s.t. }
+        \\boldsymbol{{X}}=\\boldsymbol{{X}}^T \\text{ and }
+        \\boldsymbol{{X}}\\succeq 0\\}}
 
 
     Parameters
@@ -92,8 +98,10 @@ class SDP(Cone):
 class Pow(Cone):
     """The primal power cone.
 
-    :math:`\\mathcal{P}_{{\\alpha,1-\\alpha}}=\\{{x=(x_0,x_1,\\bar{{x}})
-    \\text{ s.t. } \\|\\bar{{x}}\\|_2^2 \\leq x_0^\\alpha x_1^{{1-\\alpha}}\\}}`
+    .. math::
+
+        \\mathcal{P}_{{\\alpha,1-\\alpha}}=\\{{x=(x_0,x_1,\\bar{{x}})
+        \\text{ s.t. } \\|\\bar{{x}}\\|_2^2 \\leq x_0^\\alpha x_1^{{1-\\alpha}}\\}}
 
     Parameters
     ----------
@@ -122,8 +130,10 @@ class Pow(Cone):
 class Exp(Cone):
     """The primal exponential cone.
 
-    :math:`\\mathcal{K}_\\text{exp} = \\{{x=(x_0,x_1,x_2) \\text{ s.t. }
-    x_0 \\geq x_1\\exp(x_2/x_1), \\:\\: x_0,x_1\\geq 0\\}}`
+    .. math::
+
+        \\mathcal{K}_\\text{exp} = \\{{x=(x_0,x_1,x_2) \\text{ s.t. }
+        x_0 \\geq x_1\\exp(x_2/x_1), \\:\\: x_0,x_1\\geq 0\\}}
     """
 
     def __init__(self):

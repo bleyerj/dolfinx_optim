@@ -20,6 +20,7 @@ from dolfinx_optim.utils import (
     split_affine_expression,
     reshape,
 )
+from dolfinx_optim.cones import Cone
 
 
 def generate_scalar_quadrature_functionspace(domain, deg_quad, scheme="default"):
@@ -220,7 +221,18 @@ class ConvexTerm(ABC):
             }
         )
 
-    def add_conic_constraint(self, expr, cone, name=""):
+    def add_conic_constraint(self, expr, cone: Cone, name=""):
+        """Add a conic constraint :math:`expr \\in \\mathcal{K}`.
+
+        Parameters
+        ----------
+        expr : UFL expression
+            a UFL affine combination of variables
+        cone : dolfinx_optim.cones.Cone
+            The cone :math:`\\mathcal{K}` in which to constrain the expression
+        name : str, optional
+            Name of the constraint
+        """
         dim = get_shape(expr)
         if isinstance(dim, tuple):
             expr = apply_algebra_lowering(to_vect(expr, False))

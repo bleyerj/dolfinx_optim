@@ -17,6 +17,13 @@ import ufl
 
 
 class Perspective(ConvexTerm):
+    """Transforms a function :math:`f(x)` into its perspective:
+
+    .. math::
+
+        \\text{persp}_f(t,x) = tf(x/t)
+    """
+
     def __init__(self, t, fun):
         self.fun = fun
         expr = fun.operand

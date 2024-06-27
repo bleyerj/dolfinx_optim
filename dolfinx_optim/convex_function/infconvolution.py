@@ -12,6 +12,15 @@ from dolfinx_optim.convex_function import ConvexTerm
 
 
 class InfConvolution(ConvexTerm):
+    """Transforms two function :math:`f_1(x)` and :math:`f_2(x)` into their inf-convolution:
+
+    .. math::
+
+        (f_1\square f_2)(x) = \\inf_{x \\text{ s.t. } x=y_1+y_2} f_1(y_1)+f_2(y_2)
+
+    If `indices` are provided, convolution is taken only over this set of indices.
+    """
+
     def __init__(self, fun1, fun2, indices=None):
         self.fun1 = fun1
         self.fun2 = fun2
