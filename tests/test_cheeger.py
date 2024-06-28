@@ -150,4 +150,4 @@ def test_Cheeger():
 #     print(norm)
 #     test_perspectives(norm, fun)
 # test_norms(norms[1], fun_eval[1])
-test_perspectives(norms[1], fun_eval[1])
+test_conjugate(balls[1], fun_eval[1])

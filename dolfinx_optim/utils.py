@@ -88,7 +88,7 @@ def hstack(arrays):
     """Vertical stack of vectors/matrix."""
     shapes = [a.ufl_shape for a in arrays]
     if all([len(s) <= 1 for s in shapes]):
-        return as_matrix([[a[i] for a in arrays] for i in range(shapes[0][0])])
+        return as_vector([a[i] for a in arrays for i in range(a.ufl_shape[0])])
 
     shapes = [shape(a)[0] for a in arrays]
     assert len(set(shapes)) == 1, "Arrays must have matching dimensions."

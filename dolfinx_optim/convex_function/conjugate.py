@@ -13,6 +13,7 @@ from dolfinx_optim.utils import (
     split_affine_expression,
     reshape,
     hstack,
+    vstack,
 )
 from dolfinx_optim.convex_function import ConvexTerm
 import ufl
@@ -50,7 +51,7 @@ class Conjugate(ConvexTerm):
             constraint += concatenate([c_op] + c_var)
 
         for cons in self.fun.linear_constraints:
-            A_op, A_var, b = split_affine_expression(
+            A_op, A_var, b0 = split_affine_expression(
                 cons["expr"], self.fun.operand, self.fun.variables
             )
             A = hstack([A_op] + [a for a in A_var])
@@ -58,18 +59,19 @@ class Conjugate(ConvexTerm):
             d = cons["dim"]
 
             if cons["bu"] == cons["bl"]:
-                b = reshape(cons["bu"], d)
+                b = reshape(cons["bu"], d) - b0
                 s = self.add_var(d)
                 self.add_linear_term(ufl.dot(s, b))
                 constraint += apply_algebra_lowering(transpose(A) * s)
             else:
                 if cons["bu"] is not None:
-                    bu = reshape(cons["bu"], d)
+                    bu = reshape(cons["bu"], d) - b0
                     su = self.add_var(d, lx=0)
                     self.add_linear_term(ufl.dot(su, bu))
+                    print(transpose(A).ufl_shape, su.ufl_shape)
                     constraint += apply_algebra_lowering(transpose(A) * su)
                 if cons["bl"] is not None:
-                    bl = reshape(cons["bl"], d)
+                    bl = reshape(cons["bl"], d) - b0
                     sl = self.add_var(d, lx=0)
                     self.add_linear_term(-ufl.dot(sl, bl))
                     constraint -= apply_algebra_lowering(transpose(A) * sl)

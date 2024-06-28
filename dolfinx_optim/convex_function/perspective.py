@@ -13,7 +13,6 @@ from dolfinx_optim.utils import (
     reshape,
 )
 from dolfinx_optim.convex_function import ConvexTerm
-import ufl
 
 
 class Perspective(ConvexTerm):
