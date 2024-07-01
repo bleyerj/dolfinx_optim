@@ -1,5 +1,5 @@
 import pytest
-from ufl import as_matrix, as_vector, Identity, shape
+from ufl import as_matrix, as_vector, Identity, shape, Constant
 from dolfinx_optim.utils import (
     to_vect,
     to_mat,
@@ -43,6 +43,7 @@ def test_stacking():
     B = as_matrix([[1, 2, 3], [4, 5, 6]])
     IAAI = as_matrix([[1, 0, 1, 2], [0, 1, 3, 4], [1, 2, 1, 0], [3, 4, 0, 1]])
     assert hstack([as_vector([0, 0]), as_vector([1])]) == as_vector([0, 0, 1])
+    assert hstack([as_vector([0, 0]), Id[0, 0]]) == as_vector([0, 0, 1])
     assert hstack([as_vector([0, 0]), A]) == as_matrix([[0, 1, 2], [0, 3, 4]])
     assert vstack([as_vector([0, 0]), A]) == as_matrix([[0, 0], [1, 2], [3, 4]])
     assert hstack([Id, A]) == as_matrix([[1, 0, 1, 2], [0, 1, 3, 4]])
