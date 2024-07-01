@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
@@ -41,7 +41,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -178,25 +178,16 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/dolfinx_optim.html">dolfinx_optim</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.html">dolfinx_optim.convex_function</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.conjugate.html">dolfinx_optim.convex_function.conjugate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.convex_term.html">dolfinx_optim.convex_function.convex_term</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.eigenvalues.html">dolfinx_optim.convex_function.eigenvalues</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.epigraph.html">dolfinx_optim.convex_function.epigraph</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.infconvolution.html">dolfinx_optim.convex_function.infconvolution</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.norms.html">dolfinx_optim.convex_function.norms</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.partial_minimization.html">dolfinx_optim.convex_function.partial_minimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.perspective.html">dolfinx_optim.convex_function.perspective</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.simple_terms.html">dolfinx_optim.convex_function.simple_terms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/cones.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cones</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/convex_function.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">convex_function</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/primitives.html">Primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/transforms.html">Transforms</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.mosek_io.html">dolfinx_optim.mosek_io</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.utils.html">dolfinx_optim.utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/mosek_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mosek_io</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
 </ul>
 </li>
 </ul>
@@ -305,113 +296,232 @@ document.write(`
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#D"><strong>D</strong></a>
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.simple_terms.AbsValue">AbsValue (class in dolfinx_optim.convex_function.simple_terms)</a>
+</li>
+      <li><a href="api/convex_function.html#dolfinx_optim.convex_function.convex_term.ConvexTerm.add_conic_constraint">add_conic_constraint() (ConvexTerm method)</a>
+</li>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_convex_term">add_convex_term() (MosekProblem method)</a>
+</li>
+      <li><a href="api/convex_function.html#dolfinx_optim.convex_function.convex_term.ConvexTerm.add_eq_constraint">add_eq_constraint() (ConvexTerm method)</a>
+
+      <ul>
+        <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_eq_constraint">(MosekProblem method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/convex_function.html#dolfinx_optim.convex_function.convex_term.ConvexTerm.add_ineq_constraint">add_ineq_constraint() (ConvexTerm method)</a>
+
+      <ul>
+        <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_ineq_constraint">(MosekProblem method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/convex_function.html#dolfinx_optim.convex_function.convex_term.ConvexTerm.add_linear_term">add_linear_term() (ConvexTerm method)</a>
+</li>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_obj_func">add_obj_func() (MosekProblem method)</a>
+</li>
+      <li><a href="api/convex_function.html#dolfinx_optim.convex_function.convex_term.ConvexTerm.add_var">add_var() (ConvexTerm method)</a>
+
+      <ul>
+        <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_var">(MosekProblem method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.block_matrix">block_matrix() (in module dolfinx_optim.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.concatenate">concatenate() (in module dolfinx_optim.utils)</a>
+</li>
+      <li><a href="api/cones.html#dolfinx_optim.cones.Cone">Cone (class in dolfinx_optim.cones)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/transforms.html#dolfinx_optim.convex_function.conjugate.Conjugate">Conjugate (class in dolfinx_optim.convex_function.conjugate)</a>
+</li>
+      <li><a href="api/convex_function.html#dolfinx_optim.convex_function.convex_term.ConvexTerm">ConvexTerm (class in dolfinx_optim.convex_function.convex_term)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    dolfinx_optim
-
-      <ul>
-        <li><a href="_autosummary/dolfinx_optim.html#module-dolfinx_optim">module</a>
-</li>
-      </ul></li>
-      <li>
     dolfinx_optim.cones
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.cones.html#module-dolfinx_optim.cones">module</a>
-</li>
-      </ul></li>
-      <li>
-    dolfinx_optim.convex_function
-
-      <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.html#module-dolfinx_optim.convex_function">module</a>
-</li>
-      </ul></li>
-      <li>
-    dolfinx_optim.convex_function.conjugate
-
-      <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.conjugate.html#module-dolfinx_optim.convex_function.conjugate">module</a>
-</li>
-      </ul></li>
-      <li>
-    dolfinx_optim.convex_function.convex_term
-
-      <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.convex_term.html#module-dolfinx_optim.convex_function.convex_term">module</a>
+        <li><a href="api/cones.html#module-dolfinx_optim.cones">module</a>
 </li>
       </ul></li>
       <li>
     dolfinx_optim.convex_function.eigenvalues
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.eigenvalues.html#module-dolfinx_optim.convex_function.eigenvalues">module</a>
+        <li><a href="api/primitives.html#module-dolfinx_optim.convex_function.eigenvalues">module</a>
 </li>
       </ul></li>
       <li>
     dolfinx_optim.convex_function.epigraph
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.epigraph.html#module-dolfinx_optim.convex_function.epigraph">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    dolfinx_optim.convex_function.infconvolution
-
-      <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.infconvolution.html#module-dolfinx_optim.convex_function.infconvolution">module</a>
+        <li><a href="api/_autosummary/dolfinx_optim.convex_function.epigraph.html#module-dolfinx_optim.convex_function.epigraph">module</a>
 </li>
       </ul></li>
       <li>
     dolfinx_optim.convex_function.norms
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.norms.html#module-dolfinx_optim.convex_function.norms">module</a>
-</li>
-      </ul></li>
-      <li>
-    dolfinx_optim.convex_function.partial_minimization
-
-      <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.partial_minimization.html#module-dolfinx_optim.convex_function.partial_minimization">module</a>
+        <li><a href="api/_autosummary/dolfinx_optim.convex_function.norms.html#module-dolfinx_optim.convex_function.norms">module</a>, <a href="api/primitives.html#module-dolfinx_optim.convex_function.norms">[1]</a>
 </li>
       </ul></li>
       <li>
     dolfinx_optim.convex_function.perspective
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.perspective.html#module-dolfinx_optim.convex_function.perspective">module</a>
+        <li><a href="api/_autosummary/dolfinx_optim.convex_function.perspective.html#module-dolfinx_optim.convex_function.perspective">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     dolfinx_optim.convex_function.simple_terms
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.simple_terms.html#module-dolfinx_optim.convex_function.simple_terms">module</a>
+        <li><a href="api/primitives.html#module-dolfinx_optim.convex_function.simple_terms">module</a>
 </li>
       </ul></li>
       <li>
     dolfinx_optim.mosek_io
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.mosek_io.html#module-dolfinx_optim.mosek_io">module</a>
+        <li><a href="api/mosek_io.html#module-dolfinx_optim.mosek_io">module</a>
 </li>
       </ul></li>
       <li>
     dolfinx_optim.utils
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.utils.html#module-dolfinx_optim.utils">module</a>
+        <li><a href="api/utils.html#module-dolfinx_optim.utils">module</a>
 </li>
       </ul></li>
+      <li><a href="api/cones.html#dolfinx_optim.cones.Exp.dual">dual (Exp property)</a>
+
+      <ul>
+        <li><a href="api/cones.html#dolfinx_optim.cones.Pow.dual">(Pow property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/transforms.html#dolfinx_optim.convex_function.epigraph.Epigraph">Epigraph (class in dolfinx_optim.convex_function.epigraph)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/cones.html#dolfinx_optim.cones.Exp">Exp (class in dolfinx_optim.cones)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.eigenvalues.FrobeniusNorm">FrobeniusNorm (class in dolfinx_optim.convex_function.eigenvalues)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.get_dual_var">get_dual_var() (MosekProblem method)</a>
+</li>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.get_lagrange_multiplier">get_lagrange_multiplier() (MosekProblem method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.get_slice">get_slice() (in module dolfinx_optim.utils)</a>
+</li>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.get_solution_info">get_solution_info() (MosekProblem method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.hstack">hstack() (in module dolfinx_optim.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/transforms.html#dolfinx_optim.convex_function.infconvolution.InfConvolution">InfConvolution (class in dolfinx_optim.convex_function.infconvolution)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.L1Ball">L1Ball (class in dolfinx_optim.convex_function.norms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.L1Norm">L1Norm (class in dolfinx_optim.convex_function.norms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.L2Ball">L2Ball (class in dolfinx_optim.convex_function.norms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.L2Norm">L2Norm (class in dolfinx_optim.convex_function.norms)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.eigenvalues.LambdaMax">LambdaMax (class in dolfinx_optim.convex_function.eigenvalues)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.simple_terms.LinearTerm">LinearTerm (class in dolfinx_optim.convex_function.simple_terms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.LinfBall">LinfBall (class in dolfinx_optim.convex_function.norms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.LinfNorm">LinfNorm (class in dolfinx_optim.convex_function.norms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.norms.LpNorm">LpNorm (class in dolfinx_optim.convex_function.norms)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -422,35 +532,115 @@ document.write(`
     module
 
       <ul>
-        <li><a href="_autosummary/dolfinx_optim.html#module-dolfinx_optim">dolfinx_optim</a>
+        <li><a href="api/cones.html#module-dolfinx_optim.cones">dolfinx_optim.cones</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.cones.html#module-dolfinx_optim.cones">dolfinx_optim.cones</a>
+        <li><a href="api/primitives.html#module-dolfinx_optim.convex_function.eigenvalues">dolfinx_optim.convex_function.eigenvalues</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.html#module-dolfinx_optim.convex_function">dolfinx_optim.convex_function</a>
+        <li><a href="api/_autosummary/dolfinx_optim.convex_function.epigraph.html#module-dolfinx_optim.convex_function.epigraph">dolfinx_optim.convex_function.epigraph</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.conjugate.html#module-dolfinx_optim.convex_function.conjugate">dolfinx_optim.convex_function.conjugate</a>
+        <li><a href="api/_autosummary/dolfinx_optim.convex_function.norms.html#module-dolfinx_optim.convex_function.norms">dolfinx_optim.convex_function.norms</a>, <a href="api/primitives.html#module-dolfinx_optim.convex_function.norms">[1]</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.convex_term.html#module-dolfinx_optim.convex_function.convex_term">dolfinx_optim.convex_function.convex_term</a>
+        <li><a href="api/_autosummary/dolfinx_optim.convex_function.perspective.html#module-dolfinx_optim.convex_function.perspective">dolfinx_optim.convex_function.perspective</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.eigenvalues.html#module-dolfinx_optim.convex_function.eigenvalues">dolfinx_optim.convex_function.eigenvalues</a>
+        <li><a href="api/primitives.html#module-dolfinx_optim.convex_function.simple_terms">dolfinx_optim.convex_function.simple_terms</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.epigraph.html#module-dolfinx_optim.convex_function.epigraph">dolfinx_optim.convex_function.epigraph</a>
+        <li><a href="api/mosek_io.html#module-dolfinx_optim.mosek_io">dolfinx_optim.mosek_io</a>
 </li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.infconvolution.html#module-dolfinx_optim.convex_function.infconvolution">dolfinx_optim.convex_function.infconvolution</a>
-</li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.norms.html#module-dolfinx_optim.convex_function.norms">dolfinx_optim.convex_function.norms</a>
-</li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.partial_minimization.html#module-dolfinx_optim.convex_function.partial_minimization">dolfinx_optim.convex_function.partial_minimization</a>
-</li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.perspective.html#module-dolfinx_optim.convex_function.perspective">dolfinx_optim.convex_function.perspective</a>
-</li>
-        <li><a href="_autosummary/dolfinx_optim.convex_function.simple_terms.html#module-dolfinx_optim.convex_function.simple_terms">dolfinx_optim.convex_function.simple_terms</a>
-</li>
-        <li><a href="_autosummary/dolfinx_optim.mosek_io.html#module-dolfinx_optim.mosek_io">dolfinx_optim.mosek_io</a>
-</li>
-        <li><a href="_autosummary/dolfinx_optim.utils.html#module-dolfinx_optim.utils">dolfinx_optim.utils</a>
+        <li><a href="api/utils.html#module-dolfinx_optim.utils">dolfinx_optim.utils</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem">MosekProblem (class in dolfinx_optim.mosek_io)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.eigenvalues.NuclearNorm">NuclearNorm (class in dolfinx_optim.convex_function.eigenvalues)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.optimize">optimize() (MosekProblem method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/transforms.html#dolfinx_optim.convex_function.partial_minimization.PartialMinimization">PartialMinimization (class in dolfinx_optim.convex_function.partial_minimization)</a>
+</li>
+      <li><a href="api/transforms.html#dolfinx_optim.convex_function.perspective.Perspective">Perspective (class in dolfinx_optim.convex_function.perspective)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/cones.html#dolfinx_optim.cones.Pow">Pow (class in dolfinx_optim.cones)</a>
+</li>
+      <li><a href="api/cones.html#dolfinx_optim.cones.Product">Product (class in dolfinx_optim.cones)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/cones.html#dolfinx_optim.cones.Quad">Quad (class in dolfinx_optim.cones)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.simple_terms.QuadOverLin">QuadOverLin (class in dolfinx_optim.convex_function.simple_terms)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.simple_terms.QuadraticTerm">QuadraticTerm (class in dolfinx_optim.convex_function.simple_terms)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/cones.html#dolfinx_optim.cones.RQuad">RQuad (class in dolfinx_optim.cones)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/cones.html#dolfinx_optim.cones.SDP">SDP (class in dolfinx_optim.cones)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.eigenvalues.SpectralNorm">SpectralNorm (class in dolfinx_optim.convex_function.eigenvalues)</a>
+</li>
+      <li><a href="api/primitives.html#dolfinx_optim.convex_function.eigenvalues.SpectralRadius">SpectralRadius (class in dolfinx_optim.convex_function.eigenvalues)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.tail">tail() (in module dolfinx_optim.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.to_list">to_list() (in module dolfinx_optim.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#dolfinx_optim.utils.vstack">vstack() (in module dolfinx_optim.utils)</a>
+</li>
   </ul></td>
 </tr></table>
 

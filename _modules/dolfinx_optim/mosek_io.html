@@ -1,0 +1,1119 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dolfinx_optim.mosek_io &#8212; dolfinx_optim</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dolfinx_optim/mosek_io';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">dolfinx_optim</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    dolfinx_optim documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Documented demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../demos/3D_soil_slope_limit_analysis/3D_soil_slope_limit_analysis.html">Three-dimensional limit analysis problem using Semi-Definite Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos/viscoplasticity/viscoplasticity.html">Viscoplastic fluid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos/elastoplasticity/elastoplasticity_exponential_hardening.html">Elastoplasticity with exponential isotropic hardening</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos/cartoon_texture_decomposition/cartoon_texture_decomposition.html">Cartoon-texture oscillation decomposition demo</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../api/cones.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cones</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/convex_function.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">convex_function</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/primitives.html">Primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/transforms.html">Transforms</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/mosek_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mosek_io</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for dolfinx_optim.mosek_io</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">mosek_io provides interface to the Mosek optimization solver.</span>
+
+<span class="sd">All types of conic programming (LP, SOCP, SDP, power and exponential cones)</span>
+<span class="sd">are supported.</span>
+
+<span class="sd">@author: Jeremy Bleyer, Ecole des Ponts ParisTech,</span>
+<span class="sd">Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)</span>
+<span class="sd">@email: jeremy.bleyer@enpc.fr</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">mosek.fusion</span> <span class="k">as</span> <span class="nn">mf</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">from</span> <span class="nn">ufl.algorithms.apply_derivatives</span> <span class="kn">import</span> <span class="n">apply_derivatives</span>
+<span class="kn">from</span> <span class="nn">ufl.algorithms.apply_algebra_lowering</span> <span class="kn">import</span> <span class="n">apply_algebra_lowering</span>
+<span class="kn">import</span> <span class="nn">scipy.sparse</span>
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">fem</span>
+<span class="kn">import</span> <span class="nn">dolfinx.fem.petsc</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.utils</span> <span class="kn">import</span> <span class="n">get_shape</span><span class="p">,</span> <span class="n">to_list</span>
+<span class="kn">from</span> <span class="nn">dolfinx_optim.convex_function</span> <span class="kn">import</span> <span class="n">ConvexTerm</span>
+
+
+<span class="k">def</span> <span class="nf">mosek_cone_domain</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;quad&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inQCone</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;rquad&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inRotatedQCone</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;ppow&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inPPowerCone</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;pexp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inPExpCone</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;dpow&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inDPowerCone</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;dexp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inDExpCone</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">K</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;sdp&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inPSDCone</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cone type &quot;</span><span class="si">{</span><span class="n">K</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s1">&quot; is not available.&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_petsc_matrix_to_scipy</span><span class="p">(</span><span class="n">A_petsc</span><span class="p">,</span> <span class="n">M_array</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility function to converts a PETSc matrix to a scipy sparse coo matrix</span>
+
+<span class="sd">    if M_array is not None, computes diag(M_array)^{-1})*A_petsc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">A_petsc</span><span class="o">.</span><span class="n">getValuesCSR</span><span class="p">()</span>
+    <span class="n">A_csr</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="n">A_petsc</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">M_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">A_csr</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">diags</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">M_array</span><span class="p">)</span> <span class="o">@</span> <span class="n">A_csr</span>
+    <span class="k">return</span> <span class="n">A_csr</span><span class="o">.</span><span class="n">tocoo</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_scipy_matrix_to_mosek</span><span class="p">(</span><span class="n">A_coo</span><span class="p">):</span>
+    <span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="n">A_coo</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Matrix</span><span class="o">.</span><span class="n">sparse</span><span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">A_coo</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="n">A_coo</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">A_coo</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_create_mass_matrix</span><span class="p">(</span><span class="n">V2</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+    <span class="c1"># mass matrix on V2</span>
+    <span class="n">one</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V2</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V2</span><span class="p">)</span>
+    <span class="n">one</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">m_ufl</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="k">return</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">m_ufl</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+
+
+<span class="k">def</span> <span class="nf">_create_interpolation_matrix</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">V2</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+    <span class="n">V1</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">function_space</span>
+    <span class="n">v_</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V1</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V2</span><span class="p">)</span>
+    <span class="n">new_op</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v_</span><span class="p">)</span>
+    <span class="n">a_ufl</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">new_op</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="n">A_petsc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">a_ufl</span><span class="p">))</span>
+    <span class="n">A_petsc</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+
+    <span class="n">M_array</span> <span class="o">=</span> <span class="n">_create_mass_matrix</span><span class="p">(</span><span class="n">V2</span><span class="p">,</span> <span class="n">dx</span><span class="p">)</span>
+
+    <span class="n">A_coo</span> <span class="o">=</span> <span class="n">_petsc_matrix_to_scipy</span><span class="p">(</span><span class="n">A_petsc</span><span class="p">,</span> <span class="n">M_array</span><span class="o">=</span><span class="n">M_array</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_scipy_matrix_to_mosek</span><span class="p">(</span><span class="n">A_coo</span><span class="p">),</span> <span class="n">M_array</span>
+
+
+<span class="k">def</span> <span class="nf">is_scalar</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_value_array</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">u</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">u</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># constant case</span>
+        <span class="k">return</span> <span class="n">u</span><span class="o">.</span><span class="n">value</span>
+
+
+<div class="viewcode-block" id="MosekProblem">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem">[docs]</a>
+<span class="k">class</span> <span class="nc">MosekProblem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A generic optimization problem using the Mosek optimization solver.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    domain : dolfinx.mesh.Mesh</span>
+<span class="sd">        Underlying mesh.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Problem name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">Mesh</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vy</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lagrange_multiplier_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cones</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ux</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bu</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bl</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bc_dual</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bc_prim</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># self.vectors_dict = {}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objectives</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>
+
+    <span class="k">def</span> <span class="nf">_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;presolve&quot;</span><span class="p">:</span> <span class="s2">&quot;off&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;presolve_lindep&quot;</span><span class="p">:</span> <span class="s2">&quot;off&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_level&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;tol_rel_gap&quot;</span><span class="p">:</span> <span class="mf">1e-7</span><span class="p">,</span>
+            <span class="s2">&quot;solve_form&quot;</span><span class="p">:</span> <span class="s2">&quot;free&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;num_threads&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;dump_file&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_create_variable_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">lx</span><span class="p">,</span> <span class="n">cone</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cone</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">cone</span><span class="o">.</span><span class="n">dim</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">//</span> <span class="n">n</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="n">mosek_cone_domain</span><span class="p">(</span><span class="n">cone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cone</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;sdp&quot;</span><span class="p">:</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">//</span> <span class="n">n</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">domain</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inPSDCone</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">],</span> <span class="n">domain</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">variable</span><span class="p">([</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">],</span> <span class="n">domain</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">vec</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">vec</span><span class="o">.</span><span class="n">getSize</span><span class="p">())</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ux</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">domain</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">unbounded</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">ux</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lxv</span> <span class="o">=</span> <span class="n">get_value_array</span><span class="p">(</span><span class="n">lx</span><span class="p">)</span>
+                <span class="n">domain</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">greaterThan</span><span class="p">(</span><span class="n">lxv</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">uxv</span> <span class="o">=</span> <span class="n">get_value_array</span><span class="p">(</span><span class="n">ux</span><span class="p">)</span>
+                <span class="n">domain</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">greaterThan</span><span class="p">(</span><span class="n">uxv</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lxv</span> <span class="o">=</span> <span class="n">get_value_array</span><span class="p">(</span><span class="n">lx</span><span class="p">)</span>
+                <span class="n">uxv</span> <span class="o">=</span> <span class="n">get_value_array</span><span class="p">(</span><span class="n">ux</span><span class="p">)</span>
+                <span class="n">domain</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">lxv</span><span class="p">,</span> <span class="n">uxv</span><span class="p">)</span>
+            <span class="n">var_values</span> <span class="o">=</span> <span class="n">get_value_array</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_scalar</span><span class="p">(</span><span class="n">var_values</span><span class="p">):</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="n">bcs</span><span class="p">):</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">variable</span><span class="o">.</span><span class="n">function_space</span>
+        <span class="n">u_bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+        <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+        <span class="n">fem</span><span class="o">.</span><span class="n">set_bc</span><span class="p">(</span><span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">to_list</span><span class="p">(</span><span class="n">bcs</span><span class="p">))</span>
+        <span class="n">dof_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">bc_values</span> <span class="o">=</span> <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">dof_indices</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">pick</span><span class="p">(</span><span class="n">dof_indices</span><span class="p">),</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">equalsTo</span><span class="p">(</span><span class="n">bc_values</span><span class="p">))</span>
+
+<div class="viewcode-block" id="MosekProblem.add_var">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_var">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_var</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">V</span><span class="p">,</span>
+        <span class="n">cone</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">lx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ux</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a (list of) optimization variable.</span>
+
+<span class="sd">        The added variables belong to the corresponding FunctionSpace V.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        V : (list of) `FunctionSpace`</span>
+<span class="sd">            variable FunctionSpace</span>
+<span class="sd">        cone : (list of) `Cone`</span>
+<span class="sd">            cone in which each variable belongs (None if no constraint)</span>
+<span class="sd">        ux : (list of) float, Function</span>
+<span class="sd">            upper bound on variable :math:`x \\leq u_x`</span>
+<span class="sd">        lx : (list of) float, Function</span>
+<span class="sd">            lower bound on variable :math:`l_x \\leq x`</span>
+<span class="sd">        bc : (list of) `DirichletBC`</span>
+<span class="sd">            boundary conditions applied to the variables (None if no bcs)</span>
+<span class="sd">        name : (list of) str</span>
+<span class="sd">            name of the associated functions</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        x : Function tuple</span>
+<span class="sd">            optimization variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">V_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">V</span><span class="p">]</span>
+            <span class="n">bc_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">V_list</span> <span class="o">=</span> <span class="n">V</span>
+            <span class="n">bc_list</span> <span class="o">=</span> <span class="n">bc</span>
+        <span class="n">nlist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bc_list</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">nlist</span>
+
+        <span class="n">lx_list</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">lx</span><span class="p">,</span> <span class="n">nlist</span><span class="p">)</span>
+        <span class="n">ux_list</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">ux</span><span class="p">,</span> <span class="n">nlist</span><span class="p">)</span>
+        <span class="n">cone_list</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">cone</span><span class="p">,</span> <span class="n">nlist</span><span class="p">)</span>
+        <span class="n">name_list</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">nlist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lx</span> <span class="o">+=</span> <span class="n">lx_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ux</span> <span class="o">+=</span> <span class="n">ux_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cones</span> <span class="o">+=</span> <span class="n">cone_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bc_prim</span> <span class="o">+=</span> <span class="n">bc_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_names</span> <span class="o">+=</span> <span class="n">name_list</span>
+
+        <span class="n">new_var</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">V_list</span><span class="p">,</span> <span class="n">name_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">):</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">V</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">V</span><span class="p">,))</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">new_var</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+            <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_variable_vector</span><span class="p">(</span>
+                <span class="n">var</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ux_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">lx_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cone_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># FIXME: better handle bcs ?</span>
+            <span class="k">if</span> <span class="n">bc_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_boundary_conditions</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="n">bc_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+
+        <span class="c1"># for i in range(len(new_var)):</span>
+        <span class="c1">#     var = new_var[i]</span>
+        <span class="c1">#     bc = bc_list[i]</span>
+        <span class="c1">#     ux = self.ux[i]</span>
+        <span class="c1">#     lx = self.lx[i]</span>
+        <span class="c1">#     cone = self.cones[i]</span>
+        <span class="c1">#     name = self.variable_names[i]</span>
+        <span class="c1">#     print(name, var.x.array)</span>
+        <span class="c1">#     vector = self._create_variable_vector(</span>
+        <span class="c1">#         var, name, ux, lx, cone</span>
+        <span class="c1">#     )  # FIXME: better handle bcs ?</span>
+        <span class="c1">#     if bc is not None:</span>
+        <span class="c1">#         self._add_boundary_conditions(var, vector, bc)</span>
+        <span class="c1">#     self.vectors.append(vector)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">+=</span> <span class="n">new_var</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vx</span> <span class="o">+=</span> <span class="n">V_list</span>
+
+        <span class="k">if</span> <span class="n">nlist</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">new_var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_var</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.add_eq_constraint">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_eq_constraint">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_eq_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a linear equality constraint :math:`Ax = b`.</span>
+
+<span class="sd">        The constraint matrix A is expressed through a linear form involving optimization variables</span>
+<span class="sd">        and Lagrange multiplier test functions.</span>
+<span class="sd">        The right-hand side is a linear form involving the same Lagrange multiplier.</span>
+<span class="sd">        Naming the constraint enables to retrieve the corresponding Lagrange multiplier</span>
+<span class="sd">        optimal value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        A : Form</span>
+<span class="sd">            A linear form involving optimization variables. If A contains constant terms, the latter are</span>
+<span class="sd">            transferred to the right-hand side b.</span>
+<span class="sd">        b : float, Form</span>
+<span class="sd">            Right-hand side as a float or a linear form involving the same Lagrange multipliers as in A</span>
+<span class="sd">        bc : `dolfinx.fem.dirichletbc`</span>
+<span class="sd">            boundary conditions to apply on the Lagrange multiplier (will be</span>
+<span class="sd">            applied to all columns of the constraint when possible)</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Lagrange multiplier name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_ineq_constraint</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bc</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.add_ineq_constraint">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_ineq_constraint">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_ineq_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a linear inequality constraint :math:`b_l \\leq Ax \\leq b_u`.</span>
+
+<span class="sd">        The constraint matrix A is expressed through a linear form involving optimization variables</span>
+<span class="sd">        and Lagrange multiplier test functions.</span>
+<span class="sd">        The right-hand side is a linear form involving the same Lagrange multiplier.</span>
+<span class="sd">        Naming the constraint enables to retrieve the corresponding Lagrange multiplier</span>
+<span class="sd">        optimal value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        A : Form</span>
+<span class="sd">            A linear form involving optimization variables. If A contains constant terms, the latter are</span>
+<span class="sd">            transferred to the right-hand side b.</span>
+<span class="sd">        bl : float, Form</span>
+<span class="sd">            Lower-bound as a float or a linear form involving the same Lagrange multipliers as in A</span>
+<span class="sd">        bu : float, Form</span>
+<span class="sd">            Same as bl.</span>
+<span class="sd">        bc : `dolfinx.fem.dirichletbc`</span>
+<span class="sd">            boundary conditions to apply on the Lagrange multiplier (will be</span>
+<span class="sd">            applied to all columns of the constraint when possible)</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Lagrange multiplier name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">arity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">arguments</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">arity</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+                    <span class="n">var_</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">function_space</span><span class="p">)</span>
+                    <span class="n">curr_form</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_</span><span class="p">)</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">curr_form</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+                    <span class="n">expr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">bl</span><span class="p">,</span> <span class="n">bu</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">arity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ufl_element</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">arguments</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ufl_function_space</span><span class="p">()</span><span class="o">.</span><span class="n">ufl_element</span><span class="p">()</span>
+            <span class="n">V_cons</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">functionspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">ufl_element</span><span class="p">)</span>
+            <span class="c1"># TODO: add possibility to pass directly an assembled matrix (comply with dolfinx_mpc)</span>
+
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+                    <span class="n">dvar</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">function_space</span><span class="p">)</span>
+                    <span class="n">curr_form</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">dvar</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1"># FIXME: need to apply bcs</span>
+                        <span class="n">A_petsc</span> <span class="o">=</span> <span class="n">dolfinx</span><span class="o">.</span><span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">curr_form</span><span class="p">))</span>
+                        <span class="n">A_petsc</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+                        <span class="n">A_coo</span> <span class="o">=</span> <span class="n">_petsc_matrix_to_scipy</span><span class="p">(</span><span class="n">A_petsc</span><span class="p">)</span>
+                        <span class="n">A_mosek</span> <span class="o">=</span> <span class="n">_scipy_matrix_to_mosek</span><span class="p">(</span><span class="n">A_coo</span><span class="p">)</span>
+                        <span class="n">expr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">A_mosek</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Empty block, skipping&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">getSize</span><span class="p">()</span>
+                    <span class="n">c0</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                        <span class="n">var</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span>
+                        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="o">.</span><span class="n">array</span> <span class="o">-</span> <span class="n">c0</span><span class="p">)</span>
+                        <span class="n">var</span><span class="o">.</span><span class="n">value</span> <span class="o">*=</span> <span class="mi">0</span>
+                    <span class="n">c_mat</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Matrix</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+                    <span class="n">expr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">c_mat</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+
+            <span class="n">expr_tot</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">bl</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+                <span class="n">xbl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">expr_tot</span><span class="o">.</span><span class="n">getSize</span><span class="p">(),</span> <span class="n">bl</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xbl</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">bl</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">bu</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+                <span class="n">xbu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">expr_tot</span><span class="o">.</span><span class="n">getSize</span><span class="p">(),</span> <span class="n">bu</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xbu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">bu</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+
+            <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span><span class="n">expr_tot</span><span class="p">,</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">xbl</span><span class="p">,</span> <span class="n">xbu</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">V_cons</span><span class="p">)})</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.add_obj_func">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_obj_func">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_obj_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an objective function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : linear form</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+                <span class="n">var_</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">function_space</span><span class="p">)</span>
+                <span class="n">curr_form</span> <span class="o">=</span> <span class="n">apply_derivatives</span><span class="p">(</span>
+                    <span class="n">apply_algebra_lowering</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_</span><span class="p">))</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">curr_form</span><span class="o">.</span><span class="n">arguments</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">curr_form</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">objectives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">getSize</span><span class="p">()</span>
+                <span class="n">c0</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                    <span class="n">var</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span>
+                    <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span> <span class="o">-</span> <span class="n">c0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">objectives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">vec</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.add_convex_term">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.add_convex_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_convex_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_fun</span><span class="p">:</span> <span class="n">ConvexTerm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the convex term `conv_fun` to the problem.&quot;&quot;&quot;</span>
+        <span class="n">conv_fun</span><span class="o">.</span><span class="n">_apply_conic_representation</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">conv_fun</span><span class="o">.</span><span class="n">variables</span><span class="p">)):</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">variable_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">ux</span> <span class="o">=</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">ux</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">lx</span> <span class="o">=</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">lx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cone</span> <span class="o">=</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">cones</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_variable_vector</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">lx</span><span class="p">,</span> <span class="n">cone</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">==</span> <span class="n">vector</span><span class="o">.</span><span class="n">getSize</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+
+        <span class="n">objective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_objective</span><span class="p">(</span><span class="n">conv_fun</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_linear_constraints</span><span class="p">(</span><span class="n">conv_fun</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_conic_constraints</span><span class="p">(</span><span class="n">conv_fun</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">objective</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">objectives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_apply_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_fun</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">objective</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">var</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+                            <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">conv_fun</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">*</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">objective</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+                            <span class="n">var</span><span class="o">.</span><span class="n">value</span> <span class="o">*=</span> <span class="mf">0.0</span>
+                            <span class="n">var</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                            <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+                                <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">conv_fun</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">*</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">objective</span><span class="p">)</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">var_</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">function_space</span><span class="p">)</span>
+                    <span class="n">dobj</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span>
+                        <span class="n">conv_fun</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">*</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">objective</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dobj</span><span class="o">.</span><span class="n">coefficients</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">dobj</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># try:</span>
+                    <span class="n">obj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+                <span class="c1"># except AttributeError:</span>
+                <span class="c1">#     obj.append(mf.Expr.constTerm(0.0))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_apply_linear_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_fun</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cons</span> <span class="ow">in</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">linear_constraints</span><span class="p">:</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;expr&quot;</span><span class="p">]</span>
+            <span class="n">expr_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">curr_expr_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">lamb_</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">):</span>
+                    <span class="n">curr_expr</span> <span class="o">=</span> <span class="n">apply_derivatives</span><span class="p">(</span>
+                        <span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">apply_algebra_lowering</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="n">var</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">curr_expr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if derivative is zero ignore</span>
+                        <span class="n">curr_expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_expr</span><span class="p">)</span>
+                        <span class="n">A_op</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_create_interpolation_matrix</span><span class="p">(</span>
+                            <span class="n">curr_expr</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">],</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">dx</span>
+                        <span class="p">)</span>
+                        <span class="n">expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">A_op</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+                    <span class="c1"># FIXME: handle non zero constant term</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># FIXME: handle constant terms</span>
+                    <span class="c1"># raise NotImplementedError</span>
+
+            <span class="n">M_array</span> <span class="o">=</span> <span class="n">_create_mass_matrix</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">],</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bu&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bu&quot;</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">bu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+                    <span class="n">xbu</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span>
+                    <span class="n">xbu</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bu&quot;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bu&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">bu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+                    <span class="n">xbu</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span>
+                        <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">lamb_</span><span class="p">,</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bu&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">xbu</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">array</span> <span class="o">/</span> <span class="n">M_array</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xbu</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bl&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bl&quot;</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">bl</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+                    <span class="n">xbl</span> <span class="o">=</span> <span class="n">bl</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span>
+                    <span class="n">xbl</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bl&quot;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bl&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">bl</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+                    <span class="n">xbl</span> <span class="o">=</span> <span class="n">bl</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bl</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span>
+                        <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">lamb_</span><span class="p">,</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;bl&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">xbl</span> <span class="o">=</span> <span class="n">bl</span><span class="o">.</span><span class="n">array</span> <span class="o">/</span> <span class="n">M_array</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xbl</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">xbu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">xbl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span>
+                    <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expr_list</span><span class="p">),</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">inRange</span><span class="p">(</span><span class="n">xbl</span><span class="p">,</span> <span class="n">xbu</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">xbu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span>
+                    <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expr_list</span><span class="p">),</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">lessThan</span><span class="p">(</span><span class="n">xbu</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">xbl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span>
+                    <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expr_list</span><span class="p">),</span> <span class="n">mf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">greaterThan</span><span class="p">(</span><span class="n">xbl</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Linear inequality constraint must have bounds&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span> <span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])})</span>
+
+    <span class="k">def</span> <span class="nf">_apply_conic_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conv_fun</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cons</span> <span class="ow">in</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">conic_constraints</span><span class="p">:</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;expr&quot;</span><span class="p">]</span>
+            <span class="n">cone</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;cone&quot;</span><span class="p">]</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">]</span>
+
+            <span class="n">v</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+            <span class="n">expr_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">curr_expr_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">):</span>
+                    <span class="n">curr_expr</span> <span class="o">=</span> <span class="n">apply_derivatives</span><span class="p">(</span>
+                        <span class="n">apply_algebra_lowering</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">curr_expr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if derivative is zero ignore</span>
+                        <span class="n">curr_expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_expr</span><span class="p">)</span>
+                        <span class="n">A_op</span><span class="p">,</span> <span class="n">M_array</span> <span class="o">=</span> <span class="n">_create_interpolation_matrix</span><span class="p">(</span>
+                            <span class="n">curr_expr</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">dx</span>
+                        <span class="p">)</span>
+                        <span class="n">expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">A_op</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># FIXME: handle constant terms</span>
+                    <span class="c1"># raise NotImplementedError</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">curr_expr_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">expr</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">curr_expr_list</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">expr</span>
+            <span class="n">b_vec</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">constTerm</span><span class="p">(</span>
+                <span class="n">fem</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span><span class="o">.</span><span class="n">array</span>
+                <span class="o">/</span> <span class="n">M_array</span>
+            <span class="p">)</span>
+            <span class="n">expr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_vec</span><span class="p">)</span>
+            <span class="n">z_in_cone</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">expr_list</span><span class="p">)</span>
+            <span class="n">z_shape</span> <span class="o">=</span> <span class="n">get_shape</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cone</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;sdp&quot;</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">cone</span><span class="o">.</span><span class="n">dim</span>
+                <span class="k">assert</span> <span class="n">z_in_cone</span><span class="o">.</span><span class="n">getSize</span><span class="p">()</span> <span class="o">==</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">ndof</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span>
+                <span class="n">z_in_cone</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z_in_cone</span><span class="p">,</span> <span class="p">[</span><span class="n">conv_fun</span><span class="o">.</span><span class="n">ndof</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">z_shape</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">expr_size</span> <span class="o">=</span> <span class="n">z_in_cone</span><span class="o">.</span><span class="n">getSize</span><span class="p">()</span>
+                <span class="n">conv_fun_size</span> <span class="o">=</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">ndof</span> <span class="o">*</span> <span class="n">z_shape</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">expr_size</span> <span class="o">==</span> <span class="n">conv_fun_size</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Wrong shape in conic constraint expression </span><span class="si">{</span><span class="n">expr_size</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">conv_fun_size</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">z_in_cone</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z_in_cone</span><span class="p">,</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">ndof</span><span class="p">,</span> <span class="n">z_shape</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">z_in_cone</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z_in_cone</span><span class="p">,</span> <span class="n">conv_fun</span><span class="o">.</span><span class="n">ndof</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span><span class="n">z_in_cone</span><span class="p">,</span> <span class="n">mosek_cone_domain</span><span class="p">(</span><span class="n">cone</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">cons</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span> <span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">cons</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])})</span>
+
+    <span class="k">def</span> <span class="nf">_set_task_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_parameters</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="p">),</span> <span class="s2">&quot;Available parameters are:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_parameters</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;autoUpdateSolInfo&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;intpntSolveForm&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;solve_form&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Set log level (integer parameter)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">])</span>
+        <span class="c1"># Select interior-point optimizer... (parameter with symbolic string values)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;conic&quot;</span><span class="p">)</span>
+        <span class="c1"># ... without basis identification (parameter with symbolic string values)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;intpntBasis&quot;</span><span class="p">,</span> <span class="s2">&quot;never&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ... without basis identification (parameter with symbolic string values)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;presolveUse&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;presolve&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;presolveLindepUse&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;presolve_lindep&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Set relative gap tolerance (double parameter)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;intpntCoTolRelGap&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;tol_rel_gap&quot;</span><span class="p">])</span>
+        <span class="c1"># Controls whether primal or dual form is solved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setSolverParam</span><span class="p">(</span><span class="s2">&quot;intpntSolveForm&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;solve_form&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="MosekProblem.get_solution_info">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.get_solution_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_solution_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return information dictionary on the solution.</span>
+
+<span class="sd">        If output=True, it gets printed out.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">int_info</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;intpntIter&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;optNumcon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;optNumvar&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;anaProNumVar&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">double_info</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;optimizerTime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;presolveEliTime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;presolveLindepTime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;presolveTime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intpntTime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intpntOrderTime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;solItrPrimalObj&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;solItrDualObj&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">Lint_info</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;numAffConicCon&quot;</span><span class="p">]</span>
+        <span class="n">Lint_value</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">getSolverLIntInfo</span><span class="p">(</span><span class="s2">&quot;rdNumacc&quot;</span><span class="p">)]</span>
+        <span class="n">int_value</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">getSolverIntInfo</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">int_info</span><span class="p">]</span> <span class="o">+</span> <span class="n">Lint_value</span>
+        <span class="n">double_value</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">getSolverDoubleInfo</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">double_info</span><span class="p">]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">int_info</span> <span class="o">+</span> <span class="n">Lint_info</span> <span class="o">+</span> <span class="n">double_info</span><span class="p">,</span>
+                <span class="n">int_value</span> <span class="o">+</span> <span class="n">Lint_value</span> <span class="o">+</span> <span class="n">double_value</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;solution_status&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">getAcceptedSolutionStatus</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solver information:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">info</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.optimize">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.optimize">[docs]</a>
+    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sense</span><span class="o">=</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="n">dump</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the problem in Mosek format and solves.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sense : {&quot;min[imize]&quot;, &quot;max[imize]&quot;}</span>
+<span class="sd">            sense of optimization</span>
+<span class="sd">        dump : bool</span>
+<span class="sd">            dumps the problem to a .ptf file format, default=False</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pobj : float</span>
+<span class="sd">            the computed primal optimal value</span>
+<span class="sd">        dobj : float</span>
+<span class="sd">            the computed dual optimal value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sense</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">ObjectiveSense</span><span class="o">.</span><span class="n">Minimize</span>
+        <span class="k">elif</span> <span class="n">sense</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">ObjectiveSense</span><span class="o">.</span><span class="n">Maximize</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objectives</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sense</span><span class="p">,</span> <span class="n">mf</span><span class="o">.</span><span class="n">Expr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objectives</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dump</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">writeTask</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.ptf&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">setLogHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_task_parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+        <span class="c1"># Retrieve solution and save to file</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">level</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">var</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">level</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">primalObjValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="o">.</span><span class="n">dualObjValue</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.get_dual_var">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.get_dual_var">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_dual_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves dual variable function associated with `var`.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">_var</span><span class="p">,</span> <span class="n">_vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="n">_var</span><span class="p">:</span>
+                <span class="n">V</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">function_space</span>
+                <span class="n">dvar</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Dual_</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">M</span> <span class="o">=</span> <span class="n">_create_mass_matrix</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+                <span class="n">dvar</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">_vec</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span> <span class="o">/</span> <span class="n">M</span>
+                <span class="k">return</span> <span class="n">dvar</span></div>
+
+
+<div class="viewcode-block" id="MosekProblem.get_lagrange_multiplier">
+<a class="viewcode-back" href="../../api/mosek_io.html#dolfinx_optim.mosek_io.MosekProblem.get_lagrange_multiplier">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_lagrange_multiplier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves Lagrange multiplier function associated with constraint `name`.&quot;&quot;&quot;</span>
+        <span class="n">constraint</span><span class="p">,</span> <span class="n">V_cons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">lag</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_cons</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">lag</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">dual</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">lag</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jeremy Bleyer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>dolfinx_optim &#8212; dolfinx_optim</title>
+    <title>utils &#8212; dolfinx_optim</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
@@ -42,7 +42,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -57,11 +57,10 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/dolfinx_optim';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/utils';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="dolfinx_optim.cones" href="dolfinx_optim.cones.html" />
-    <link rel="prev" title="API Reference" href="../api.html" />
+    <link rel="prev" title="mosek_io" href="mosek_io.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -179,25 +178,16 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../api.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">dolfinx_optim</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="dolfinx_optim.convex_function.html">dolfinx_optim.convex_function</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.conjugate.html">dolfinx_optim.convex_function.conjugate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.convex_term.html">dolfinx_optim.convex_function.convex_term</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.eigenvalues.html">dolfinx_optim.convex_function.eigenvalues</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.epigraph.html">dolfinx_optim.convex_function.epigraph</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.infconvolution.html">dolfinx_optim.convex_function.infconvolution</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.norms.html">dolfinx_optim.convex_function.norms</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.partial_minimization.html">dolfinx_optim.convex_function.partial_minimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.perspective.html">dolfinx_optim.convex_function.perspective</a></li>
-<li class="toctree-l4"><a class="reference internal" href="dolfinx_optim.convex_function.simple_terms.html">dolfinx_optim.convex_function.simple_terms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cones.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cones</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="convex_function.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">convex_function</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="primitives.html">Primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transforms.html">Transforms</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="dolfinx_optim.mosek_io.html">dolfinx_optim.mosek_io</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dolfinx_optim.utils.html">dolfinx_optim.utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mosek_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mosek_io</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
 </ul>
 </li>
 </ul>
@@ -277,7 +267,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -288,11 +280,25 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>dolfinx_optim</h1>
+    <h1>utils</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.block_matrix"><code class="docutils literal notranslate"><span class="pre">block_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.concatenate"><code class="docutils literal notranslate"><span class="pre">concatenate()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.get_slice"><code class="docutils literal notranslate"><span class="pre">get_slice()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.hstack"><code class="docutils literal notranslate"><span class="pre">hstack()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.tail"><code class="docutils literal notranslate"><span class="pre">tail()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.to_list"><code class="docutils literal notranslate"><span class="pre">to_list()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.vstack"><code class="docutils literal notranslate"><span class="pre">vstack()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -302,29 +308,52 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-dolfinx_optim">
-<span id="dolfinx-optim"></span><h1>dolfinx_optim<a class="headerlink" href="#module-dolfinx_optim" title="Link to this heading">#</a></h1>
-<p>dolfinx_optim package</p>
-<p>&#64;author: Jeremy Bleyer, Ecole des Ponts ParisTech,
-Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
-&#64;email: <a class="reference external" href="mailto:jeremy&#46;bleyer&#37;&#52;&#48;enpc&#46;fr">jeremy<span>&#46;</span>bleyer<span>&#64;</span>enpc<span>&#46;</span>fr</a></p>
-<p class="rubric">Modules</p>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="dolfinx_optim.cones.html#module-dolfinx_optim.cones" title="dolfinx_optim.cones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dolfinx_optim.cones</span></code></a></p></td>
-<td><p>Cones supported by Mosek.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="dolfinx_optim.convex_function.html#module-dolfinx_optim.convex_function" title="dolfinx_optim.convex_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dolfinx_optim.convex_function</span></code></a></p></td>
-<td><p>&#64;Author  :   Jeremy Bleyer, Ecole des Ponts ParisTech, Navier &#64;Contact :   <a class="reference external" href="mailto:jeremy&#46;bleyer&#37;&#52;&#48;enpc&#46;fr">jeremy<span>&#46;</span>bleyer<span>&#64;</span>enpc<span>&#46;</span>fr</a> &#64;Time    :   17/11/2023</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="dolfinx_optim.mosek_io.html#module-dolfinx_optim.mosek_io" title="dolfinx_optim.mosek_io"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dolfinx_optim.mosek_io</span></code></a></p></td>
-<td><p>mosek_io provides interface to the Mosek optimization solver.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="dolfinx_optim.utils.html#module-dolfinx_optim.utils" title="dolfinx_optim.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dolfinx_optim.utils</span></code></a></p></td>
-<td><p>Some useful utility functions.</p></td>
-</tr>
-</tbody>
-</table>
+  <section id="utils">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code><a class="headerlink" href="#utils" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-dolfinx_optim.utils">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.block_matrix">
+<span class="sig-name descname"><span class="pre">block_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#block_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.block_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Horizontal stack of vectors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.concatenate">
+<span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#concatenate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.concatenate" title="Link to this definition">#</a></dt>
+<dd><p>Concatenate vectors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.get_slice">
+<span class="sig-name descname"><span class="pre">get_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#get_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.get_slice" title="Link to this definition">#</a></dt>
+<dd><p>Get a slice x[start:end:step].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.hstack">
+<span class="sig-name descname"><span class="pre">hstack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrays</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#hstack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.hstack" title="Link to this definition">#</a></dt>
+<dd><p>Vertical stack of vectors/matrix.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.tail">
+<span class="sig-name descname"><span class="pre">tail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#tail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.tail" title="Link to this definition">#</a></dt>
+<dd><p>Get the tail x[1:] of a vector.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.to_list">
+<span class="sig-name descname"><span class="pre">to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.to_list" title="Link to this definition">#</a></dt>
+<dd><p>Transform <cite>a</cite> to list of length <cite>n</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dolfinx_optim.utils.vstack">
+<span class="sig-name descname"><span class="pre">vstack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrays</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dolfinx_optim/utils.html#vstack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dolfinx_optim.utils.vstack" title="Link to this definition">#</a></dt>
+<dd><p>Vertical stack of vectors/matrix.</p>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -340,7 +369,7 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
         },
         kernelOptions: {
             name: "python3",
-            path: "./_autosummary"
+            path: "./api"
         },
         predefinedOutput: true
     }
@@ -358,22 +387,13 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../api.html"
+       href="mosek_io.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">API Reference</p>
+        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mosek_io</span></code></p>
       </div>
-    </a>
-    <a class="right-next"
-       href="dolfinx_optim.cones.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">dolfinx_optim.cones</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -382,7 +402,26 @@ Laboratoire Navier (ENPC, Univ Gustave Eiffel, CNRS, UMR 8205)
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.block_matrix"><code class="docutils literal notranslate"><span class="pre">block_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.concatenate"><code class="docutils literal notranslate"><span class="pre">concatenate()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.get_slice"><code class="docutils literal notranslate"><span class="pre">get_slice()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.hstack"><code class="docutils literal notranslate"><span class="pre">hstack()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.tail"><code class="docutils literal notranslate"><span class="pre">tail()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.to_list"><code class="docutils literal notranslate"><span class="pre">to_list()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dolfinx_optim.utils.vstack"><code class="docutils literal notranslate"><span class="pre">vstack()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

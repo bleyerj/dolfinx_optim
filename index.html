@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
@@ -42,7 +42,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -182,25 +182,16 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/dolfinx_optim.html">dolfinx_optim</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.cones.html">dolfinx_optim.cones</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.html">dolfinx_optim.convex_function</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.conjugate.html">dolfinx_optim.convex_function.conjugate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.convex_term.html">dolfinx_optim.convex_function.convex_term</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.eigenvalues.html">dolfinx_optim.convex_function.eigenvalues</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.epigraph.html">dolfinx_optim.convex_function.epigraph</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.infconvolution.html">dolfinx_optim.convex_function.infconvolution</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.norms.html">dolfinx_optim.convex_function.norms</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.partial_minimization.html">dolfinx_optim.convex_function.partial_minimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.perspective.html">dolfinx_optim.convex_function.perspective</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/dolfinx_optim.convex_function.simple_terms.html">dolfinx_optim.convex_function.simple_terms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/cones.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cones</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/convex_function.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">convex_function</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/primitives.html">Primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/transforms.html">Transforms</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.mosek_io.html">dolfinx_optim.mosek_io</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/dolfinx_optim.utils.html">dolfinx_optim.utils</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/mosek_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mosek_io</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
 </ul>
 </li>
 </ul>
@@ -323,16 +314,17 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="dolfinx-optim-documentation">
 <h1><code class="docutils literal notranslate"><span class="pre">dolfinx_optim</span></code> documentation<a class="headerlink" href="#dolfinx-optim-documentation" title="Link to this heading">#</a></h1>
-<section id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">dolfinx_optim</span></code> is a convex optimization add-on package to the <code class="docutils literal notranslate"><span class="pre">FEniCSx</span></code> finite-element library. It provides a simple Domain-Specific Language through FEniCSx <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code> Python interface for solving convex optimization problems. In particular, it relies on the <code class="docutils literal notranslate"><span class="pre">Mosek</span></code> mathematical programming library. <code class="docutils literal notranslate"><span class="pre">Mosek</span></code> provides a state-of-the art interior-point solver for linear programming (LP), convex quadratic programming (QP), second-order conic programming (SOCP) and semi-definite programming (SDP).</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>This project is a rewrite of the <a class="reference external" href="https://gitlab.enpc.fr/navier-fenics/fenics-optim"><code class="docutils literal notranslate"><span class="pre">fenics_optim</span></code> package</a> working with the legacy FEniCS version.</p>
 </div>
-<!-- [![Documentation Status](https://readthedocs.org/projects/fenics-optim/badge/?version=latest)](https://fenics-optim.readthedocs.io/en/latest/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3604085.svg)](https://doi.org/10.5281/zenodo.3604085)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) -->
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">dolfinx_optim</span></code> is a convex optimization add-on package to the <code class="docutils literal notranslate"><span class="pre">FEniCSx</span></code> finite-element library. It provides a simple Domain-Specific Language through FEniCSx <code class="docutils literal notranslate"><span class="pre">dolfinx</span></code> Python interface for solving convex optimization problems. In particular, it relies on the <code class="docutils literal notranslate"><span class="pre">Mosek</span></code> mathematical programming library. <code class="docutils literal notranslate"><span class="pre">Mosek</span></code> provides a state-of-the art interior-point solver for linear programming (LP), convex quadratic programming (QP), second-order conic programming (SOCP) and semi-definite programming (SDP).</p>
+<ul class="simple">
+<li><p>Github repository: <a class="github reference external" href="https://github.com/bleyerj/dolfinx_optim">bleyerj/dolfinx_optim</a></p></li>
+<li><p>Online documentation: <a class="reference external" href="https://bleyerj.github.io/dolfinx_optim/">https://bleyerj.github.io/dolfinx_optim/</a></p></li>
+</ul>
 </section>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
@@ -341,7 +333,7 @@ document.write(`
 <li><p><strong>FEniCSx</strong> (v.0.8), see <a class="reference external" href="https://fenicsproject.org/download/">installation instructions here</a>.</p></li>
 <li><p><strong>MOSEK</strong> (&gt;= version 10 with its Python Fusion interface), see <a class="reference external" href="https://www.mosek.com/downloads/">installation instructions here</a>. The Python interface can be simply installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-f<span class="w"> </span>https://download.mosek.com/stable/wheel/index.html<span class="w"> </span>Mosek
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">f</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">mosek</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">stable</span><span class="o">/</span><span class="n">wheel</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span> <span class="n">Mosek</span>
 </pre></div>
 </div>
 <p>Mosek is a commercial software so users need a valid Mosek license. Free unlimited licenses are available for education and research purposes, see the <a class="reference external" href="https://www.mosek.com/products/academic-licenses/">Academic License section</a>.</p>
@@ -407,7 +399,6 @@ document.write(`
 <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_32x32.png" width="16" height="16" />
  0000-0001-8212-9921
 </a>
-<p><span class="math notranslate nohighlight">\(\,\)</span></p>
 <a class="bg-primary mb-1 reference internal image-reference" href="_images/banner_tutelles.png"><img alt="_images/banner_tutelles.png" class="bg-primary mb-1 align-center" src="_images/banner_tutelles.png" style="width: 600px;" /></a>
 </section>
 <div class="toctree-wrapper compound">

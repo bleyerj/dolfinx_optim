@@ -317,7 +317,7 @@ class HardeningStoredEnergy(ConvexTerm):
     def conic_repr(self, p):
         r = self.add_var()
         stack = concatenate([r, 1.0, -om * p])
-        self.add_conic_constraint(stack, Exp(3))
+        self.add_conic_constraint(stack, Exp())
         self.add_linear_term((sigu - sig0) * (p + 1 / om * r))
 ```
 
