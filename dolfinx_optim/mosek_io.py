@@ -142,6 +142,7 @@ class MosekProblem:
             "presolve_lindep": "off",
             "log_level": 10,
             "tol_rel_gap": 1e-7,
+            "tol_feas": 1e-8,
             "solve_form": "free",
             "num_threads": 0,
             "dump_file": None,
@@ -447,6 +448,7 @@ class MosekProblem:
 
     def _apply_objective(self, conv_fun):
         obj = []
+
         for var, vec in zip(self.variables, self.vectors):
             if conv_fun.objective is not None:
                 if isinstance(var, fem.Constant):
@@ -465,10 +467,14 @@ class MosekProblem:
                             )
                 else:
                     var_ = ufl.TestFunction(var.function_space)
-                    dobj = ufl.derivative(
-                        conv_fun.scale_factor * conv_fun.objective, var, var_
+                    dobj = apply_derivatives(
+                        apply_algebra_lowering(
+                            ufl.derivative(
+                                conv_fun.scale_factor * conv_fun.objective, var, var_
+                            )
+                        )
                     )
-                    if len(dobj.coefficients()) > 0:
+                    if len(dobj.arguments()) > 0:
                         c = fem.assemble_vector(fem.form(dobj)).array
                     else:
                         c = None
@@ -630,6 +636,9 @@ class MosekProblem:
 
         # Set relative gap tolerance (double parameter)
         self.M.setSolverParam("intpntCoTolRelGap", self.parameters["tol_rel_gap"])
+        # Set feasibility tolerance (double parameter)
+        self.M.setSolverParam("intpntCoTolPfeas", self.parameters["tol_feas"])
+        self.M.setSolverParam("intpntCoTolDfeas", self.parameters["tol_feas"])
         # Controls whether primal or dual form is solved
         self.M.setSolverParam("intpntSolveForm", self.parameters["solve_form"])
 

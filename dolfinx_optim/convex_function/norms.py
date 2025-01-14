@@ -8,33 +8,10 @@ Definition of various norms and balls.
 @Time    :   17/11/2023
 """
 from dolfinx_optim.utils import concatenate, get_shape
-from dolfinx_optim.cones import Quad, RQuad, Pow
+from dolfinx_optim.cones import Quad, Pow
 from dolfinx_optim.convex_function import ConvexTerm
 from dolfinx_optim.convex_function.epigraph import Epigraph
-from dolfinx_optim.convex_function.partial_minimization import PartialMinimization
-import numpy as np
 import ufl
-
-
-def to_ball(norm, k, *args):
-    return PartialMinimization(Epigraph(k, norm(*args)), [0])
-    # return Epigraph(k, norm(*args))
-
-
-# def L2Ball(*args, k=1.0):
-#     return to_ball(L2Norm, k, *args)
-
-
-# def L1Ball(*args, k=1.0):
-#     return to_ball(L1Norm, k, *args)
-
-
-# def LinfBall(*args, k=1.0):
-#     return to_ball(LinfNorm, k, *args)
-
-
-def LpBall(*args, k=1.0):
-    return to_ball(LpNorm, k, *args)
 
 
 class L1Ball(ConvexTerm):
@@ -131,20 +108,20 @@ class LpNorm(ConvexTerm):
         self.add_linear_term(t)
 
 
-# class LpBall(ConvexTerm):
-#     """Define the Lp-ball constraint :math:`||x||_p <= 1.0`."""
+class LpBall(ConvexTerm):
+    """Define the Lp-ball constraint :math:`||x||_p <= 1.0`."""
 
-#     def __init__(self, operand, deg_quad, p):
-#         super().__init__(operand, deg_quad, parameters=(p,))
+    def __init__(self, operand, deg_quad, p):
+        super().__init__(operand, deg_quad, parameters=(p,))
 
-#     def conic_repr(self, expr, p):
-#         d = get_shape(expr)
-#         if d == 0:
-#             stack = concatenate([1.0, 1.0, expr])
-#             self.add_conic_constraint(stack, Pow(3, 1 / p))
-#         else:
-#             r = self.add_var(d)
-#             self.add_eq_constraint(sum(r), b=1.0)
-#             for i in range(d):
-#                 stack = concatenate([r[i], 1.0, expr[i]])
-#                 self.add_conic_constraint(stack, Pow(3, 1 / p))
+    def conic_repr(self, expr, p):
+        d = get_shape(expr)
+        if d == 0:
+            stack = concatenate([1.0, 1.0, expr])
+            self.add_conic_constraint(stack, Pow(3, 1 / p))
+        else:
+            r = self.add_var(d)
+            self.add_eq_constraint(sum(r), b=1.0)
+            for i in range(d):
+                stack = concatenate([r[i], 1.0, expr[i]])
+                self.add_conic_constraint(stack, Pow(3, 1 / p))
